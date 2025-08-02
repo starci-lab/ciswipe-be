@@ -1,0 +1,90 @@
+import { ChainKey, Network, Token, TokenType } from "../types"
+
+export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
+    [ChainKey.Solana]: {
+        [Network.Mainnet]: [
+            {
+                id: "solana-sol-mainnet",
+                icon: "https://solana.com/img/solana-logo.png",
+                name: "Solana",
+                symbol: "SOL",
+                decimals: 9,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Native,
+            },
+            {
+                id: "solana-wsol-mainnet",
+                icon: "https://solana.com/img/solana-logo.png",
+                name: "Solana",
+                tokenAddress: "So11111111111111111111111111111111111111112",
+                symbol: "wSOL",
+                decimals: 9,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Wrapper,
+            },
+            {
+                id: "solana-msol-mainnet",
+                icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So/icon.png",
+                name: "Marinade Staked SOL",
+                symbol: "mSOL",
+                tokenAddress: "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
+                decimals: 9,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Regular,
+            },
+            {
+                id: "solana-jup-mainnet",
+                icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB/icon.png",
+                name: "Jupiter",
+                symbol: "JUP",
+                tokenAddress: "JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB",
+                decimals: 6,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Regular,
+            },
+            {
+                id: "solana-usdc-mainnet",
+                icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/icon.png",
+                name: "USD Coin",
+                symbol: "USDC",
+                tokenAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                decimals: 6,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Stable,
+            },
+        ],
+        [Network.Testnet]: [
+            {
+                id: "solana-sol-testnet",
+                icon: "https://solana.com/img/solana-logo.png",
+                name: "Solana",
+                symbol: "SOL",
+                decimals: 9,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Native,
+            },
+            {
+                id: "solana-wsol-testnet",
+                icon: "https://solana.com/img/solana-logo.png",
+                name: "Solana",
+                symbol: "wSOL",
+                tokenAddress: "So11111111111111111111111111111111111111112",
+                decimals: 9,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Wrapper,
+            },
+        ],
+    },
+    [ChainKey.Monad]: {
+        [Network.Mainnet]: [],
+        [Network.Testnet]: [],
+    },
+    [ChainKey.Bsc]: {
+        [Network.Mainnet]: [],
+        [Network.Testnet]: [],
+    },
+    [ChainKey.Sui]: {
+        [Network.Mainnet]: [],
+        [Network.Testnet]: [],
+    },
+}
