@@ -29,7 +29,7 @@ import { createCacheKey } from "@/modules/cache"
 import { VolumeService } from "@/modules/volume"
 
 @Injectable()
-export class RaydiumPlugin
+export class RaydiumPluginService
     extends DexPluginAbstract
     implements OnModuleInit, OnApplicationBootstrap
 {
@@ -54,7 +54,7 @@ export class RaydiumPlugin
     protected async getData({
         ...coreParams
     }: GetDataParams): Promise<PoolsApiReturn> {
-        const volumeName = `raydium-${coreParams.token1.tokenAddress}-${coreParams.token2.tokenAddress}.json`
+        const volumeName = `raydium-${coreParams.token1.id}-${coreParams.token2.id}.json`
         try {
             if (!coreParams.token1.tokenAddress || !coreParams.token2.tokenAddress) {
                 throw new Error("Token address is required")

@@ -1,2 +1,2 @@
-export * from "./cetus.plugin"
+export * from "./cetus-plugin.service"
 export * from "./cetus.module"

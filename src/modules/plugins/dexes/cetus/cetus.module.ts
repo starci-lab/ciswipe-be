@@ -1,15 +1,15 @@
 import { Module } from "@nestjs/common"
 import { ConfigurableModuleClass } from "./cetus.module-definition"
-import { CetusPlugin } from "./cetus.plugin"
-import { CetusSdk } from "./cetus.sdk"
+import { CetusPluginService } from "./cetus-plugin.service"
+import { CetusSdkService } from "./cetus-sdk.service"
 
 @Module({
     providers: [
-        CetusPlugin,
-        CetusSdk,
+        CetusPluginService,
+        CetusSdkService,
     ],
     exports: [
-        CetusPlugin,
+        CetusPluginService,
     ],
 })
 export class CetusModule extends ConfigurableModuleClass {}

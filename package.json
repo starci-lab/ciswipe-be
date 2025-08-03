@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.4.0",
+    "@jup-ag/api": "^6.0.44",
     "@keyv/redis": "^5.1.0",
     "@mysten/sui.js": "^0.54.1",
     "@nestjs/axios": "^4.0.1",

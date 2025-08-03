@@ -71,7 +71,7 @@ export interface PoolQueryBody {
 }
 
 @Injectable()
-export class CetusSdk {
+export class CetusSdkService {
     private readonly MAINNET_API =
         "https://api-sui.cetus.zone/v3/sui/clmm/stats_pools"
 
@@ -105,25 +105,6 @@ export class CetusSdk {
             }
         }
         return this.query(this.MAINNET_API, body)
-    }
-
-    private async postQuery(
-        url: string,
-        body: PoolQueryBody,
-    ): Promise<CetusApiResponse> {
-        try {
-            console.log(`body: ${JSON.stringify(body)}`)
-            const response = await lastValueFrom(
-                this.httpService.post(url, body, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }),
-            )
-            return response.data?.data || response.data
-        } catch (error) {
-            throw new Error(`Failed to fetch from Cetus API: ${error.message}`)
-        }
     }
 
     // Existing methods updated to use makeRequest

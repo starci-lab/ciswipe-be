@@ -5,7 +5,7 @@ import {
 } from "../abstract"
 import {
     BaseInputAddLiquidityV3Params,
-    BaseInputDataParams,
+    BaseInputDataAddLiquidityV3Params,
     BaseOutputAddLiquidityV3Result,
 } from "@/modules/blockchain"
 
@@ -46,6 +46,6 @@ export interface AddLiquidityV3OutputResult
   dump?: boolean;
 }
 
-export interface GetDataParams extends BaseInputDataParams {
+export interface GetDataParams extends BaseInputDataAddLiquidityV3Params {
   dump?: boolean;
 }

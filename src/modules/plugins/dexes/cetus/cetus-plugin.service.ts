@@ -16,24 +16,24 @@ import {
 } from "../abstract"
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
-import { CetusApiResponse, CetusSdk, PoolData } from "./cetus.sdk"
+import { CetusApiResponse, CetusSdkService, PoolData } from "./cetus-sdk.service"
 import { computePercentage } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
 
 @Injectable()
-export class CetusPlugin
+export class CetusPluginService
     extends DexPluginAbstract
     implements OnApplicationBootstrap
 {
     protected async getData({
         ...coreParams
     }: GetDataParams): Promise<CetusApiResponse> {
-        const volumeName = `cetus-${coreParams.token1.tokenAddress}-${coreParams.token2.tokenAddress}.json`
+        const volumeName = `cetus-${coreParams.token1.id}-${coreParams.token2.id}.json`
         try {
             if (!coreParams.token1.tokenAddress || !coreParams.token2.tokenAddress) {
                 throw new Error("Token address is required")
             }
-            const data = await this.cetusSdk.getPools({
+            const data = await this.cetusSdkService.getPools({
                 coinTypes: [
                     coreParams.token1.tokenAddress,
                     coreParams.token2.tokenAddress,
@@ -63,7 +63,7 @@ export class CetusPlugin
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly volumeService: VolumeService,
-    private readonly cetusSdk: CetusSdk,
+    private readonly cetusSdkService: CetusSdkService,
     ) {
         super({
             name: "Cetus",

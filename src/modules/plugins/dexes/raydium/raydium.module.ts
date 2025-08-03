@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common"
 import { ConfigurableModuleClass } from "./raydium.module-definition"
-import { RaydiumPlugin } from "./raydium.plugin"
+import { RaydiumPluginService } from "./raydium-plugin.service"
 
 @Module({
     providers: [
-        RaydiumPlugin,
+        RaydiumPluginService,
     ],
     exports: [
-        RaydiumPlugin,
+        RaydiumPluginService,
     ],
 })
 export class RaydiumModule extends ConfigurableModuleClass {}
