@@ -1,6 +1,7 @@
-import { DynamicModule, Module, Provider } from "@nestjs/common"
+import { DynamicModule, Module } from "@nestjs/common"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./dexes.module-definition"
-import { RaydiumPlugin } from "./raydium"
+import { RaydiumModule } from "./raydium"
+import { CetusModule } from "./cetus"
 
 @Module({})
 export class DexesModule extends ConfigurableModuleClass {
@@ -8,18 +9,14 @@ export class DexesModule extends ConfigurableModuleClass {
         options: typeof OPTIONS_TYPE = {}
     ): DynamicModule {
         const dynamicModule = super.register(options)
-        const plugins: Array<Provider> = [
-            RaydiumPlugin
+        const modules: Array<DynamicModule> = [
+            RaydiumModule.register(options),
+            CetusModule.register(options),
         ]
         return {
             ...dynamicModule,
-            providers: [
-                ...(dynamicModule.providers ?? []),
-                ...plugins,
-            ],
-            exports: [
-                ...plugins,
-            ],
+            imports: modules,
+            exports: modules,
         }
     }
 }

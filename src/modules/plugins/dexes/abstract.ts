@@ -3,7 +3,11 @@ import {
     BasePluginAbstractConstructorParams,
     PluginKind,
 } from "../abstract"
-import { BaseInputParams, BaseOutputResult } from "@/modules/blockchain"
+import {
+    BaseInputAddLiquidityV3Params,
+    BaseInputDataParams,
+    BaseOutputAddLiquidityV3Result,
+} from "@/modules/blockchain"
 
 export interface DexPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
@@ -14,31 +18,34 @@ export interface DexPluginAbstractConstructorParams
 
 export abstract class DexPluginAbstract extends BasePluginAbstract {
     private readonly dump: boolean
-    constructor(
-        {
-            dump,
-            ...superParams
-        }: DexPluginAbstractConstructorParams
-    ) {
+    constructor({ dump, ...superParams }: DexPluginAbstractConstructorParams) {
         console.log(dump)
         super({
             ...superParams,
-            kind: PluginKind.Dex
+            kind: PluginKind.Dex,
         })
     }
 
-    protected abstract addLiquidityV3(
-        {
-            dump,
-            ...coreParams
-        }: AddLiquidityV3Params
-    ): Promise<AddLiquidityV3OutputResult>;
+  protected abstract addLiquidityV3({
+      dump,
+      ...coreParams
+  }: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult>;
+
+  protected abstract getData({
+      dump,
+      ...coreParams
+  }: GetDataParams): Promise<unknown>;
 }
 
-export interface AddLiquidityV3Params extends BaseInputParams {
-    dump?: boolean
+export interface AddLiquidityV3Params extends BaseInputAddLiquidityV3Params {
+  dump?: boolean;
 }
 
-export interface AddLiquidityV3OutputResult extends BaseOutputResult {
-    dump?: boolean
+export interface AddLiquidityV3OutputResult
+  extends BaseOutputAddLiquidityV3Result {
+  dump?: boolean;
+}
+
+export interface GetDataParams extends BaseInputDataParams {
+  dump?: boolean;
 }

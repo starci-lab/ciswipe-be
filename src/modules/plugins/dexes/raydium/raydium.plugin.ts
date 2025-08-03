@@ -14,8 +14,9 @@ import {
     AddLiquidityV3OutputResult,
     AddLiquidityV3Params,
     DexPluginAbstract,
+    GetDataParams,
 } from "../abstract"
-import { Raydium } from "@raydium-io/raydium-sdk-v2"
+import { PoolsApiReturn, Raydium } from "@raydium-io/raydium-sdk-v2"
 import {
     Inject,
     Injectable,
@@ -25,6 +26,7 @@ import {
 import { Connection } from "@solana/web3.js"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import { createCacheKey } from "@/modules/cache"
+import { VolumeService } from "@/modules/volume"
 
 @Injectable()
 export class RaydiumPlugin
@@ -37,6 +39,7 @@ export class RaydiumPlugin
     private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly volumeService: VolumeService,
     ) {
         super({
             name: "Raydium",
@@ -48,16 +51,47 @@ export class RaydiumPlugin
         })
     }
 
+    protected async getData({
+        ...coreParams
+    }: GetDataParams): Promise<PoolsApiReturn> {
+        const volumeName = `raydium-${coreParams.token1.tokenAddress}-${coreParams.token2.tokenAddress}.json`
+        try {
+            if (!coreParams.token1.tokenAddress || !coreParams.token2.tokenAddress) {
+                throw new Error("Token address is required")
+            }
+            const raydium = this.raydiums[coreParams.network]
+            const pools = await raydium.api.fetchPoolByMints({
+                mint1: coreParams.token1.tokenAddress,
+                mint2: coreParams.token2.tokenAddress,
+            })
+            await this.volumeService.writeJsonToDataVolume<PoolsApiReturn>(
+                volumeName,
+                pools,
+            )
+            return pools
+        } catch (error) {
+            console.error(error)
+            // if error happlen, we try to read from volume
+            try {
+                return await this.volumeService.readJsonFromDataVolume<PoolsApiReturn>(
+                    volumeName,
+                )
+            } catch (error) {
+                console.error(error)
+            }
+            throw error
+        }
+    }
     async onApplicationBootstrap() {
         const output = await this.addLiquidityV3({
             network: Network.Mainnet,
             chainKey: ChainKey.Solana,
             inputTokens: [
                 {
-                    TokenId: TokenId.SolanaSolMainnet,
+                    id: TokenId.SolanaSolMainnet,
                 },
                 {
-                    TokenId: TokenId.SolanaUsdcMainnet,
+                    id: TokenId.SolanaUsdcMainnet,
                 },
             ],
             disableCache: false,
@@ -90,7 +124,7 @@ export class RaydiumPlugin
         // get the pool info
         const [token1, token2] = coreParams.inputTokens
         // if token1 = token2, throw error
-        if (token1.TokenId === token2.TokenId) {
+        if (token1.id === token2.id) {
             throw new Error(
                 "Raydium add liquidity v3 only supports 2 different input tokens",
             )
@@ -98,7 +132,7 @@ export class RaydiumPlugin
         let [token1Entity, token2Entity] = tokens[ChainKey.Solana][
             coreParams.network
         ].filter(
-            (token) => token.id === token1.TokenId || token.id === token2.TokenId,
+            (token) => token.id === token1.id || token.id === token2.id,
         )
         // if token1 or token2 = sol, we change to wsol
         if (token1Entity.type === TokenType.Native) {
@@ -119,10 +153,12 @@ export class RaydiumPlugin
             }
             token2Entity = wrapper
         }
-        if (!token1Entity.tokenAddress || !token2Entity.tokenAddress) {
-            throw new Error("Raydium token address not found")
+        if (!token1Entity?.tokenAddress || !token2Entity?.tokenAddress) {
+            return {
+                strategies: [],
+            }
         }
-        const cacheKey = createCacheKey(coreParams)
+        const cacheKey = createCacheKey("Raydium", coreParams)
         if (!coreParams.disableCache) {
             const outputResult =
         await this.cacheManager.get<AddLiquidityV3OutputResult>(cacheKey)
@@ -130,11 +166,10 @@ export class RaydiumPlugin
                 return outputResult
             }
         }
-        const poolsApiReturn = await this.raydiums[
-            coreParams.network
-        ].api.fetchPoolByMints({
-            mint1: token1Entity.tokenAddress,
-            mint2: token2Entity.tokenAddress,
+        const poolsApiReturn = await this.getData({
+            network: coreParams.network,
+            token1: token1Entity,
+            token2: token2Entity,
         })
         // write to file
         const strategies: Array<OutputStrategy> = poolsApiReturn.data

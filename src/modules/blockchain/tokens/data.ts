@@ -9,6 +9,12 @@ export enum TokenId {
     SolanaSolTestnet = "solana-sol-testnet",
     SolanaWsolTestnet = "solana-wsol-testnet",
     SolanaRayMainnet = "solana-ray-mainnet",
+    SuiSuiMainnet = "sui-sui-mainnet",
+    SuiUsdcMainnet = "sui-usdc-mainnet",
+    SuiUsdcWormholeMainnet = "sui-usdc-wormhole-mainnet",
+    SuiSuiTestnet = "sui-sui-testnet",
+    SuiUsdcTestnet = "sui-usdc-testnet",
+    SuiCetusMainnet = "sui-cetus-mainnet",
 }
 export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
     [ChainKey.Solana]: {
@@ -104,7 +110,69 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
         [Network.Testnet]: [],
     },
     [ChainKey.Sui]: {
-        [Network.Mainnet]: [],
-        [Network.Testnet]: [],
-    },
+        [Network.Mainnet]: [
+            {
+                id: TokenId.SuiSuiMainnet,
+                icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/20947.png", // SUI logo
+                name: "Sui",
+                symbol: "SUI",
+                tokenAddress: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+                decimals: 9,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Native,
+            },
+            {
+                id: TokenId.SuiUsdcMainnet,
+                icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png", // USDC logo
+                name: "USD Coin",
+                symbol: "USDC",
+                tokenAddress: "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+                decimals: 6,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Stable,
+            },
+            {
+                id: TokenId.SuiUsdcWormholeMainnet,
+                icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png", // USDC logo
+                name: "USD Coin (Wormhole)",
+                symbol: "USDC",
+                tokenAddress: "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN", 
+                decimals: 6,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Stable,
+            },
+            {
+                id: TokenId.SuiCetusMainnet,
+                icon: "https://cetus.zone/favicon.ico",
+                name: "Cetus",
+                symbol: "CETUS",
+                tokenAddress: "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS",
+                decimals: 9,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Regular,
+            },
+        ],
+        [Network.Testnet]: [
+            {
+                id: TokenId.SuiSuiTestnet,
+                icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/20947.png",
+                name: "Sui",
+                symbol: "SUI",
+                tokenAddress: "0x2::sui::SUI",
+                decimals: 9,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Native,
+            },
+            {
+                id: TokenId.SuiUsdcTestnet,
+                icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                name: "USD Coin",
+                symbol: "USDC",
+                tokenAddress: "0x9007e2c4c1a20f5ff1dd6ec8e2cc5ae04928e2eb06fa1c708ba84c5f5a68f82a::coin::COIN",
+                decimals: 6,
+                chainKey: ChainKey.Sui,
+                type: TokenType.Stable,
+            },
+        ],
+    }
 }

@@ -10,7 +10,7 @@ export class BlockchainModule extends ConfigurableModuleClass {
         const dynamicModule = super.register(options)
         const rpcModule = RpcModule.register({
             isGlobal: options.isGlobal,
-        })
+        }) 
         return {
             ...dynamicModule,
             imports: [

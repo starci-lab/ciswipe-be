@@ -1,3 +1,4 @@
+import { join } from "path"
 
 export const envConfig = () => ({
     redis: {
@@ -5,5 +6,10 @@ export const envConfig = () => ({
         port: parseInt(process.env.REDIS_PORT || "6379", 10),
         password: process.env.REDIS_PASSWORD || "Cuong123_A",
         ttl: parseInt(process.env.REDIS_TTL || "60000", 10), // 60s
+    },
+    volume: {
+        data: {
+            path: process.env.VOLUME_DATA_PATH || join(process.cwd(), ".volume", "data"),
+        },
     }
 })

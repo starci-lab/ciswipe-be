@@ -20,15 +20,20 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@cetusprotocol/cetus-sui-clmm-sdk": "^5.4.0",
     "@keyv/redis": "^5.1.0",
+    "@mysten/sui.js": "^0.54.1",
+    "@nestjs/axios": "^4.0.1",
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^6.0.0",
     "@raydium-io/raydium-sdk-v2": "^0.2.8-alpha",
     "cacheable": "^1.10.3",
     "ethers": "^6.15.0",
+    "jsbi": "^4.3.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

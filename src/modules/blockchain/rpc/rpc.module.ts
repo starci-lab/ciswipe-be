@@ -6,6 +6,7 @@ import {
 import { getSolanaRpcsProvider } from "./solana.providers"
 import { getEvmRpcsProvider } from "./evm.provider"
 import { ChainKey, chainKeyToPlatform, Platform } from "../types"
+import { getSuiRpcsProvider } from "./sui.provider"
 
 @Module({})
 export class RpcModule extends ConfigurableModuleClass {
@@ -20,15 +21,18 @@ export class RpcModule extends ConfigurableModuleClass {
                 evmProviders.push(getEvmRpcsProvider(chainKey))
             }
         }
+        const suiRpcsProvider = getSuiRpcsProvider()
         return {
             ...dynamicModule,
             providers: [
                 solanaRpcsProvider,
                 ...evmProviders,
+                suiRpcsProvider,
             ],
             exports: [
                 solanaRpcsProvider,
                 ...evmProviders,
+                suiRpcsProvider,
             ]
         }
     }

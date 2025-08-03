@@ -41,6 +41,15 @@ export enum TokenType {
     Regular = "regular",
 }
 
+export interface Project {
+    // project name
+    name: string
+    // project website
+    website: string
+    // project social links
+    socialLinks?: Record<string, string>
+}
+
 export interface Token {
     // token id
     id: TokenId
@@ -58,6 +67,8 @@ export interface Token {
     chainKey: ChainKey
     // token type
     type: TokenType
+    // project
+    project?: Project
 }
 
 export enum Network {
@@ -68,11 +79,11 @@ export enum Network {
 }
 
 export interface TokenData {
-    TokenId: string
+    id: string
     amount?: number
 }
 // core params, use in the quote to get the best investment
-export interface BaseInputParams {
+export interface BaseInputAddLiquidityV3Params {
     // network, if not provided, use the default network
     network: Network
     // chain key, if not provided, use the default chain key
@@ -81,6 +92,15 @@ export interface BaseInputParams {
     inputTokens: Array<TokenData>
     // disable cache, if true, the result will not be cached
     disableCache?: boolean
+}
+
+// core params, use in the quote to get the best investment
+export interface BaseInputDataParams {
+    // network, if not provided, use the default network
+    network: Network
+    // token
+    token1: Token
+    token2: Token
 }
 
 export enum OutputStrategyAprDuration {
@@ -126,6 +146,6 @@ export interface OutputStrategy {
     type: OutputStrategyType
 }
 
-export interface BaseOutputResult {
+export interface BaseOutputAddLiquidityV3Result {
     strategies: Array<OutputStrategy>
 }
