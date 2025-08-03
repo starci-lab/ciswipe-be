@@ -1,10 +1,20 @@
 import { ChainKey, Network, Token, TokenType } from "../types"
 
+export enum TokenId {
+    SolanaSolMainnet = "solana-sol-mainnet",
+    SolanaWsolMainnet = "solana-wsol-mainnet",
+    SolanaMsolMainnet = "solana-msol-mainnet",
+    SolanaJupMainnet = "solana-jup-mainnet",
+    SolanaUsdcMainnet = "solana-usdc-mainnet",
+    SolanaSolTestnet = "solana-sol-testnet",
+    SolanaWsolTestnet = "solana-wsol-testnet",
+    SolanaRayMainnet = "solana-ray-mainnet",
+}
 export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
     [ChainKey.Solana]: {
         [Network.Mainnet]: [
             {
-                id: "solana-sol-mainnet",
+                id: TokenId.SolanaSolMainnet,
                 icon: "https://solana.com/img/solana-logo.png",
                 name: "Solana",
                 symbol: "SOL",
@@ -13,7 +23,7 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 type: TokenType.Native,
             },
             {
-                id: "solana-wsol-mainnet",
+                id: TokenId.SolanaWsolMainnet,
                 icon: "https://solana.com/img/solana-logo.png",
                 name: "Solana",
                 tokenAddress: "So11111111111111111111111111111111111111112",
@@ -23,7 +33,7 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 type: TokenType.Wrapper,
             },
             {
-                id: "solana-msol-mainnet",
+                id: TokenId.SolanaMsolMainnet,
                 icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So/icon.png",
                 name: "Marinade Staked SOL",
                 symbol: "mSOL",
@@ -33,7 +43,7 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 type: TokenType.Regular,
             },
             {
-                id: "solana-jup-mainnet",
+                id: TokenId.SolanaJupMainnet,
                 icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB/icon.png",
                 name: "Jupiter",
                 symbol: "JUP",
@@ -43,7 +53,7 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 type: TokenType.Regular,
             },
             {
-                id: "solana-usdc-mainnet",
+                id: TokenId.SolanaUsdcMainnet,
                 icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/icon.png",
                 name: "USD Coin",
                 symbol: "USDC",
@@ -52,10 +62,20 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 chainKey: ChainKey.Solana,
                 type: TokenType.Stable,
             },
+            {
+                id: TokenId.SolanaRayMainnet,
+                icon: "https://img-v1.raydium.io/icon/4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R.png",
+                name: "Raydium",
+                symbol: "RAY",
+                tokenAddress: "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+                decimals: 6,
+                chainKey: ChainKey.Solana,
+                type: TokenType.Regular,
+            },
         ],
         [Network.Testnet]: [
             {
-                id: "solana-sol-testnet",
+                id: TokenId.SolanaSolTestnet,
                 icon: "https://solana.com/img/solana-logo.png",
                 name: "Solana",
                 symbol: "SOL",
@@ -64,7 +84,7 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
                 type: TokenType.Native,
             },
             {
-                id: "solana-wsol-testnet",
+                id: TokenId.SolanaWsolTestnet,
                 icon: "https://solana.com/img/solana-logo.png",
                 name: "Solana",
                 symbol: "wSOL",

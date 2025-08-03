@@ -1,3 +1,5 @@
+import { TokenId } from "./tokens"
+
 export enum ChainKey {
     // Solana
     Solana = "solana",
@@ -7,6 +9,25 @@ export enum ChainKey {
     Bsc = "bsc",
     // Sui
     Sui = "sui"
+}
+
+export enum Platform {
+    Evm = "evm",
+    Solana = "solana",
+    Sui = "sui",
+}
+
+export const chainKeyToPlatform = (chainKey: ChainKey): Platform => {
+    switch (chainKey) {
+    case ChainKey.Solana:
+        return Platform.Solana
+    case ChainKey.Monad:
+        return Platform.Evm
+    case ChainKey.Bsc:
+        return Platform.Evm
+    case ChainKey.Sui:
+        return Platform.Sui
+    }
 }
 
 export enum TokenType {
@@ -22,7 +43,7 @@ export enum TokenType {
 
 export interface Token {
     // token id
-    id: string
+    id: TokenId
     // token icon
     icon: string
     // token name
@@ -46,9 +67,9 @@ export enum Network {
     Testnet = "testnet",
 }
 
-export interface TokenAmount {
-    tokenKey: string
-    amount: number
+export interface TokenData {
+    TokenId: string
+    amount?: number
 }
 // core params, use in the quote to get the best investment
 export interface BaseInputParams {
@@ -57,16 +78,54 @@ export interface BaseInputParams {
     // chain key, if not provided, use the default chain key
     chainKey: ChainKey
     // input tokens, if not provided, use the default input tokens
-    inputTokens: Array<TokenAmount>
+    inputTokens: Array<TokenData>
+    // disable cache, if true, the result will not be cached
+    disableCache?: boolean
 }
 
-export interface OutputStrategy {
-    // output token, if not provided, use the default output token
-    outputTokens: Array<TokenAmount>
-    // apr of the strategy
+export enum OutputStrategyAprDuration {
+    Day = "day",
+    Week = "week",
+    Month = "month",
+    Year = "year",
+}
+
+export interface OutputStrategyReward {
+    apr: number
+    tokenId: TokenId
+}
+export interface OutputStrategyApr {
+    feeApr?: number
+    rewards?: Array<OutputStrategyReward>
+    // in most case, apr = feeApr + rewardApr
     apr: number
 }
 
-export interface BaseOutputParams {
+export enum OutputStrategyType {
+    // dex
+    AddLiquidityV3 = "addLiquidityV3",
+}
+
+export interface OutputStrategyAddLiquidityV3Metadata {
+    // pool id
+    poolId: string
+    // fee tier
+    feeRate: number
+    // tvl
+    tvl: number
+}
+
+export interface OutputStrategy {
+    // output token, if not provided, the strategy path is ended
+    outputTokens?: Array<TokenData>
+    // aprs of the strategy
+    aprs?: Partial<Record<OutputStrategyAprDuration, OutputStrategyApr>>
+    // metadata of the strategy
+    metadata?: OutputStrategyAddLiquidityV3Metadata
+    // type
+    type: OutputStrategyType
+}
+
+export interface BaseOutputResult {
     strategies: Array<OutputStrategy>
 }

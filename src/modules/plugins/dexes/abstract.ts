@@ -3,7 +3,7 @@ import {
     BasePluginAbstractConstructorParams,
     PluginKind,
 } from "../abstract"
-import { BaseInputParams, BaseOutputParams } from "@/modules/blockchain"
+import { BaseInputParams, BaseOutputResult } from "@/modules/blockchain"
 
 export interface DexPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
@@ -32,13 +32,13 @@ export abstract class DexPluginAbstract extends BasePluginAbstract {
             dump,
             ...coreParams
         }: AddLiquidityV3Params
-    ): Promise<AddLiquidityV3OutputParams>;
+    ): Promise<AddLiquidityV3OutputResult>;
 }
 
 export interface AddLiquidityV3Params extends BaseInputParams {
     dump?: boolean
 }
 
-export interface AddLiquidityV3OutputParams extends BaseOutputParams {
+export interface AddLiquidityV3OutputResult extends BaseOutputResult {
     dump?: boolean
 }
