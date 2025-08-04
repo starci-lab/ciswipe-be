@@ -17,12 +17,9 @@ export interface LendingPluginAbstractConstructorParams
 
 // in staking, we focus on input-output, and the amount in - out
 export abstract class LendingPluginAbstract extends BasePluginAbstract {
-    private readonly dump: boolean
     constructor({
-        dump,
         ...superParams
     }: LendingPluginAbstractConstructorParams) {
-        console.log(dump)
         super({
             ...superParams,
             kind: PluginKind.Lending,
@@ -44,9 +41,8 @@ export interface LendParams {
   disableCache?: boolean;
 }
 
-export interface LendingOutputApy {
-  apy: number;
-  netApy?: number;
+export interface LendingOutputApr {
+  apr: number;
 }
 
 export interface LendingOutputStrategyMetadata {
@@ -62,8 +58,8 @@ export enum LendingOutputStrategyType {
 export interface LendingOutputStrategy {
   // output token, if not provided, the strategy path is ended
   outputTokens?: Array<TokenData>;
-  // apy of the strategy
-  apy?: LendingOutputApy;
+  // apr of the strategy
+  apr?: LendingOutputApr;
   // metadata of the strategy
   metadata?: LendingOutputStrategyMetadata;
   // type

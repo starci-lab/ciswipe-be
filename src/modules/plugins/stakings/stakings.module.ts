@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./stakings.module-definition"
 import { JitoModule } from "./jito"
+import { StakingStorageService } from "./staking-storage.service"
 
 @Module({})
 export class StakingsModule extends ConfigurableModuleClass {
@@ -13,8 +14,15 @@ export class StakingsModule extends ConfigurableModuleClass {
         ]
         return {
             ...dynamicModule,
+            providers: [
+                ...(dynamicModule.providers || []),
+                StakingStorageService
+            ],
             imports: modules,
-            exports: modules,
+            exports: [
+                ...modules,
+                StakingStorageService
+            ],
         }
     }
 }

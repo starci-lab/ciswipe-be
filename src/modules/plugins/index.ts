@@ -1,3 +1,5 @@
 export * from "./plugins.module"
 export * from "./dexes"
 export * from "./aggregators"
+export * from "./lendings"
+export * from "./stakings"

@@ -26,26 +26,45 @@ import { VolumeService } from "@/modules/volume"
 import { LendingPluginAbstract } from "../abstract"
 import {
     getMedianSlotDurationInMsFromLastEpochs,
-    KaminoManager,
-    KaminoVault,
+    KaminoMarket,
 } from "@kamino-finance/klend-sdk"
-import { assertIsAddress } from "@solana/addresses"
 import {
     DEFAULT_RPC_CONFIG,
     createSolanaRpcApi,
     SolanaRpcApi,
     createRpc,
     createDefaultRpcTransport,
+    address,
+    Address,
 } from "@solana/kit"
 import { createCacheKey } from "@/modules/cache"
 import { computePercentage } from "@/modules/common"
+
+// market pubkeys
+const marketPubkeys = {
+    [Network.Mainnet]: [address("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF")],
+    [Network.Testnet]: [address("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF")],
+}
+
+export interface KaminoLendVault {
+  id: string;
+  collateralMint: string;
+  collateralExchangeRate: number;
+  apr: number;
+  mint: string;
+}
+
+export interface GetGlobalDataParams {
+  network: Network;
+  chainKey: ChainKey;
+}
 
 @Injectable()
 export class KaminoPluginService
     extends LendingPluginAbstract
     implements OnModuleInit, OnApplicationBootstrap
 {
-    private kaminoManagers: Record<Network, KaminoManager>
+    private kaminoMarketMaps: Record<Network, Map<Address, KaminoMarket>>
     constructor(
     @Inject(createProviderToken(ChainKey.Solana))
     private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
@@ -63,18 +82,54 @@ export class KaminoPluginService
         })
     }
 
-    protected async getData(params: GetDataParams): Promise<Array<KaminoVault>> {
-        const volumeName = `kamino-${params.inputToken.id}.json`
-        try {
-            if (!params.inputToken.tokenAddress) {
-                throw new Error("Token address is required")
-            }
-            const kaminoManager = this.kaminoManagers[params.network]
-            assertIsAddress(params.inputToken.tokenAddress)
-            const vaults = await kaminoManager.getAllVaultsForToken(
-                params.inputToken.tokenAddress,
+    protected async getData(
+        params: GetDataParams,
+    ): Promise<unknown> {
+        let token = tokens[params.chainKey][params.network].find(
+            (token) => token.id === params.inputToken.id,
+        )
+        if (!token) {
+            throw new Error("Token not found")
+        }
+        if (token.type === TokenType.Native) {
+            token = tokens[params.chainKey][params.network].find(
+                (token) => token.type === TokenType.Wrapper,
             )
-            await this.volumeService.writeJsonToDataVolume<Array<KaminoVault>>(
+            if (!token) {
+                throw new Error("Wrapper token not found")
+            }
+        }
+        const vaults = await this.getGlobalData(params)
+        return vaults.filter((vault) => vault.mint === token.tokenAddress)
+    }
+
+    protected async getGlobalData(
+        params: GetGlobalDataParams,
+    ): Promise<Array<KaminoLendVault>> {
+        const volumeName = "kamino.json"
+        try {
+            const slot = await this.solanaRpcProvider[params.network].getSlot()
+            const markets = Array.from(
+                this.kaminoMarketMaps[params.network].values(),
+            )
+            const vaults: Array<KaminoLendVault> = []
+            for (const market of markets) {
+                const reserves = market
+                    .getReserves()
+                for (const reserve of reserves) {
+                    vaults.push({
+                        id: reserve.address,
+                        collateralMint: reserve.getCTokenMint(),
+                        collateralExchangeRate: reserve.getEstimatedCollateralExchangeRate(
+                            BigInt(slot),
+                            0
+                        ).toNumber(),
+                        apr: reserve.calculateSupplyAPR(BigInt(slot), 0),
+                        mint: reserve.getLiquidityMint(),
+                    })
+                }
+            }
+            await this.volumeService.writeJsonToDataVolume<Array<KaminoLendVault>>(
                 volumeName,
                 vaults,
             )
@@ -84,7 +139,7 @@ export class KaminoPluginService
             // if error happlen, we try to read from volume
             try {
                 return await this.volumeService.readJsonFromDataVolume<
-          Array<KaminoVault>
+          Array<KaminoLendVault>
         >(volumeName)
             } catch (error) {
                 console.error(error)
@@ -92,6 +147,7 @@ export class KaminoPluginService
             throw error
         }
     }
+
     async onApplicationBootstrap() {
         const output = await this.lend({
             network: Network.Mainnet,
@@ -106,24 +162,34 @@ export class KaminoPluginService
     }
 
     async onModuleInit() {
-        const _kaminoManagers: Partial<Record<Network, KaminoManager>> = {}
+        const _kaminoMarketMaps: Partial<
+      Record<Network, Map<Address, KaminoMarket>>
+    > = {}
         for (const network of Object.values(Network)) {
+            if (network === Network.Testnet) {
+                // do nothing for testnet
+                continue
+            }
             const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
             const api = createSolanaRpcApi<SolanaRpcApi>({
                 ...DEFAULT_RPC_CONFIG,
                 defaultCommitment: "confirmed",
             })
-            _kaminoManagers[network] = new KaminoManager(
+            _kaminoMarketMaps[network] = await KaminoMarket.loadMultiple(
                 createRpc({
                     api,
                     transport: createDefaultRpcTransport({
                         url: this.solanaRpcProvider[network].rpcEndpoint,
                     }),
                 }),
+                marketPubkeys[network],
                 slotDuration,
             )
         }
-        this.kaminoManagers = _kaminoManagers as Record<Network, KaminoManager>
+        this.kaminoMarketMaps = _kaminoMarketMaps as Record<
+      Network,
+      Map<Address, KaminoMarket>
+    >
     }
 
     // method to add liquidity to a pool
@@ -142,14 +208,12 @@ export class KaminoPluginService
                 throw new Error("Wrapper token not found")
             }
         }
-
         // load from cache
         const cacheKey = createCacheKey("Kamino", params)
         const cachedData = await this.cacheManager.get(cacheKey)
         if (cachedData) {
             return cachedData as LendingOutputResult
         }
-
         const vaults = await this.getData({
             network: params.network,
             chainKey: params.chainKey,
@@ -158,34 +222,24 @@ export class KaminoPluginService
         const result: LendingOutputResult = {
             strategies: [],
         }
-        console.log("called")
-        const slot = await this.solanaRpcProvider[params.network].getSlot()
-        const bigIntSlot = BigInt(slot)
         const promises = Array<Promise<void>>()
-        for (const vault of vaults) {
+        for (const vault of vaults as Array<KaminoLendVault>) {
             promises.push(
                 (async () => {
-                    if (!vault.state) {
-                        return
-                    }
-                    const apy = await this.kaminoManagers[
-                        params.network
-                    ].getVaultActualAPY(vault.state, bigIntSlot)
+                    const apy = vault.apr
                     const strategy: LendingOutputStrategy = {
                         outputTokens: [
                             {
-                                tokenAddress: vault.state.sharesMint,
+                                tokenAddress: vault.collateralMint,
+                                amount: vault.collateralExchangeRate,
                             },
                         ],
-                        apy: {
-                            apy: computePercentage(apy.grossAPY.toNumber(), 1, 5),
-                            netApy: apy.netAPY
-                                ? computePercentage(apy.netAPY.toNumber(), 1, 5)
-                                : undefined,
+                        apr: {
+                            apr: computePercentage(apy, 1, 5),
                         },
                         type: LendingOutputStrategyType.Lending,
                         metadata: {
-                            vaultId: vault.address,
+                            vaultId: vault.id,
                         },
                     }
                     result.strategies.push(strategy)

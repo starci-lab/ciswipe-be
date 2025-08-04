@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./lendings.module-definition"
-import { KaminoModule } from "./kamino"
+//import { KaminoModule } from "./kamino"
+import { LendingStorageService } from "./lending-storage.service"
 
 @Module({})
 export class LendingsModule extends ConfigurableModuleClass {
@@ -9,12 +10,20 @@ export class LendingsModule extends ConfigurableModuleClass {
     ): DynamicModule {
         const dynamicModule = super.register(options)
         const modules: Array<DynamicModule> = [
-            KaminoModule.register(options),
+            // kamino lending is deprecated, will enter vaults service instead
+            //KaminoModule.register(options),
         ]
         return {
             ...dynamicModule,
             imports: modules,
-            exports: modules,
+            providers: [
+                ...(dynamicModule.providers || []),
+                LendingStorageService
+            ],
+            exports: [
+                ...modules,
+                LendingStorageService
+            ],
         }
     }
 }
