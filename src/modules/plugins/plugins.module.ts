@@ -3,6 +3,7 @@ import { ConfigurableModuleClass, OPTIONS_TYPE } from "./plugins.module-definiti
 import { DexesModule } from "./dexes"
 import { AggregatorsModule } from "./aggregators"
 import { StakingsModule } from "./stakings"
+import { LendingsModule } from "./lendings"
 
 @Module({})
 export class PluginsModule extends ConfigurableModuleClass {
@@ -19,17 +20,22 @@ export class PluginsModule extends ConfigurableModuleClass {
         const stakingsModule = StakingsModule.register({
             isGlobal: options.isGlobal,
         })
+        const lendingsModule = LendingsModule.register({
+            isGlobal: options.isGlobal,
+        })
         return {
             ...dynamicModule,
             imports: [
                 dexesModule,
                 aggregatorsModule,
-                stakingsModule
+                stakingsModule,
+                lendingsModule
             ],
             exports: [
                 dexesModule,
                 aggregatorsModule,
-                stakingsModule
+                stakingsModule,
+                lendingsModule
             ],
         }
     }

@@ -79,28 +79,9 @@ export enum Network {
 }
 
 export interface TokenData {
-    id: TokenId
+    id?: TokenId
+    tokenAddress?: string
     amount?: number
-}
-// core params, use in the quote to get the best investment
-export interface BaseInputAddLiquidityV3Params {
-    // network, if not provided, use the default network
-    network: Network
-    // chain key, if not provided, use the default chain key
-    chainKey: ChainKey
-    // input tokens, if not provided, use the default input tokens
-    inputTokens: Array<TokenData>
-    // disable cache, if true, the result will not be cached
-    disableCache?: boolean
-}
-
-// core params, use in the quote to get the best investment
-export interface BaseInputDataAddLiquidityV3Params {
-    // network, if not provided, use the default network
-    network: Network
-    // token
-    token1: Token
-    token2: Token
 }
 
 export interface BaseInputDataStakeParams {
@@ -156,26 +137,18 @@ export interface OutputStrategy {
     type: OutputStrategyType
 }
 
-export interface BaseOutputAddLiquidityV3Result {
-    strategies: Array<OutputStrategy>
-}
-
-export interface BaseInputStakeParams {
-    // network, if not provided, use the default network
-    network: Network
-    // chain key, if not provided, use the default chain key
-    chainKey: ChainKey
-    // input tokens, if not provided, use the default input tokens
-    inputToken: TokenData
-}
-
-export interface StakeOutputApy {
-    apy: number
-    mevApy?: number
-}
 
 export interface BaseOutputStakeResult {
     // output tokens
     outputTokens: Array<TokenData>
-    apy: StakeOutputApy  
+    apy: OutputStrategyApr  
+}
+
+export interface BaseInputDataLendingParams {
+    // network, if not provided, use the default network
+    network: Network
+    // chain key
+    chainKey: ChainKey
+    // token
+    inputToken: Token
 }

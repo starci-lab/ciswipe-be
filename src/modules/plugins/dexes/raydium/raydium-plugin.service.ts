@@ -110,19 +110,13 @@ export class RaydiumPluginService
     }
 
     // method to add liquidity to a pool
-    protected async addLiquidityV3({
-        dump,
-        ...coreParams
-    }: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
+    protected async addLiquidityV3(params: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
     // raydium support only for Solana so that we dont care about chainKey
-        if (coreParams.inputTokens.length !== 2) {
+        if (params.inputTokens.length !== 2) {
             throw new Error("Raydium add liquidity v3 only supports 2 input tokens")
         }
-        if (dump) {
-            console.log("addLiquidityV3", coreParams)
-        }
         // get the pool info
-        const [token1, token2] = coreParams.inputTokens
+        const [token1, token2] = params.inputTokens
         // if token1 = token2, throw error
         if (token1.id === token2.id) {
             throw new Error(
@@ -130,13 +124,13 @@ export class RaydiumPluginService
             )
         }
         let [token1Entity, token2Entity] = tokens[ChainKey.Solana][
-            coreParams.network
+            params.network
         ].filter(
             (token) => token.id === token1.id || token.id === token2.id,
         )
         // if token1 or token2 = sol, we change to wsol
         if (token1Entity.type === TokenType.Native) {
-            const wrapper = tokens[ChainKey.Solana][coreParams.network].find(
+            const wrapper = tokens[ChainKey.Solana][params.network].find(
                 (token) => token.type === TokenType.Wrapper,
             )
             if (!wrapper) {
@@ -145,7 +139,7 @@ export class RaydiumPluginService
             token1Entity = wrapper
         }
         if (token2Entity.type === TokenType.Native) {
-            const wrapper = tokens[ChainKey.Solana][coreParams.network].find(
+            const wrapper = tokens[ChainKey.Solana][params.network].find(
                 (token) => token.type === TokenType.Wrapper,
             )
             if (!wrapper) {
@@ -158,8 +152,8 @@ export class RaydiumPluginService
                 strategies: [],
             }
         }
-        const cacheKey = createCacheKey("Raydium", coreParams)
-        if (!coreParams.disableCache) {
+        const cacheKey = createCacheKey("Raydium", params)
+        if (!params.disableCache) {
             const outputResult =
         await this.cacheManager.get<AddLiquidityV3OutputResult>(cacheKey)
             if (outputResult) {
@@ -167,7 +161,8 @@ export class RaydiumPluginService
             }
         }
         const poolsApiReturn = await this.getData({
-            network: coreParams.network,
+            network: params.network,
+            chainKey: ChainKey.Solana,
             token1: token1Entity,
             token2: token2Entity,
         })
@@ -180,7 +175,7 @@ export class RaydiumPluginService
                     (info) => info.mint.address,
                 )
                 const rewardTokenIds = rewardTokenAddresses.map((address) => {
-                    const token = tokens[ChainKey.Solana][coreParams.network].find(
+                    const token = tokens[ChainKey.Solana][params.network].find(
                         (token) => token.tokenAddress === address,
                     )
                     if (!token) {
@@ -223,7 +218,7 @@ export class RaydiumPluginService
                     type: OutputStrategyType.AddLiquidityV3,
                 }
             })
-        if (!coreParams.disableCache) {
+        if (!params.disableCache) {
             await this.cacheManager.set<AddLiquidityV3OutputResult>(cacheKey, {
                 strategies,
             })

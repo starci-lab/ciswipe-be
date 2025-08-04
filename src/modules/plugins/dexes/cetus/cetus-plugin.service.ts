@@ -25,18 +25,16 @@ export class CetusPluginService
     extends DexPluginAbstract
     implements OnApplicationBootstrap
 {
-    protected async getData({
-        ...coreParams
-    }: GetDataParams): Promise<CetusApiResponse> {
-        const volumeName = `cetus-${coreParams.token1.id}-${coreParams.token2.id}.json`
+    protected async getData(params: GetDataParams): Promise<CetusApiResponse> {
+        const volumeName = `cetus-${params.token1.id}-${params.token2.id}.json`
         try {
-            if (!coreParams.token1.tokenAddress || !coreParams.token2.tokenAddress) {
+            if (!params.token1.tokenAddress || !params.token2.tokenAddress) {
                 throw new Error("Token address is required")
             }
             const data = await this.cetusSdkService.getPools({
                 coinTypes: [
-                    coreParams.token1.tokenAddress,
-                    coreParams.token2.tokenAddress,
+                    params.token1.tokenAddress,
+                    params.token2.tokenAddress,
                 ],
             })
             await this.volumeService.writeJsonToDataVolume<CetusApiResponse>(
@@ -159,20 +157,14 @@ export class CetusPluginService
         }
     }
 
-    protected async addLiquidityV3({
-        dump,
-        ...coreParams
-    }: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
+    protected async addLiquidityV3(params: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
     // cetus only support for sui so we dont care about chainKey parameter
-        if (dump) {
-            console.log("Cetus add liquidity v3", coreParams)
-        }
-        if (coreParams.inputTokens.length !== 2) {
+        if (params.inputTokens.length !== 2) {
             throw new Error("Cetus only support for 2 tokens")
         }
-        const [token1, token2] = coreParams.inputTokens
+        const [token1, token2] = params.inputTokens
         const [token1Entity, token2Entity] = tokens[ChainKey.Sui][
-            coreParams.network
+            params.network
         ].filter((token) => token.id === token1.id || token.id === token2.id)
         if (!token1Entity?.tokenAddress || !token2Entity?.tokenAddress) {
             return {
@@ -180,7 +172,8 @@ export class CetusPluginService
             }
         }
         const poolsData = await this.getData({
-            network: coreParams.network,
+            network: params.network,
+            chainKey: ChainKey.Sui,
             token1: token1Entity,
             token2: token2Entity,
         })

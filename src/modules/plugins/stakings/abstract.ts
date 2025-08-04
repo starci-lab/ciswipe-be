@@ -4,14 +4,19 @@ import {
     PluginKind,
 } from "../abstract"
 import {
-    BaseInputDataStakeParams,
-    BaseInputStakeParams,
-    BaseOutputStakeResult,
+    ChainKey,
+    Network,
+    TokenData,
 } from "@/modules/blockchain"
 
 export interface StakingPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
   dump?: boolean;
+}
+
+export interface StakeOutputApy {
+  apy: number
+  mevApy?: number
 }
 
 // in staking, we focus on input-output, and the amount in - out
@@ -25,27 +30,32 @@ export abstract class StakingPluginAbstract extends BasePluginAbstract {
         })
     }
 
-  protected abstract stake({
-      dump,
-      ...coreParams
-  }: StakeParams): Promise<StakeOutputResult>;
+  protected abstract stake(params: StakeParams): Promise<StakeOutputResult>;
   
-  protected abstract getData({
-      dump,
-      ...coreParams
-  }: GetDataParams): Promise<unknown>;
+  protected abstract getData(params: GetDataParams): Promise<unknown>;
 }
 
-export interface StakeParams extends BaseInputStakeParams {
-  dump?: boolean;
+export interface StakeParams {
+  // network, if not provided, use the default network
+  network: Network;
+  // chain key, if not provided, use the default chain key
+  chainKey: ChainKey;
+  // input tokens, if not provided, use the default input tokens
+  inputToken: TokenData;
 }
 
-export interface StakeOutputResult extends BaseOutputStakeResult {
-  dump?: boolean;
+export interface StakeOutputResult {
+  outputTokens: Array<TokenData>;
+  apy: StakeOutputApy;
 }
 
-export interface GetDataParams extends BaseInputDataStakeParams {
-  dump?: boolean;
+export interface GetDataParams {
+  // network, if not provided, use the default network
+  network: Network;
+  // chain key, if not provided, use the default chain key
+  chainKey: ChainKey;
+  // input tokens, if not provided, use the default input tokens
+  inputToken: TokenData;
 }
 
 

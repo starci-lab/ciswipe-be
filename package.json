@@ -22,6 +22,7 @@
   "dependencies": {
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.4.0",
     "@jup-ag/api": "^6.0.44",
+    "@kamino-finance/klend-sdk": "^7.0.6",
     "@keyv/redis": "^5.1.0",
     "@mysten/sui.js": "^0.54.1",
     "@nestjs/axios": "^4.0.1",
@@ -32,6 +33,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.0.0",
     "@raydium-io/raydium-sdk-v2": "^0.2.8-alpha",
+    "@solana/kit": "^2.3.0",
     "cacheable": "^1.10.3",
     "ethers": "^6.15.0",
     "jsbi": "^4.3.2",

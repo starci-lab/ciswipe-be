@@ -64,8 +64,8 @@ export class JitoPluginService
         console.dir(result, { depth: null })
     }
 
-    protected async getData({ ...coreParams }: GetDataParams): Promise<Data> {
-        const volumeName = `jito-${coreParams.inputToken.id}.json`
+    protected async getData(params: GetDataParams): Promise<Data> {
+        const volumeName = `jito-${params.inputToken.id}.json`
         try {
             const stats = await this.jitoSdkService.getPoolStats()
             await this.volumeService.writeJsonToDataVolume<JitoPoolStats>(
@@ -89,18 +89,16 @@ export class JitoPluginService
     }
 
     /** Stake into Jito */
-    protected async stake({
-        ...coreParams
-    }: StakeParams): Promise<StakeOutputResult> {
+    protected async stake(params: StakeParams): Promise<StakeOutputResult> {
         try {
-            const { stats } = await this.getData({ ...coreParams })
-            if (!coreParams.inputToken.amount) {
+            const { stats } = await this.getData(params)
+            if (!params.inputToken.amount) {
                 throw new Error("Input token amount is required")
             }
             const { amountOut } = await this.jupiterQuoteService.quote({
                 tokenInId: TokenId.SolanaSolMainnet,
                 tokenOutId: TokenId.SolanaJitoSolMainnet,
-                amount: coreParams.inputToken.amount,
+                amount: params.inputToken.amount,
             })
             return {
                 outputTokens: [
