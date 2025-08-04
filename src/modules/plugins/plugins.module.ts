@@ -3,7 +3,8 @@ import { ConfigurableModuleClass, OPTIONS_TYPE } from "./plugins.module-definiti
 // import { DexesModule } from "./dexes"
 // import { AggregatorsModule } from "./aggregators"
 // import { StakingsModule } from "./stakings"
-import { LendingsModule } from "./lendings"
+// import { LendingsModule } from "./lendings"
+import { VaultsModule } from "./vaults"
 
 @Module({})
 export class PluginsModule extends ConfigurableModuleClass {
@@ -20,7 +21,10 @@ export class PluginsModule extends ConfigurableModuleClass {
         // const stakingsModule = StakingsModule.register({
         //     isGlobal: options.isGlobal,
         // })
-        const lendingsModule = LendingsModule.register({
+        // const lendingsModule = LendingsModule.register({
+        //     isGlobal: options.isGlobal,
+        // })
+        const vaultsModule = VaultsModule.register({
             isGlobal: options.isGlobal,
         })
         return {
@@ -29,13 +33,16 @@ export class PluginsModule extends ConfigurableModuleClass {
                 // dexesModule,
                 // aggregatorsModule,
                 // stakingsModule,
-                lendingsModule
+                // vaultsModule
+                // lendingsModule
+                vaultsModule
             ],
             exports: [
                 // dexesModule,
                 // aggregatorsModule,
                 // stakingsModule,
-                lendingsModule
+                // lendingsModule
+                vaultsModule
             ],
         }
     }

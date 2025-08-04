@@ -14,6 +14,7 @@ export enum PluginKind {
     Dex = "dex",
     Lending = "lending",
     Staking = "staking",
+    Vault = "vault",
 }
 
 // base plugin class, contains common properties for all plugins

@@ -14,7 +14,7 @@ export interface StakingPluginAbstractConstructorParams
   dump?: boolean;
 }
 
-export interface StakeOutputApy {
+export interface ExecuteOutputApy {
   apy: number
   mevApy?: number
 }
@@ -30,12 +30,12 @@ export abstract class StakingPluginAbstract extends BasePluginAbstract {
         })
     }
 
-  protected abstract stake(params: StakeParams): Promise<StakeOutputResult>;
+  protected abstract execute(params: ExecuteParams): Promise<ExecuteResult>;
   
   protected abstract getData(params: GetDataParams): Promise<unknown>;
 }
 
-export interface StakeParams {
+export interface ExecuteParams {
   // network, if not provided, use the default network
   network: Network;
   // chain key, if not provided, use the default chain key
@@ -44,9 +44,9 @@ export interface StakeParams {
   inputToken: TokenData;
 }
 
-export interface StakeOutputResult {
+export interface ExecuteResult {
   outputTokens: Array<TokenData>;
-  apy: StakeOutputApy;
+  apy: ExecuteOutputApy;
 }
 
 export interface GetDataParams {

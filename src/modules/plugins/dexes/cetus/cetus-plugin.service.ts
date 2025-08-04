@@ -1,18 +1,18 @@
 import {
     ChainKey,
     Network,
-    OutputStrategy,
-    OutputStrategyApr,
-    OutputStrategyAprDuration,
-    OutputStrategyType,
     TokenId,
     tokens,
 } from "@/modules/blockchain"
 import {
-    AddLiquidityV3OutputResult,
-    AddLiquidityV3Params,
     DexPluginAbstract,
     GetDataParams,
+    V3Strategy,
+    V3ExecuteParams,
+    V3ExecuteResult,
+    StrategyType,
+    V3StrategyApr,
+    V3StrategyAprDuration,
 } from "../abstract"
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -74,7 +74,7 @@ export class CetusPluginService
     }
 
     async onApplicationBootstrap() {
-        const output = await this.addLiquidityV3({
+        const output = await this.v3Execute({
             network: Network.Mainnet,
             chainKey: ChainKey.Sui,
             inputTokens: [
@@ -102,12 +102,12 @@ export class CetusPluginService
 
     private caculateAprForSpecificDuration(
         pool: PoolData,
-        duration: OutputStrategyAprDuration,
-    ): OutputStrategyApr {
+        duration: V3StrategyAprDuration,
+    ): V3StrategyApr {
         const durationMap = {
-            [OutputStrategyAprDuration.Day]: "24H",
-            [OutputStrategyAprDuration.Week]: "7D",
-            [OutputStrategyAprDuration.Month]: "30D",
+            [V3StrategyAprDuration.Day]: "24H",
+            [V3StrategyAprDuration.Week]: "7D",
+            [V3StrategyAprDuration.Month]: "30D",
         }
         const durationKey = durationMap[duration]
         const stats = pool.stats.find((stat) => stat.dateType === durationKey)
@@ -137,27 +137,27 @@ export class CetusPluginService
 
     private calculateApr(
         pool: PoolData,
-    ): Partial<Record<OutputStrategyAprDuration, OutputStrategyApr>> {
+    ): Partial<Record<V3StrategyAprDuration, V3StrategyApr>> {
         const dailyApr = this.caculateAprForSpecificDuration(
             pool,
-            OutputStrategyAprDuration.Day,
+            V3StrategyAprDuration.Day,
         )
         const weeklyApr = this.caculateAprForSpecificDuration(
             pool,
-            OutputStrategyAprDuration.Week,
+            V3StrategyAprDuration.Week,
         )
         const monthlyApr = this.caculateAprForSpecificDuration(
             pool,
-            OutputStrategyAprDuration.Month,
+            V3StrategyAprDuration.Month,
         )
         return {
-            [OutputStrategyAprDuration.Day]: dailyApr,
-            [OutputStrategyAprDuration.Week]: weeklyApr,
-            [OutputStrategyAprDuration.Month]: monthlyApr,
+            [V3StrategyAprDuration.Day]: dailyApr,
+            [V3StrategyAprDuration.Week]: weeklyApr,
+            [V3StrategyAprDuration.Month]: monthlyApr,
         }
     }
 
-    protected async addLiquidityV3(params: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
+    protected async v3Execute(params: V3ExecuteParams): Promise<V3ExecuteResult> {
     // cetus only support for sui so we dont care about chainKey parameter
         if (params.inputTokens.length !== 2) {
             throw new Error("Cetus only support for 2 tokens")
@@ -177,7 +177,7 @@ export class CetusPluginService
             token1: token1Entity,
             token2: token2Entity,
         })
-        const strategies: Array<OutputStrategy> = await Promise.all(
+        const strategies: Array<V3Strategy> = await Promise.all(
             (poolsData.list ?? []).map((pool) => {
                 const aprs = this.calculateApr(pool)
                 return {
@@ -187,7 +187,7 @@ export class CetusPluginService
                         feeRate: pool.feeRate,
                         tvl: parseFloat(pool.tvl) || 0,
                     },
-                    type: OutputStrategyType.AddLiquidityV3,
+                    type: StrategyType.AddLiquidityV3,
                 }
             }),
         )

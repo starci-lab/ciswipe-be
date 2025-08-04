@@ -10,19 +10,19 @@ import {
     TokenData,
 } from "@/modules/blockchain"
 
-export interface LendingPluginAbstractConstructorParams
+export interface VaultPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
   dump?: boolean;
 }
 
 // in staking, we focus on input-output, and the amount in - out
-export abstract class LendingPluginAbstract extends BasePluginAbstract {
+export abstract class VaultPluginAbstract extends BasePluginAbstract {
     constructor({
         ...superParams
-    }: LendingPluginAbstractConstructorParams) {
+    }: VaultPluginAbstractConstructorParams) {
         super({
             ...superParams,
-            kind: PluginKind.Lending,
+            kind: PluginKind.Vault,
         })
     }
 
@@ -36,34 +36,27 @@ export interface ExecuteParams {
   // chain key, if not provided, use the default chain key
   chainKey: ChainKey;
   // input tokens, if not provided, use the default input tokens
-  inputToken: TokenData;
+  inputTokens: Array<TokenData>;
   // disable cache, if not provided, use the default disable cache
   disableCache?: boolean;
 }
 
-export interface LendingOutputApr {
+export interface ExecuteApr {
   apr: number;
 }
 
-export interface LendingOutputStrategyMetadata {
+export interface ExecuteStrategyMetadata {
   // vault id
   vaultId: string;
-}
-
-export enum LendingOutputStrategyType {
-  // lending
-  Lending = "lending",
 }
 
 export interface ExecuteStrategy {
   // output token, if not provided, the strategy path is ended
   outputTokens?: Array<TokenData>;
   // apr of the strategy
-  apr?: LendingOutputApr;
+  apr?: ExecuteApr;
   // metadata of the strategy
-  metadata?: LendingOutputStrategyMetadata;
-  // type
-  type: LendingOutputStrategyType;
+  metadata?: ExecuteStrategyMetadata;
 }
 
 export interface ExecuteResult {
@@ -76,5 +69,5 @@ export interface GetDataParams {
   // chain key, if not provided, use the default chain key
   chainKey: ChainKey;
   // input tokens, if not provided, use the default input tokens
-  inputToken: Token;
+  inputTokens: Array<Token>;
 }

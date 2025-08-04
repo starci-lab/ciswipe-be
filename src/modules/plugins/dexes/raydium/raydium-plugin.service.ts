@@ -2,19 +2,19 @@ import {
     ChainKey,
     createProviderToken,
     Network,
-    OutputStrategy,
-    OutputStrategyAprDuration,
-    OutputStrategyType,
     RecordRpcProvider,
     TokenId,
     tokens,
     TokenType,
 } from "@/modules/blockchain"
 import {
-    AddLiquidityV3OutputResult,
-    AddLiquidityV3Params,
     DexPluginAbstract,
     GetDataParams,
+    V3ExecuteParams,
+    V3ExecuteResult,
+    V3StrategyAprDuration,
+    V3Strategy,
+    StrategyType,
 } from "../abstract"
 import { PoolsApiReturn, Raydium } from "@raydium-io/raydium-sdk-v2"
 import {
@@ -83,7 +83,7 @@ export class RaydiumPluginService
         }
     }
     async onApplicationBootstrap() {
-        const output = await this.addLiquidityV3({
+        const output = await this.v3Execute({
             network: Network.Mainnet,
             chainKey: ChainKey.Solana,
             inputTokens: [
@@ -110,7 +110,7 @@ export class RaydiumPluginService
     }
 
     // method to add liquidity to a pool
-    protected async addLiquidityV3(params: AddLiquidityV3Params): Promise<AddLiquidityV3OutputResult> {
+    protected async v3Execute(params: V3ExecuteParams): Promise<V3ExecuteResult> {
     // raydium support only for Solana so that we dont care about chainKey
         if (params.inputTokens.length !== 2) {
             throw new Error("Raydium add liquidity v3 only supports 2 input tokens")
@@ -155,7 +155,7 @@ export class RaydiumPluginService
         const cacheKey = createCacheKey("Raydium", params)
         if (!params.disableCache) {
             const outputResult =
-        await this.cacheManager.get<AddLiquidityV3OutputResult>(cacheKey)
+        await this.cacheManager.get<V3ExecuteResult>(cacheKey)
             if (outputResult) {
                 return outputResult
             }
@@ -167,7 +167,7 @@ export class RaydiumPluginService
             token2: token2Entity,
         })
         // write to file
-        const strategies: Array<OutputStrategy> = poolsApiReturn.data
+        const strategies: Array<V3Strategy> = poolsApiReturn.data
             .filter((pool) => pool.type === "Concentrated")
             .sort((poolPrev, poolNext) => poolPrev.tvl - poolNext.tvl)
             .map((pool) => {
@@ -185,7 +185,7 @@ export class RaydiumPluginService
                 })
                 return {
                     aprs: {
-                        [OutputStrategyAprDuration.Day]: {
+                        [V3StrategyAprDuration.Day]: {
                             apr: pool.day.apr,
                             feeApr: pool.day.feeApr,
                             rewards: pool.day.rewardApr.map((rewardApr, index) => ({
@@ -193,7 +193,7 @@ export class RaydiumPluginService
                                 tokenId: rewardTokenIds[index],
                             })),
                         },
-                        [OutputStrategyAprDuration.Week]: {
+                        [V3StrategyAprDuration.Week]: {
                             apr: pool.week.apr,
                             feeApr: pool.week.feeApr,
                             rewards: pool.week.rewardApr.map((rewardApr, index) => ({
@@ -201,7 +201,7 @@ export class RaydiumPluginService
                                 tokenId: rewardTokenIds[index],
                             })),
                         },
-                        [OutputStrategyAprDuration.Month]: {
+                        [V3StrategyAprDuration.Month]: {
                             apr: pool.month.apr,
                             feeApr: pool.month.feeApr,
                             rewards: pool.month.rewardApr.map((rewardApr, index) => ({
@@ -215,11 +215,11 @@ export class RaydiumPluginService
                         feeRate: pool.feeRate,
                         tvl: pool.tvl,
                     },
-                    type: OutputStrategyType.AddLiquidityV3,
+                    type: StrategyType.AddLiquidityV3,
                 }
             })
         if (!params.disableCache) {
-            await this.cacheManager.set<AddLiquidityV3OutputResult>(cacheKey, {
+            await this.cacheManager.set<V3ExecuteResult>(cacheKey, {
                 strategies,
             })
         }

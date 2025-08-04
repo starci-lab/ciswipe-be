@@ -28,14 +28,14 @@ export abstract class DexPluginAbstract extends BasePluginAbstract {
         })
     }
 
-  protected abstract addLiquidityV3(
-    params: AddLiquidityV3Params,
-  ): Promise<AddLiquidityV3OutputResult>;
+  protected abstract v3Execute(
+    params: V3ExecuteParams,
+  ): Promise<V3ExecuteResult>;
 
   protected abstract getData(params: GetDataParams): Promise<unknown>;
 }
 
-export interface AddLiquidityV3Params {
+export interface V3ExecuteParams {
   // network, if not provided, use the default network
   network: Network;
   // chain key, if not provided, use the default chain key
@@ -46,8 +46,8 @@ export interface AddLiquidityV3Params {
   disableCache?: boolean;
 }
 
-export interface AddLiquidityV3OutputResult {
-  strategies: Array<OutputStrategy>;
+export interface V3ExecuteResult {
+  strategies: Array<V3Strategy>;
 }
 
 export interface GetDataParams {
@@ -59,31 +59,31 @@ export interface GetDataParams {
   token2: Token;
 }
 
-export enum OutputStrategyAprDuration {
+export enum V3StrategyAprDuration {
   Day = "day",
   Week = "week",
   Month = "month",
   Year = "year",
 }
 
-export interface OutputStrategyReward {
+export interface StrategyReward {
   apr: number;
   tokenId: TokenId;
 }
 
-export interface OutputStrategyApr {
+export interface V3StrategyApr {
   feeApr?: number;
-  rewards?: Array<OutputStrategyReward>;
+  rewards?: Array<StrategyReward>;
   // in most case, apr = feeApr + rewardApr
   apr: number;
 }
 
-export enum OutputStrategyType {
+export enum StrategyType {
   // dex
   AddLiquidityV3 = "addLiquidityV3",
 }
 
-export interface OutputStrategyAddLiquidityV3Metadata {
+export interface StrategyV3Metadata {
   // pool id
   poolId: string;
   // fee tier
@@ -92,13 +92,13 @@ export interface OutputStrategyAddLiquidityV3Metadata {
   tvl: number;
 }
 
-export interface OutputStrategy {
+export interface V3Strategy {
   // output token, if not provided, the strategy path is ended
   outputTokens?: Array<TokenData>;
   // aprs of the strategy
-  aprs?: Partial<Record<OutputStrategyAprDuration, OutputStrategyApr>>;
+  aprs?: Partial<Record<V3StrategyAprDuration, V3StrategyApr>>;
   // metadata of the strategy
-  metadata?: OutputStrategyAddLiquidityV3Metadata;
+  metadata?: StrategyV3Metadata;
   // type
-  type: OutputStrategyType;
+  type: StrategyType;
 }

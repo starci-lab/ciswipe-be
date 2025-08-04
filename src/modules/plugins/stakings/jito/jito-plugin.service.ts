@@ -6,8 +6,8 @@ import {
 } from "@/modules/blockchain"
 import {
     StakingPluginAbstract,
-    StakeOutputResult,
-    StakeParams,
+    ExecuteParams,
+    ExecuteResult,
     GetDataParams,
 } from "../abstract"
 import {
@@ -56,7 +56,7 @@ export class JitoPluginService
 
     async onApplicationBootstrap() {
     // Example: stake SOL to Jito pool and log result
-        const result = await this.stake({
+        const result = await this.execute({
             network: Network.Mainnet,
             chainKey: ChainKey.Solana,
             inputToken: { id: TokenId.SolanaSolMainnet, amount: 1 },
@@ -89,7 +89,7 @@ export class JitoPluginService
     }
 
     /** Stake into Jito */
-    protected async stake(params: StakeParams): Promise<StakeOutputResult> {
+    protected async execute(params: ExecuteParams): Promise<ExecuteResult> {
         try {
             const { stats } = await this.getData(params)
             if (!params.inputToken.amount) {

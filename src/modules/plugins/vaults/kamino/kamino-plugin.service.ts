@@ -8,11 +8,11 @@ import {
     TokenType,
 } from "@/modules/blockchain"
 import {
+    GetDataParams,
     ExecuteParams,
     ExecuteResult,
     ExecuteStrategy,
-    GetDataParams,
-    LendingOutputStrategyType,
+    VaultPluginAbstract,
 } from "../abstract"
 import {
     Inject,
@@ -23,10 +23,10 @@ import {
 import { Connection } from "@solana/web3.js"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import { VolumeService } from "@/modules/volume"
-import { LendingPluginAbstract } from "../abstract"
 import {
     getMedianSlotDurationInMsFromLastEpochs,
-    KaminoMarket,
+    KaminoVaultClient,
+    calculateAPRFromAPY,
 } from "@kamino-finance/klend-sdk"
 import {
     DEFAULT_RPC_CONFIG,
@@ -35,36 +35,30 @@ import {
     createRpc,
     createDefaultRpcTransport,
     address,
-    Address,
 } from "@solana/kit"
 import { createCacheKey } from "@/modules/cache"
 import { computePercentage } from "@/modules/common"
-
-// market pubkeys
-const marketPubkeys = {
-    [Network.Mainnet]: [address("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF")],
-    [Network.Testnet]: [address("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF")],
-}
-
-export interface KaminoLendVault {
-  id: string;
-  collateralMint: string;
-  collateralExchangeRate: number;
-  apr: number;
-  mint: string;
-}
 
 export interface GetGlobalDataParams {
   network: Network;
   chainKey: ChainKey;
 }
 
+export interface KaminoVault {
+  // vault id
+  id: string;
+  // apr
+  apr: number;
+  // share mint
+  shareMint: string;
+}
+
 @Injectable()
 export class KaminoPluginService
-    extends LendingPluginAbstract
+    extends VaultPluginAbstract
     implements OnModuleInit, OnApplicationBootstrap
 {
-    private kaminoMarketMaps: Record<Network, Map<Address, KaminoMarket>>
+    private kaminoVaultClients: Record<Network, KaminoVaultClient>
     constructor(
     @Inject(createProviderToken(ChainKey.Solana))
     private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
@@ -83,49 +77,35 @@ export class KaminoPluginService
     }
 
     protected async getData(params: GetDataParams): Promise<unknown> {
-        let token = tokens[params.chainKey][params.network].find(
-            (token) => token.id === params.inputToken.id,
-        )
-        if (!token) {
-            throw new Error("Token not found")
+        if (params.inputTokens.length !== 1) {
+            throw new Error("Kamino plugin only supports one input token")
         }
-        if (token.type === TokenType.Native) {
-            token = tokens[params.chainKey][params.network].find(
-                (token) => token.type === TokenType.Wrapper,
-            )
-            if (!token) {
-                throw new Error("Wrapper token not found")
-            }
-        }
-        const vaults = await this.getGlobalData(params)
-        return vaults.filter((vault) => vault.mint === token.tokenAddress)
-    }
-
-    protected async getGlobalData(
-        params: GetGlobalDataParams,
-    ): Promise<Array<KaminoLendVault>> {
-        const volumeName = "kamino.json"
+        const [inputToken] = params.inputTokens
+        const volumeName = `kamino-${inputToken.id}.json`
         try {
             const slot = await this.solanaRpcProvider[params.network].getSlot()
-            const markets = Array.from(
-                this.kaminoMarketMaps[params.network].values(),
-            )
-            const vaults: Array<KaminoLendVault> = []
-            for (const market of markets) {
-                const reserves = market.getReserves()
-                for (const reserve of reserves) {
-                    vaults.push({
-                        id: reserve.address,
-                        collateralMint: reserve.getCTokenMint(),
-                        collateralExchangeRate: reserve
-                            .getEstimatedCollateralExchangeRate(BigInt(slot), 0)
-                            .toNumber(),
-                        apr: reserve.calculateSupplyAPR(BigInt(slot), 0),
-                        mint: reserve.getLiquidityMint(),
-                    })
-                }
+            const vaults: Array<KaminoVault> = []
+            if (!inputToken.tokenAddress) {
+                throw new Error("Input token address is required")
             }
-            await this.volumeService.writeJsonToDataVolume<Array<KaminoLendVault>>(
+            const fetchedVaults = await this.kaminoVaultClients[
+                params.network
+            ].getAllVaultsForToken(address(inputToken.tokenAddress))
+            for (const fetchedVault of fetchedVaults) {
+                if (!fetchedVault || !fetchedVault.state) {
+                    continue
+                }
+                const apy = await this.kaminoVaultClients[
+                    params.network
+                ].getVaultActualAPY(fetchedVault.state, BigInt(slot))
+                const apr = calculateAPRFromAPY(apy.grossAPY)
+                vaults.push({
+                    id: fetchedVault.address,
+                    apr: apr.toNumber(),
+                    shareMint: fetchedVault.state?.sharesMint || "",
+                })
+            }
+            await this.volumeService.writeJsonToDataVolume<Array<KaminoVault>>(
                 volumeName,
                 vaults,
             )
@@ -135,7 +115,7 @@ export class KaminoPluginService
             // if error happlen, we try to read from volume
             try {
                 return await this.volumeService.readJsonFromDataVolume<
-          Array<KaminoLendVault>
+          Array<KaminoVault>
         >(volumeName)
             } catch (error) {
                 console.error(error)
@@ -148,19 +128,19 @@ export class KaminoPluginService
         const output = await this.execute({
             network: Network.Mainnet,
             chainKey: ChainKey.Solana,
-            inputToken: {
-                id: TokenId.SolanaUsdcMainnet,
-                amount: 1,
-            },
+            inputTokens: [
+                {
+                    id: TokenId.SolanaUsdcMainnet,
+                    amount: 1,
+                },
+            ],
             disableCache: false,
         })
         console.dir(output, { depth: null })
     }
 
     async onModuleInit() {
-        const _kaminoMarketMaps: Partial<
-      Record<Network, Map<Address, KaminoMarket>>
-    > = {}
+        const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
         for (const network of Object.values(Network)) {
             if (network === Network.Testnet) {
                 // do nothing for testnet
@@ -171,27 +151,26 @@ export class KaminoPluginService
                 ...DEFAULT_RPC_CONFIG,
                 defaultCommitment: "confirmed",
             })
-            _kaminoMarketMaps[network] = await KaminoMarket.loadMultiple(
+            _kaminoVaultClients[network] = new KaminoVaultClient(
                 createRpc({
                     api,
                     transport: createDefaultRpcTransport({
                         url: this.solanaRpcProvider[network].rpcEndpoint,
                     }),
                 }),
-                marketPubkeys[network],
                 slotDuration,
             )
         }
-        this.kaminoMarketMaps = _kaminoMarketMaps as Record<
+        this.kaminoVaultClients = _kaminoVaultClients as Record<
       Network,
-      Map<Address, KaminoMarket>
+      KaminoVaultClient
     >
     }
 
     // method to add liquidity to a pool
     protected async execute(params: ExecuteParams): Promise<ExecuteResult> {
         let token = tokens[params.chainKey][params.network].find(
-            (token) => token.id === params.inputToken.id,
+            (token) => token.id === params.inputTokens[0].id,
         )
         if (!token) {
             throw new Error("Token not found")
@@ -205,7 +184,7 @@ export class KaminoPluginService
             }
         }
         // load from cache
-        const cacheKey = createCacheKey("Kamino", params)
+        const cacheKey = createCacheKey("Kamino-Vault", params)
         const cachedData = await this.cacheManager.get(cacheKey)
         if (cachedData) {
             return cachedData as ExecuteResult
@@ -213,27 +192,26 @@ export class KaminoPluginService
         const vaults = await this.getData({
             network: params.network,
             chainKey: params.chainKey,
-            inputToken: token,
+            inputTokens: [token],
         })
         const result: ExecuteResult = {
             strategies: [],
         }
         const promises = Array<Promise<void>>()
-        for (const vault of vaults as Array<KaminoLendVault>) {
+        for (const vault of vaults as Array<KaminoVault>) {
             promises.push(
                 (async () => {
                     const apy = vault.apr
                     const strategy: ExecuteStrategy = {
                         outputTokens: [
                             {
-                                tokenAddress: vault.collateralMint,
-                                amount: vault.collateralExchangeRate,
+                                tokenAddress: vault.shareMint,
+                                amount: 1,
                             },
                         ],
                         apr: {
                             apr: computePercentage(apy, 1, 5),
                         },
-                        type: LendingOutputStrategyType.Lending,
                         metadata: {
                             vaultId: vault.id,
                         },
