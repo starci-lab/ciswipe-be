@@ -1,11 +1,6 @@
 import {
-    ChainKey,
     createProviderToken,
-    Network,
     RecordRpcProvider,
-    TokenId,
-    tokens,
-    TokenType,
 } from "@/modules/blockchain"
 import {
     DexPluginAbstract,
@@ -27,6 +22,8 @@ import { Connection } from "@solana/web3.js"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import { createCacheKey } from "@/modules/cache"
 import { VolumeService } from "@/modules/volume"
+import { ChainKey, Network, TokenType } from "@/modules/common"
+import { TokenId, tokens } from "@/modules/blockchain"
 
 @Injectable()
 export class RaydiumPluginService

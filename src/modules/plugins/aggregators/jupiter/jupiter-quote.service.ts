@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { createJupiterApiClient, QuoteGetRequest, QuoteResponse } from "@jup-ag/api"
-import { ChainKey, Network, TokenId, tokens, TokenType } from "@/modules/blockchain"
+import { ChainKey, Network, TokenType } from "@/modules/common"
+import { TokenId, tokens } from "@/modules/blockchain"
 import { computeDenomination, computePercentage } from "@/modules/common"
 
 

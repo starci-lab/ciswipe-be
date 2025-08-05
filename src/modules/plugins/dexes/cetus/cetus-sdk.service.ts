@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Network } from "@/modules/blockchain"
+import { Network } from "@/modules/common"
 import { HttpService } from "@nestjs/axios"
 import { lastValueFrom } from "rxjs"
 

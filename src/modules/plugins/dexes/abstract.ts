@@ -6,10 +6,8 @@ import {
 import {
     ChainKey,
     Network,
-    Token,
-    TokenData,
-    TokenId,
-} from "@/modules/blockchain"
+} from "@/modules/common"
+import { Token, TokenData, TokenId } from "@/modules/blockchain"
 
 export interface DexPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {

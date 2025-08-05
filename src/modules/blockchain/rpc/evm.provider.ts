@@ -1,7 +1,7 @@
 import { Provider } from "@nestjs/common"
 import { ethers } from "ethers"
 import { createProviderToken, RecordRpcProvider } from "./types"
-import { ChainKey, chainKeyToPlatform, Network, Platform } from "../types"
+import { ChainKey, chainKeyToPlatform, Network, Platform } from "@/modules/common"
 
 export interface EthereumRpcMetadata {
     rpcUrl: string

@@ -1,7 +1,7 @@
 import { Provider } from "@nestjs/common"
 import { SuiClient, getFullnodeUrl } from "@mysten/sui.js/client"
 import { createProviderToken, RecordRpcProvider } from "./types"
-import { ChainKey, Network } from "../types"
+import { ChainKey, Network } from "@/modules/common"
 
 export interface SuiProvider {
     client: SuiClient

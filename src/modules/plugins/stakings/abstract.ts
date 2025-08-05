@@ -4,10 +4,10 @@ import {
     PluginKind,
 } from "../abstract"
 import {
-    ChainKey,
     Network,
-    TokenData,
-} from "@/modules/blockchain"
+    ChainKey,
+} from "@/modules/common"
+import { TokenData } from "@/modules/blockchain"
 
 export interface StakingPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {

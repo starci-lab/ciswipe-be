@@ -1,9 +1,14 @@
 import { Injectable, OnModuleInit } from "@nestjs/common"
-import { BuildStrategyResult, RiskType } from "./types"
+import { BuildStrategyResult, RiskType, StrategyQuoteRequest } from "./types"
 import {
     LendingStorageService,
     StakingStorageService,
+    VaultStorageService,
 } from "@/modules/plugins"
+import { ChainKey, Network } from "@/modules/common"
+import { tokens } from "@/modules/blockchain/tokens"
+import { randomUUID } from "crypto"
+import { getIntersection } from "@/modules/common"
 
 // low risk strategy builder
 // 1. Stablecoin lending (Aave, Compound, Kamino) -> base yield 3-6%
@@ -11,12 +16,14 @@ import {
 // 3. Stablecoin pools (Curve 3pool, Saber, Mercurial) -> ~4-8%
 // 4. Delta-neutral farming (hedged yield farming) -> 6-10
 // 5. Stablecoin liquidity pools (Uniswap v3 stable pairs, Curve factory pools, Raydium stables) -> ~5-10%
+// 6. Vaults (Kamino, Jupiter, Raydium) -> ~10-20%
 
 @Injectable()
 export class LowRiskBuilderService implements OnModuleInit {
     constructor(
     private readonly lendingStorageService: LendingStorageService,
     private readonly stakingStorageService: StakingStorageService,
+    private readonly vaultStorageService: VaultStorageService,
     ) {}
 
     async onModuleInit() {
@@ -25,18 +32,81 @@ export class LowRiskBuilderService implements OnModuleInit {
 
     async build() {
     // retrieve all plugins
-        const lendingPlugins = this.lendingStorageService.getPlugins()
-        const stakingPlugins = this.stakingStorageService.getPlugins()
+        //const lendingPlugins = this.lendingStorageService.getPlugins()
+        //const stakingPlugins = this.stakingStorageService.getPlugins()
+        //const vaultPlugins = this.vaultStorageService.getPlugins()
         // since lending fit for this strategy, we will try to build a lending strategy
 
-        return {
-            risk: RiskType.LowRisk,
-        }
+        return this.buildSimpleVaultStrategies({
+            chainKeys: [ChainKey.Solana],
+            riskTypes: [RiskType.LowRisk],
+            network: Network.Mainnet,
+        })
     }
 
     // we try to simulate a simple lending strategy
-    async buildSimpleLendingStrategies(): Promise<Array<BuildStrategyResult>> {
-        const lendingPlugins = this.lendingStorageService.getPlugins()
-        return []
+    async buildSimpleVaultStrategies({
+        chainKeys,
+        network = Network.Mainnet,
+    }: StrategyQuoteRequest): Promise<Array<BuildStrategyResult>> {
+        const vaultPlugins = this.vaultStorageService.getPlugins()
+        const results: Array<BuildStrategyResult> = []
+        const promises: Array<Promise<void>> = []
+        for (const plugin of vaultPlugins) {
+            promises.push(
+                (async () => {
+                    const intersectionChainKeys = getIntersection(chainKeys, plugin.getChainKeys())
+                    if (intersectionChainKeys.length === 0) {
+                        return
+                    }
+                    const promose: Array<Promise<void>> = []
+                    for (const chainKey of intersectionChainKeys) {
+                        const tokenIds = getIntersection(
+                            tokens[chainKey][network].map((token) => token.id),
+                            plugin.getTokenIds()[network],
+                        )
+                        if (tokenIds.length === 0) {
+                            continue
+                        }
+                        promose.push(
+                            (async () => {
+                                const data = await plugin.execute({
+                                    network,
+                                    chainKey,
+                                    inputTokens: tokenIds.map((tokenId) => ({
+                                        id: tokenId,
+                                    })),
+                                    disableCache: false,
+                                })
+                                const result: BuildStrategyResult = {
+                                    id: randomUUID(),
+                                    allocations: [
+                                        {
+                                            allocation: 100,
+                                            steps: [
+                                                {
+                                                    inputTokens: data.strategies.map((strategy) => ({
+                                                        id: strategy.outputTokens?.[0]?.id,
+                                                    })),
+                                                    outputTokens: data.strategies.map((strategy) => ({
+                                                        id: strategy.outputTokens?.[0]?.id,
+                                                    })),
+                                                    transactionTxs: [],
+                                                    gasEstimated: 0,
+                                                    id: randomUUID(),
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                }
+                                results.push(result)
+                            })(),
+                        )
+                    }
+                    await Promise.all(promose)
+                })(),
+            )
+        }
+        return results
     }
 }

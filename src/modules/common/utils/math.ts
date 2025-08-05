@@ -1,5 +1,6 @@
 import Decimal from "decimal.js"
 import JSBI from "jsbi"
+
 export const computePercentage = (
     numerator: number,
     denominator: number = 1,

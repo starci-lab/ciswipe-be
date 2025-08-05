@@ -1,4 +1,4 @@
-import { ChainKey, Network } from "../types"
+import { ChainKey, Network } from "@/modules/common"
 
 export const createProviderToken = (chainKey: ChainKey) => {
     return `${chainKey.toLowerCase()}-rpc-provider` as const

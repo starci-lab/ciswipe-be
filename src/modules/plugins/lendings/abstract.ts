@@ -6,9 +6,8 @@ import {
 import {
     ChainKey,
     Network,
-    Token,
-    TokenData,
-} from "@/modules/blockchain"
+} from "@/modules/common"
+import { Token, TokenData } from "@/modules/blockchain"
 
 export interface LendingPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {

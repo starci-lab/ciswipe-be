@@ -1,4 +1,4 @@
-import { ChainKey } from "@/modules/blockchain"
+import { ChainKey } from "@/modules/common"
 
 export interface BasePluginAbstractConstructorParams {
     name: string

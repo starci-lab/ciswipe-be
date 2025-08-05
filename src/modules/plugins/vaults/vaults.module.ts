@@ -2,7 +2,7 @@ import { DynamicModule, Module } from "@nestjs/common"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./vaults.module-definition"
 //import { KaminoModule } from "./kamino"
 import { VaultStorageService } from "./vault-storage.service"
-import { KaminoModule } from "./kamino"
+import { KaminoVaultModule } from "./kamino"
 
 @Module({})
 export class VaultsModule extends ConfigurableModuleClass {
@@ -11,7 +11,7 @@ export class VaultsModule extends ConfigurableModuleClass {
     ): DynamicModule {
         const dynamicModule = super.register(options)
         const modules: Array<DynamicModule> = [
-            KaminoModule.register(options),
+            KaminoVaultModule.register(options),
         ]
         return {
             ...dynamicModule,

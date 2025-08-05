@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
-import { KaminoPluginService } from "./kamino"
+import { KaminoVaultPluginService } from "./kamino"
 import { VaultPluginAbstract } from "./abstract"
 
 // lendings service
@@ -13,7 +13,7 @@ export class VaultStorageService {
     // get all plugins
     getPlugins(): Array<VaultPluginAbstract> {
         return [
-            this.moduleRef.get(KaminoPluginService)
+            this.moduleRef.get(KaminoVaultPluginService)
         ]
     }
 }

@@ -5,7 +5,7 @@ import {
 } from "./rpc.module-definition"
 import { getSolanaRpcsProvider } from "./solana.providers"
 import { getEvmRpcsProvider } from "./evm.provider"
-import { ChainKey, chainKeyToPlatform, Platform } from "../types"
+import { ChainKey, chainKeyToPlatform, Platform } from "@/modules/common"
 import { getSuiRpcsProvider } from "./sui.provider"
 
 @Module({})

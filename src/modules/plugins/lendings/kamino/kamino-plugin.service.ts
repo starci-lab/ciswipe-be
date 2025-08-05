@@ -1,11 +1,6 @@
 import {
-    ChainKey,
     createProviderToken,
-    Network,
     RecordRpcProvider,
-    TokenId,
-    tokens,
-    TokenType,
 } from "@/modules/blockchain"
 import {
     ExecuteParams,
@@ -17,7 +12,6 @@ import {
 import {
     Inject,
     Injectable,
-    OnApplicationBootstrap,
     OnModuleInit,
 } from "@nestjs/common"
 import { Connection } from "@solana/web3.js"
@@ -38,7 +32,8 @@ import {
     Address,
 } from "@solana/kit"
 import { createCacheKey } from "@/modules/cache"
-import { computePercentage } from "@/modules/common"
+import { ChainKey, computePercentage, Network, TokenType } from "@/modules/common"
+import { tokens } from "@/modules/blockchain"
 
 // market pubkeys
 const marketPubkeys = {
@@ -62,7 +57,7 @@ export interface GetGlobalDataParams {
 @Injectable()
 export class KaminoPluginService
     extends LendingPluginAbstract
-    implements OnModuleInit, OnApplicationBootstrap
+    implements OnModuleInit
 {
     private kaminoMarketMaps: Record<Network, Map<Address, KaminoMarket>>
     constructor(
@@ -142,19 +137,6 @@ export class KaminoPluginService
             }
             throw error
         }
-    }
-
-    async onApplicationBootstrap() {
-        const output = await this.execute({
-            network: Network.Mainnet,
-            chainKey: ChainKey.Solana,
-            inputToken: {
-                id: TokenId.SolanaUsdcMainnet,
-                amount: 1,
-            },
-            disableCache: false,
-        })
-        console.dir(output, { depth: null })
     }
 
     async onModuleInit() {

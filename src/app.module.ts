@@ -8,6 +8,11 @@ import { CacheModule } from "@/modules/cache"
 import { ScheduleModule } from "@nestjs/schedule"
 import { HttpModule } from "@nestjs/axios"
 import { VolumeModule } from "@/modules/volume"
+import { GraphQLModule as NestGraphQLModule } from "@nestjs/graphql"
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
+import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default"
+import { GraphQLModule } from "@/graphql"
+import { CoreModule } from "@/modules/core"
 
 @Module({
     imports: [
@@ -28,6 +33,18 @@ import { VolumeModule } from "@/modules/volume"
             isGlobal: true,
         }),
         PluginsModule.register({
+            isGlobal: true,
+        }),
+        CoreModule.register({
+            isGlobal: true,
+        }),
+        NestGraphQLModule.forRoot<ApolloDriverConfig>({
+            driver: ApolloDriver,
+            playground: false,
+            autoSchemaFile: true,
+            plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        }),
+        GraphQLModule.register({
             isGlobal: true,
         }),
     ],

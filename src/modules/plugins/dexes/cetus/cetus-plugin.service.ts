@@ -1,6 +1,4 @@
 import {
-    ChainKey,
-    Network,
     TokenId,
     tokens,
 } from "@/modules/blockchain"
@@ -17,7 +15,7 @@ import {
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import { CetusApiResponse, CetusSdkService, PoolData } from "./cetus-sdk.service"
-import { computePercentage } from "@/modules/common"
+import { ChainKey, computePercentage, Network } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
 
 @Injectable()

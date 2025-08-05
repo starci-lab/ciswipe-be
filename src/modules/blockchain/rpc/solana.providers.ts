@@ -1,7 +1,7 @@
 import { Provider } from "@nestjs/common"
 import { Connection } from "@solana/web3.js"
 import { createProviderToken, RecordRpcProvider } from "./types"
-import { ChainKey, Network } from "../types"
+import { ChainKey, Network } from "@/modules/common"
 
 export const getSolanaRpcsProvider = (): Provider<RecordRpcProvider<Connection>> => ({
     provide: createProviderToken(ChainKey.Solana),

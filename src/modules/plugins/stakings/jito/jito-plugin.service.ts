@@ -1,8 +1,5 @@
 import {
-    ChainKey,
     createProviderToken,
-    Network,
-    TokenId,
 } from "@/modules/blockchain"
 import {
     StakingPluginAbstract,
@@ -21,7 +18,8 @@ import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import { VolumeService } from "@/modules/volume"
 import { JitoPoolStats, JitoSdkService } from "./jito-sdk.service"
 import { JupiterQuoteService } from "../../aggregators"
-import { computePercentage } from "@/modules/common"
+import { ChainKey, computePercentage, Network } from "@/modules/common"
+import { TokenId } from "@/modules/blockchain"
 
 export interface Data {
   stats: JitoPoolStats;
