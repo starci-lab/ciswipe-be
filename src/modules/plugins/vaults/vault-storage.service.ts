@@ -13,7 +13,7 @@ export class VaultStorageService {
     // get all plugins
     getPlugins(): Array<VaultPluginAbstract> {
         return [
-            this.moduleRef.get(KaminoVaultPluginService)
+            this.moduleRef.get(KaminoVaultPluginService, { strict: false })
         ]
     }
 }

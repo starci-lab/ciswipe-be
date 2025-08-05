@@ -143,31 +143,35 @@ export class KaminoVaultPluginService
     }
 
     async onModuleInit() {
-        const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
-        for (const network of Object.values(Network)) {
-            if (network === Network.Testnet) {
+        try {
+            const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
+            for (const network of Object.values(Network)) {
+                if (network === Network.Testnet) {
                 // do nothing for testnet
-                continue
-            }
-            const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
-            const api = createSolanaRpcApi<SolanaRpcApi>({
-                ...DEFAULT_RPC_CONFIG,
-                defaultCommitment: "confirmed",
-            })
-            _kaminoVaultClients[network] = new KaminoVaultClient(
-                createRpc({
-                    api,
-                    transport: createDefaultRpcTransport({
-                        url: this.solanaRpcProvider[network].rpcEndpoint,
+                    continue
+                }
+                const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
+                const api = createSolanaRpcApi<SolanaRpcApi>({
+                    ...DEFAULT_RPC_CONFIG,
+                    defaultCommitment: "confirmed",
+                })
+                _kaminoVaultClients[network] = new KaminoVaultClient(
+                    createRpc({
+                        api,
+                        transport: createDefaultRpcTransport({
+                            url: this.solanaRpcProvider[network].rpcEndpoint,
+                        }),
                     }),
-                }),
-                slotDuration,
-            )
+                    slotDuration,
+                )
+            }
+            this.kaminoVaultClients = _kaminoVaultClients as Record<
+                Network,
+                KaminoVaultClient
+            >
+        } catch (error) {
+            console.error(error)
         }
-        this.kaminoVaultClients = _kaminoVaultClients as Record<
-      Network,
-      KaminoVaultClient
-    >
     }
 
     // method to execute the plugin

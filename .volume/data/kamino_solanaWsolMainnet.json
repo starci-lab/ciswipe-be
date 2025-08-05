@@ -1,0 +1,44 @@
+[
+  {
+    "id": "QAYtEKciq4gc42K683rTaWu3JxqceA7JkEkZxwWUWBo",
+    "apr": 0.0500228643761568,
+    "shareMint": "4F2MCvXZqoBa3mR4xkSssABU9kRcFSWvJoXwUUZZXUZn",
+    "sharePrice": 0.1735644131349436
+  },
+  {
+    "id": "A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ",
+    "apr": 0.0512719553137536,
+    "shareMint": "FiM4VQdXXnTXL7GgChryf9zHNG9cmvKECwf34L2y3CkN",
+    "sharePrice": 0.17406878209754542
+  },
+  {
+    "id": "BHRQTK6WTxC4PkCUWCC8xTQX8QjckdjhBkgkn9KmbzRt",
+    "apr": 0.0290272688219232,
+    "shareMint": "H9oDUEUt2bYeAYxHdNhLcheSv1pZ373PeDZQouWVfUnj",
+    "sharePrice": 0.17172692549693513
+  },
+  {
+    "id": "BRXLfFa5bCDA2uLVJYodpsV6xfVX32Gtj4PCGHLypnu2",
+    "apr": 0,
+    "shareMint": "DUCqmBUcPm8W2WEqtXDn4NMa1BLH4xbEHzt9y7QCV7yo",
+    "sharePrice": 0.17088315656
+  },
+  {
+    "id": "GEodMsAREMV4JdKs1yUCTKpz4EtzxKoSDeM3NZkG1RRk",
+    "apr": 0.0634743521569152,
+    "shareMint": "EmrXCePBpkDvUAEGYKh2YUU2EczadTMqpd9hnFnUzzMd",
+    "sharePrice": 0.17262247862247337
+  },
+  {
+    "id": "FyPkCfc2o7AEepuQ2HGQF8oaJ65CNCQDCSexCDNqhWfU",
+    "apr": 0.0526250146154976,
+    "shareMint": "t15LXVoTEdZQPqaqqv4aMDb81EZ4NUNyZDJAbuhwtJg",
+    "sharePrice": 0.17297784390146445
+  },
+  {
+    "id": "9EnCUR9rwuiPFT8kHYBn5wgRYfGkQNGPf1ACtNpDLGGV",
+    "apr": 0.0511065351936,
+    "shareMint": "3es7GFxqLfZGCuwqNw3iud46XxZPsouh1KREhkHosEu2",
+    "sharePrice": 0.1747461423548781
+  }
+]

@@ -2,21 +2,21 @@ import { registerEnumType, ObjectType, Field } from "@nestjs/graphql"
 import { createEnumType, ChainKey, Network, TokenType } from "@/modules/common"
 
 export enum TokenId {
-  SolanaSolMainnet = "solana-sol-mainnet",
-  SolanaWsolMainnet = "solana-wsol-mainnet",
-  SolanaMsolMainnet = "solana-msol-mainnet",
-  SolanaJupMainnet = "solana-jup-mainnet",
-  SolanaUsdcMainnet = "solana-usdc-mainnet",
-  SolanaSolTestnet = "solana-sol-testnet",
-  SolanaWsolTestnet = "solana-wsol-testnet",
-  SolanaRayMainnet = "solana-ray-mainnet",
-  SolanaJitoSolMainnet = "solana-jito-sol-mainnet",
-  SuiSuiMainnet = "sui-sui-mainnet",
-  SuiUsdcMainnet = "sui-usdc-mainnet",
-  SuiUsdcWormholeMainnet = "sui-usdc-wormhole-mainnet",
-  SuiSuiTestnet = "sui-sui-testnet",
-  SuiUsdcTestnet = "sui-usdc-testnet",
-  SuiCetusMainnet = "sui-cetus-mainnet",
+  SolanaSolMainnet = "solanaSolMainnet",
+  SolanaWsolMainnet = "solanaWsolMainnet",
+  SolanaMsolMainnet = "solanaMsolMainnet",
+  SolanaJupMainnet = "solanaJupMainnet",
+  SolanaUsdcMainnet = "solanaUsdcMainnet",
+  SolanaSolTestnet = "solanaSolTestnet",
+  SolanaWsolTestnet = "solanaWsolTestnet",
+  SolanaRayMainnet = "solanaRayMainnet",
+  SolanaJitoSolMainnet = "solanaJitoSolMainnet",
+  SuiSuiMainnet = "suiSuiMainnet",
+  SuiUsdcMainnet = "suiUsdcMainnet",
+  SuiUsdcWormholeMainnet = "suiUsdcWormholeMainnet",
+  SuiSuiTestnet = "suiSuiTestnet",
+  SuiUsdcTestnet = "suiUsdcTestnet",
+  SuiCetusMainnet = "suiCetusMainnet",
 }
 
 @ObjectType()

@@ -4,10 +4,10 @@ import { Field, Float, ObjectType, registerEnumType } from "@nestjs/graphql"
 import { TokenData } from "@/modules/blockchain"
 
 export enum RiskType {
-    LowRisk = "low-risk",          // Safe
-    MediumRisk = "medium-risk",    // Middle
-    HighRisk = "high-risk",        // Risk
-    InsaneRisk = "insane-risk",    // Ultra degen, >200% APR
+    LowRisk = "lowRisk",          // Safe
+    MediumRisk = "mediumRisk",    // Middle
+    HighRisk = "highRisk",        // Risk
+    InsaneRisk = "insaneRisk",    // Ultra degen, >200% APR
 }
 
 export const GraphQLTypeRiskType = createEnumType(RiskType) 

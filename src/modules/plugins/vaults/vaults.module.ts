@@ -11,7 +11,9 @@ export class VaultsModule extends ConfigurableModuleClass {
     ): DynamicModule {
         const dynamicModule = super.register(options)
         const modules: Array<DynamicModule> = [
-            KaminoVaultModule.register(options),
+            KaminoVaultModule.register({
+                isGlobal: options.isGlobal,
+            }),
         ]
         return {
             ...dynamicModule,
