@@ -16,4 +16,7 @@ export const envConfig = () => ({
         apiKey: process.env.DEEPSEEK_API_KEY || "",
         apiUrl: process.env.DEEPSEEK_API_URL || "https://api.deepseek.ai/v1/analyze",
     },
+    debug: {
+        kaminoVaultFetch: Boolean(process.env.KAMINO_VAULT_FETCH_DEBUG) || true,
+    },
 })

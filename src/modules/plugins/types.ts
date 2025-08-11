@@ -25,6 +25,4 @@ export interface ExecuteParams {
     chainKey: ChainKey;
     // input tokens, we provide an array of tokens
     inputTokens: Array<TokenData>;
-    // disable cache, if not provided, use the default disable cache
-    disableCache?: boolean;
-  }
+}

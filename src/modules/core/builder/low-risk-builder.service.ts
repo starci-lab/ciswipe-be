@@ -76,30 +76,18 @@ export class LowRiskBuilderService implements OnModuleInit {
                                     inputTokens: tokenIds.map((tokenId) => ({
                                         id: tokenId,
                                     })),
-                                    disableCache: false,
                                 })
-                                const result: BuildStrategyResult = {
+                                const result: Array<BuildStrategyResult> = 
+                                data.map((strategy) => ({
                                     id: randomUUID(),
                                     allocations: [
                                         {
                                             allocation: 100,
-                                            steps: [
-                                                {
-                                                    inputTokens: data.strategies.map((strategy) => ({
-                                                        id: strategy.outputTokens?.[0]?.id,
-                                                    })),
-                                                    outputTokens: data.strategies.map((strategy) => ({
-                                                        id: strategy.outputTokens?.[0]?.id,
-                                                    })),
-                                                    transactionTxs: [],
-                                                    gasEstimated: 0,
-                                                    id: randomUUID(),
-                                                },
-                                            ],
+                                            steps: [strategy],
                                         },
                                     ],
-                                }
-                                results.push(result)
+                                }))
+                                results.push(...result)
                             })(),
                         )
                     }

@@ -35,4 +35,32 @@ export class VolumeService implements OnModuleInit {
         const data = await fsPromises.readFile(join(envConfig().volume.data.path, this.safeFileName(name)))
         return JSON.parse(data.toString()) as T
     }
+
+    async existsInDataVolume(name: string): Promise<boolean> {
+        return fsPromises.access(join(envConfig().volume.data.path, this.safeFileName(name))).then(() => true).catch(() => false)
+    }
+
+    async tryActionOrFallbackToVolume<T>(
+        {
+            action,
+            name
+        }: TryActionOrFallbackToVolumeParams<T>
+    ): Promise<T> {
+        try {
+            const result = await action()
+            await this.writeJsonToDataVolume(name, result)
+            return result
+        } catch (error) {
+            try {
+                const result = await this.readJsonFromDataVolume<T>(name)
+                return result
+            } catch {
+                throw error
+            }
+        }
+    }
+}
+export interface TryActionOrFallbackToVolumeParams<T> {
+    action: () => Promise<T>,
+    name: string
 }

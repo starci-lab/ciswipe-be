@@ -2,30 +2,20 @@ import { VaultPluginAbstract } from "../abstract"
 import { Inject, Injectable } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
 import { TokenData, TokenId, tokens } from "@/modules/blockchain"
-import { KaminoVaultCacheService, Vault } from "./kamino-cache.service"
+import { KaminoVaultFetchService, Vault } from "./kamino-fetch.service"
 import { address } from "@solana/kit"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
 import { randomUUID } from "crypto"
-
-export interface KaminoVault {
-  // vault id
-  id: string;
-  // apr
-  apr: number;
-  // share mint
-  shareMint: string;
-  // share price
-  sharePrice: number;
-}
+import { calculateAPRFromAPY } from "@kamino-finance/klend-sdk"
 
 @Injectable()
 export class KaminoVaultPluginService extends VaultPluginAbstract {
     constructor(
-    private readonly kaminoVaultCacheService: KaminoVaultCacheService,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
+        private readonly kaminoVaultFetchService: KaminoVaultFetchService,
+        @Inject(CACHE_MANAGER)
+        private readonly cacheManager: Cache,
     ) {
         super({
             name: "Kamino",
@@ -70,7 +60,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
             throw new Error("Token address not found")
         }
         // load from cache
-        const cacheKey = this.kaminoVaultCacheService.getVaultCacheKey(
+        const cacheKey = this.kaminoVaultFetchService.getVaultCacheKey(
             params.network,
             address(token.tokenAddress),
         )
@@ -85,18 +75,37 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                 tokens: [
                     {
                         id: randomUUID(),
-                        n\
+                        address: vault.state?.sharesMint,
+                        priceInUSD: Number(vault.metrics.sharePrice),
                     },
                 ],
             },
+            metadata: {
+                vaultId: vault.address,
+                url: `https://app.kamino.finance/lend/${vault.address}`,
+            },
             yieldSummary: {
+                aprs: {
+                    base: calculateAPRFromAPY(Number(vault.metrics.apy)).toNumber(),
+                    day: calculateAPRFromAPY(Number(vault.metrics.apy24h)).toNumber(),
+                    week: calculateAPRFromAPY(Number(vault.metrics.apy7d)).toNumber(),
+                    month: calculateAPRFromAPY(Number(vault.metrics.apy30d)).toNumber(),
+                    year: calculateAPRFromAPY(Number(vault.metrics.apy365d)).toNumber(),
+                },
+                apys: {
+                    base: Number(vault.metrics.apy),
+                    day: Number(vault.metrics.apy24h),
+                    week: Number(vault.metrics.apy7d),
+                    month: Number(vault.metrics.apy30d),
+                    year: Number(vault.metrics.apy365d),
+                },
+            },
+            aiAnalysis: vault.aiAnalysis,
         }
     }
 
-    public async execute(params: ExecuteParams): Promise<StrategyResult> {
-        const result: StrategyResult = {
-            strategies: [],
-        }
+    public async execute(params: ExecuteParams): Promise<Array<StrategyResult>> {
+        const result: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
         for (const inputToken of params.inputTokens) {
             promises.push(
@@ -106,7 +115,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                         inputToken,
                     })
                     if (singleResult) {
-                        result.strategies.push(...singleResult.strategies)
+                        result.push(singleResult)
                     }
                 })(),
             )
@@ -117,12 +126,10 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
 }
 
 export interface ExecuteSingleParams {
-  // network, if not provided, use the default network
-  network: Network;
-  // chain key, if not provided, use the default chain key
-  chainKey: ChainKey;
-  // input token
-  inputToken: TokenData;
-  // disable cache, if not provided, use the default disable cache
-  disableCache?: boolean;
+    // network, if not provided, use the default network
+    network: Network;
+    // chain key, if not provided, use the default chain key
+    chainKey: ChainKey;
+    // input token
+    inputToken: TokenData;
 }
