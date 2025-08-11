@@ -63,6 +63,27 @@ export enum TokenType {
   Regular = "regular",
 }
 
+export const GraphQLTypeTokenType = createEnumType(TokenType)
+
+registerEnumType(GraphQLTypeTokenType, {
+    name: "TokenType",
+    description: "The chain key",
+    valuesMap: {
+        [TokenType.Native]: {
+            description: "The token is native",
+        },
+        [TokenType.Stable]: {
+            description: "The token is stable",
+        },
+        [TokenType.Wrapper]: {
+            description: "The token is wrapper",
+        },
+        [TokenType.Regular]: {
+            description: "The token is regular",
+        },
+    },
+})
+
 export enum Network {
   // mainnet, for production
   Mainnet = "mainnet",

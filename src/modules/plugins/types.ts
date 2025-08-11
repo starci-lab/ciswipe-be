@@ -1,3 +1,6 @@
+import { TokenData } from "../blockchain"
+import { ChainKey, Network } from "../common"
+
 export interface PluginMetadata {
     // plugin unique identifier
     id: string
@@ -14,3 +17,14 @@ export interface PluginMetadata {
 export interface PluginAction {
     inputTokens: Array<string>
 }
+
+export interface ExecuteParams {
+    // network, if not provided, use the default network
+    network: Network;
+    // chain key, if not provided, use the default chain key
+    chainKey: ChainKey;
+    // input tokens, we provide an array of tokens
+    inputTokens: Array<TokenData>;
+    // disable cache, if not provided, use the default disable cache
+    disableCache?: boolean;
+  }

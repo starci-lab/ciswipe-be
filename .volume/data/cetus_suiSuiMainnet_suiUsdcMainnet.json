@@ -19,26 +19,26 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "21324794.32846521046816992",
-      "totalApr": "1.1078148879364862",
+      "tvl": "23070003.10888477882537294",
+      "totalApr": "0.8953380933123098",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "23541863.08718875680875383",
-          "fee": "58854.657717971892021891",
-          "apr": "1.0102313328415065"
+          "vol": "20422785.07598557229805915",
+          "fee": "51056.962689963930745166",
+          "apr": "0.799606630579908"
         },
         {
           "dateType": "7D",
-          "vol": "112338222.76616780039228129",
-          "fee": "280845.55691541950098077",
-          "apr": "0.7515518178381485"
+          "vol": "150930696.2347241120977793",
+          "fee": "377326.740586810280244578",
+          "apr": "0.879741716639433"
         },
         {
           "dateType": "30D",
-          "vol": "685637228.7026008919892713",
-          "fee": "1714093.071756502229973705",
-          "apr": "1.1703229836416695"
+          "vol": "753728411.98529778884541247",
+          "fee": "1884321.029963244472114096",
+          "apr": "1.1630869337942205"
         }
       ],
       "miningRewarders": [
@@ -48,7 +48,7 @@
           "decimals": 9,
           "logoURL": "https://archive.cetus.zone/assets/image/sui/cetus.png",
           "display": true,
-          "apr": "0.0177532765694555",
+          "apr": "0.0172616624766138",
           "emissionsPerSecond": "0.1157407407407407"
         },
         {
@@ -57,13 +57,14 @@
           "decimals": 9,
           "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png",
           "display": true,
-          "apr": "0.0798302785255242",
+          "apr": "0.078469800255788",
           "emissionsPerSecond": "0.0152546296296296"
         }
       ],
       "vault": {
         "id": "0x41a4ab1e82f90f5965bbcd828b8ffa13bab7560bd2e352ab067e343db552f527",
-        "category": "haedal"
+        "category": "haedal",
+        "display": true
       },
       "extensions": {
         "frozen": "",
@@ -97,26 +98,26 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "4840114.45885830467767191",
-      "totalApr": "0.7495763041300823",
+      "tvl": "5398825.16016742689823804",
+      "totalApr": "0.6265149839178668",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "15715296.80184753043678685",
-          "fee": "7857.64840092376521839",
-          "apr": "0.593139932751666"
+          "vol": "14180968.16375530708313264",
+          "fee": "7090.484081877653541576",
+          "apr": "0.478991552361639"
         },
         {
           "dateType": "7D",
-          "vol": "113210984.2049044978161621",
-          "fee": "56605.492102452248908192",
-          "apr": "0.6134654152797135"
+          "vol": "101158374.97243254935006438",
+          "fee": "50579.187486216274675127",
+          "apr": "0.5137270116470725"
         },
         {
           "dateType": "30D",
-          "vol": "1025018522.46134233743553914",
-          "fee": "512509.261230671168718212",
-          "apr": "0.9499219012718215"
+          "vol": "941641794.67722772366606879",
+          "fee": "470820.897338613861833486",
+          "apr": "0.921975774169895"
         }
       ],
       "miningRewarders": [
@@ -126,16 +127,16 @@
           "decimals": 9,
           "logoURL": "https://archive.cetus.zone/assets/image/sui/cetus.png",
           "display": true,
-          "apr": "0.1564363713784163",
+          "apr": "0.1475234315562278",
           "emissionsPerSecond": "0.2314814814814815"
         }
       ],
       "vault": {
         "id": "0x24bf7840d179ea8b1b0543e496053727c98c0eb3e2c92d3c5b221c241c40125d",
-        "category": "haedal"
+        "category": "haedal",
+        "display": true
       },
       "extensions": {
-        "haedal_farms": 0.367061098919429,
         "mining_display": true,
         "mining_rewarders_display": [
           true,
@@ -164,26 +165,26 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "9626.74106843832049465",
-      "totalApr": "0.417143191578654",
+      "tvl": "9840.71121946142369878",
+      "totalApr": "0.383116638135585",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "36653.53255088353099782",
-          "fee": "10.996059765265059292",
-          "apr": "0.417143191578654"
+          "vol": "34439.60585051990438038",
+          "fee": "10.331881755155971319",
+          "apr": "0.383116638135585"
         },
         {
           "dateType": "7D",
-          "vol": "277879.68691446442783285",
-          "fee": "83.363906074339328368",
-          "apr": "0.4494589379428295"
+          "vol": "233525.76897406747313413",
+          "fee": "70.057730692220241996",
+          "apr": "0.374764419196767"
         },
         {
           "dateType": "30D",
-          "vol": "1462674.39119928161739158",
-          "fee": "438.80231735978448534",
-          "apr": "0.533202150813739"
+          "vol": "1385576.80144899498062368",
+          "fee": "415.673040434698494335",
+          "apr": "0.511371789847457"
         }
       ]
     },
@@ -205,31 +206,32 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "3514.08601346924539747",
-      "totalApr": "0.219364822898496",
+      "tvl": "2059.19909335138790866",
+      "totalApr": "0.242827751035536",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "5275.92853979277123101",
-          "fee": "2.110371415917108484",
-          "apr": "0.219364822898496"
+          "vol": "3426.47558990079593899",
+          "fee": "1.37059023596031838",
+          "apr": "0.242827751035536"
         },
         {
           "dateType": "7D",
-          "vol": "24645.00659828458903666",
-          "fee": "9.85800263931383561",
-          "apr": "0.15215828685835"
+          "vol": "29099.5426008959465062",
+          "fee": "11.63981704035837861",
+          "apr": "0.211183690496548"
         },
         {
           "dateType": "30D",
-          "vol": "63119.32821344873073592",
-          "fee": "25.24773128537949228",
-          "apr": "0.185621121475027"
+          "vol": "52877.23178498738494204",
+          "fee": "21.150892713994953965",
+          "apr": "0.1143052476069685"
         }
       ],
       "vault": {
         "id": "0xfa65110475256f6ab3a943a054f83f21492a44bfe35580bc7e5e77a648df7c31",
-        "category": "haedal"
+        "category": "haedal",
+        "display": false
       },
       "extensions": {
         "mining_display": true,
@@ -261,31 +263,32 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "3692.92445641313393828",
-      "totalApr": "0.3302155664290875",
+      "tvl": "3779.81272154117492306",
+      "totalApr": "0.2660418671617825",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "3338.71996200871349888",
-          "fee": "3.338719962008713505",
-          "apr": "0.3302155664290875"
+          "vol": "2756.39744847668466066",
+          "fee": "2.756397448476684663",
+          "apr": "0.2660418671617825"
         },
         {
           "dateType": "7D",
-          "vol": "21455.88358078060624039",
-          "fee": "21.455883580780606274",
-          "apr": "0.3846373912578445"
+          "vol": "21840.80974744584081615",
+          "fee": "21.840809747445840851",
+          "apr": "0.30364866463539"
         },
         {
           "dateType": "30D",
-          "vol": "71855.06809107416218976",
-          "fee": "71.855068091074162308",
-          "apr": "0.4468398724136325"
+          "vol": "83388.43884636108967053",
+          "fee": "83.388438846361089811",
+          "apr": "0.423594813269379"
         }
       ],
       "vault": {
         "id": "0x7a6b41646ea2df8d41b3d6280dc4eeafe2edb8cf24d4eb03bf9e4958820b7c42",
-        "category": "haedal"
+        "category": "haedal",
+        "display": false
       },
       "extensions": {
         "mining_display": true,
@@ -297,51 +300,6 @@
           true
         ],
         "showVaults": "1"
-      }
-    },
-    {
-      "pool": "0x155a70b448404eb00d2b7f2b1d6dd0bac99874d9ea44e09b4d591eb25f82c9a8",
-      "feeRate": 2000,
-      "showReverse": true,
-      "coinA": {
-        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
-        "symbol": "USDC",
-        "decimals": 6,
-        "isVerified": true,
-        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
-      },
-      "coinB": {
-        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
-        "symbol": "SUI",
-        "decimals": 9,
-        "isVerified": true,
-        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
-      },
-      "tvl": "3204.65605159130788351",
-      "totalApr": "0.418880056874313",
-      "stats": [
-        {
-          "dateType": "24H",
-          "vol": "1837.89550417634043779",
-          "fee": "3.67579100835268088",
-          "apr": "0.418880056874313"
-        },
-        {
-          "dateType": "7D",
-          "vol": "9255.25451356387415006",
-          "fee": "18.510509027127748312",
-          "apr": "0.3136576167632605"
-        },
-        {
-          "dateType": "30D",
-          "vol": "9356.84164648446185591",
-          "fee": "18.713683292968923724",
-          "apr": "0.074289929374419"
-        }
-      ],
-      "vault": {
-        "id": "0xd39eb20c8c98503f9d2b0821f0a4d164d865e0fc9dda709c5c71ad0e5129a6d1",
-        "category": "haedal"
       }
     },
     {
@@ -362,31 +320,78 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "2248.92249200778578242",
-      "totalApr": "0.34755007224375",
+      "tvl": "2063.7233409765703438",
+      "totalApr": "0.262622497760894",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "1426.64655425716615787",
-          "fee": "2.139969831385749247",
-          "apr": "0.34755007224375"
+          "vol": "990.38429548254546648",
+          "fee": "1.485576443223818201",
+          "apr": "0.262622497760894"
         },
         {
           "dateType": "7D",
-          "vol": "5967.41370555047818392",
-          "fee": "8.951120558325717293",
-          "apr": "0.2194343636950555"
+          "vol": "8220.48117444279451014",
+          "fee": "12.330721761664191769",
+          "apr": "0.2956902780291885"
         },
         {
           "dateType": "30D",
-          "vol": "5967.41370555047818392",
-          "fee": "8.951120558325717293",
-          "apr": "0.0512013515288475"
+          "vol": "13703.59145297437011705",
+          "fee": "20.555387179461555194",
+          "apr": "0.1162252806177865"
         }
       ],
       "vault": {
         "id": "0x43871f82935e4bcf0081386732fa63cd8ca8dab9fdca243427f59666d41d8ada",
-        "category": "haedal"
+        "category": "haedal",
+        "display": false
+      }
+    },
+    {
+      "pool": "0x155a70b448404eb00d2b7f2b1d6dd0bac99874d9ea44e09b4d591eb25f82c9a8",
+      "feeRate": 2000,
+      "showReverse": true,
+      "coinA": {
+        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+        "symbol": "USDC",
+        "decimals": 6,
+        "isVerified": true,
+        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
+      },
+      "coinB": {
+        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+        "symbol": "SUI",
+        "decimals": 9,
+        "isVerified": true,
+        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
+      },
+      "tvl": "2063.88053825151227776",
+      "totalApr": "0.2528598265474115",
+      "stats": [
+        {
+          "dateType": "24H",
+          "vol": "715.22343654963036708",
+          "fee": "1.430446873099260741",
+          "apr": "0.2528598265474115"
+        },
+        {
+          "dateType": "7D",
+          "vol": "9030.21057128659593182",
+          "fee": "18.060421142573191877",
+          "apr": "0.348595917206913"
+        },
+        {
+          "dateType": "30D",
+          "vol": "17582.57784935608453727",
+          "fee": "35.165155698712169097",
+          "apr": "0.151029756705816"
+        }
+      ],
+      "vault": {
+        "id": "0xd39eb20c8c98503f9d2b0821f0a4d164d865e0fc9dda709c5c71ad0e5129a6d1",
+        "category": "haedal",
+        "display": false
       }
     },
     {
@@ -407,67 +412,26 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "112.36162450145934935",
-      "totalApr": "0.3463215647638625",
+      "tvl": "115.79631294648671552",
+      "totalApr": "0.028967156885462",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "1065.21516875246705145",
-          "fee": "0.106521516875246714",
-          "apr": "0.3463215647638625"
+          "vol": "91.9615464491554627",
+          "fee": "0.009196154644915545",
+          "apr": "0.028967156885462"
         },
         {
           "dateType": "7D",
-          "vol": "1868.89888414976601224",
-          "fee": "0.186889888414976624",
-          "apr": "0.0845727216345135"
+          "vol": "1839.89761865741285229",
+          "fee": "0.183989761865741298",
+          "apr": "0.081848690097539"
         },
         {
           "dateType": "30D",
-          "vol": "7263.82631540479071273",
-          "fee": "0.726382631540479103",
-          "apr": "0.0506746646872545"
-        }
-      ]
-    },
-    {
-      "pool": "0xee0c5ca0d63b5f86994a334058c7f427d74d013ed63667359461ecb68df03ec1",
-      "feeRate": 200,
-      "showReverse": true,
-      "coinA": {
-        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
-        "symbol": "USDC",
-        "decimals": 6,
-        "isVerified": true,
-        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
-      },
-      "coinB": {
-        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
-        "symbol": "SUI",
-        "decimals": 9,
-        "isVerified": true,
-        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
-      },
-      "tvl": "50.82341408946202403",
-      "totalApr": "0.2626379408431135",
-      "stats": [
-        {
-          "dateType": "24H",
-          "vol": "182.82000568339149601",
-          "fee": "0.036564001136678299",
-          "apr": "0.2626379408431135"
-        },
-        {
-          "dateType": "7D",
-          "vol": "861.35662439673052873",
-          "fee": "0.172271324879346091",
-          "apr": "0.177060922134993"
-        },
-        {
-          "dateType": "30D",
-          "vol": "13604.49532598559114348",
-          "fee": "2.720899065197118229",
-          "apr": "0.258844855141339"
+          "vol": "6878.67323940879002107",
+          "fee": "0.687867323940879032",
+          "apr": "0.0550698343238475"
         }
       ]
     },
@@ -489,67 +453,26 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "304.47027703237825632",
-      "totalApr": "0.261652540929508",
+      "tvl": "313.49982545290512096",
+      "totalApr": "0.1942549868381895",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "21.81001332223755513",
-          "fee": "0.218100133222375553",
-          "apr": "0.261652540929508"
+          "vol": "16.69499135044638421",
+          "fee": "0.166949913504463843",
+          "apr": "0.1942549868381895"
         },
         {
           "dateType": "7D",
-          "vol": "143.09083226299050497",
-          "fee": "1.430908322629905058",
-          "apr": "0.2444633023062435"
+          "vol": "119.09914362302061623",
+          "fee": "1.190991436230206166",
+          "apr": "0.1999524241743705"
         },
         {
           "dateType": "30D",
-          "vol": "4057.21383487711906561",
-          "fee": "40.5721383487711907",
-          "apr": "0.5981703103734725"
-        }
-      ]
-    },
-    {
-      "pool": "0x7b9ab7401b35130dc451b7bf008e706e774c73c298d4fdf231a2d0810fd4b38f",
-      "feeRate": 40000,
-      "showReverse": true,
-      "coinA": {
-        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
-        "symbol": "USDC",
-        "decimals": 6,
-        "isVerified": true,
-        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
-      },
-      "coinB": {
-        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
-        "symbol": "SUI",
-        "decimals": 9,
-        "isVerified": true,
-        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
-      },
-      "tvl": "1233.64387809095926874",
-      "totalApr": "0.069821159682352",
-      "stats": [
-        {
-          "dateType": "24H",
-          "vol": "5.89055962849928417",
-          "fee": "0.235622385139971367",
-          "apr": "0.069821159682352"
-        },
-        {
-          "dateType": "7D",
-          "vol": "237.50449375195696364",
-          "fee": "9.500179750078278546",
-          "apr": "0.336844677562858"
-        },
-        {
-          "dateType": "30D",
-          "vol": "3854.14255368496919574",
-          "fee": "154.165702147398767834",
-          "apr": "2.085801626331228"
+          "vol": "2283.39177894435877559",
+          "fee": "22.833917789443587797",
+          "apr": "0.4776816579267895"
         }
       ]
     },
@@ -571,26 +494,67 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "100.5888849288504131",
-      "totalApr": "0.0776761306931375",
+      "tvl": "103.06543124342205596",
+      "totalApr": "0.0457872965982195",
       "stats": [
         {
           "dateType": "24H",
-          "vol": "1.06950384533837484",
-          "fee": "0.021390076906767497",
-          "apr": "0.0776761306931375"
+          "vol": "0.64692097310687497",
+          "fee": "0.0129384194621375",
+          "apr": "0.0457872965982195"
         },
         {
           "dateType": "7D",
-          "vol": "7.32237319056552427",
-          "fee": "0.146447463811310486",
-          "apr": "0.0756759065210855"
+          "vol": "6.21018818795759439",
+          "fee": "0.124203763759151892",
+          "apr": "0.063106957545989"
         },
         {
           "dateType": "30D",
-          "vol": "506.91864327448358919",
-          "fee": "10.138372865489671783",
-          "apr": "0.323749012777615"
+          "vol": "347.68985090127011462",
+          "fee": "6.953797018025402296",
+          "apr": "0.322718764978538"
+        }
+      ]
+    },
+    {
+      "pool": "0xee0c5ca0d63b5f86994a334058c7f427d74d013ed63667359461ecb68df03ec1",
+      "feeRate": 200,
+      "showReverse": true,
+      "coinA": {
+        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+        "symbol": "USDC",
+        "decimals": 6,
+        "isVerified": true,
+        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
+      },
+      "coinB": {
+        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+        "symbol": "SUI",
+        "decimals": 9,
+        "isVerified": true,
+        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
+      },
+      "tvl": "3.38528999536151602",
+      "totalApr": "0.003050852175369",
+      "stats": [
+        {
+          "dateType": "24H",
+          "vol": "0.14159680768739126",
+          "fee": "0.000028319361537478",
+          "apr": "0.003050852175369"
+        },
+        {
+          "dateType": "7D",
+          "vol": "382.37604563651152624",
+          "fee": "0.076475209127302313",
+          "apr": "0.084277184171715"
+        },
+        {
+          "dateType": "30D",
+          "vol": "1279.69694620545146867",
+          "fee": "0.255939389241090298",
+          "apr": "0.0621244698365675"
         }
       ]
     },
@@ -612,7 +576,7 @@
         "isVerified": true,
         "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
       },
-      "tvl": "0.00001102323092709",
+      "tvl": "0.00001102520219746",
       "totalApr": "0",
       "stats": [
         {
@@ -632,6 +596,47 @@
           "vol": "167.59751134761352044",
           "fee": "1.005585068085681123",
           "apr": "0.033223827061377"
+        }
+      ]
+    },
+    {
+      "pool": "0x7b9ab7401b35130dc451b7bf008e706e774c73c298d4fdf231a2d0810fd4b38f",
+      "feeRate": 40000,
+      "showReverse": true,
+      "coinA": {
+        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+        "symbol": "USDC",
+        "decimals": 6,
+        "isVerified": true,
+        "logoURL": "https://gateway.irys.xyz/EGpc2cG886CrWwLMneF2RyVpZ7D33a6znz6XE8n8nU7h"
+      },
+      "coinB": {
+        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+        "symbol": "SUI",
+        "decimals": 9,
+        "isVerified": true,
+        "logoURL": "https://archive.cetus.zone/assets/image/sui/sui.png"
+      },
+      "tvl": "1307.93300741692745752",
+      "totalApr": "0",
+      "stats": [
+        {
+          "dateType": "24H",
+          "vol": "0",
+          "fee": "0",
+          "apr": "0"
+        },
+        {
+          "dateType": "7D",
+          "vol": "53.53634464133292938",
+          "fee": "2.141453785653317175",
+          "apr": "0.0867418748389475"
+        },
+        {
+          "dateType": "30D",
+          "vol": "3907.67889832630212512",
+          "fee": "156.307155933052085009",
+          "apr": "1.642113093489714"
         }
       ]
     }

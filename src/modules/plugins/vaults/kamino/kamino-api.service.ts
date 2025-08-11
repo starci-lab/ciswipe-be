@@ -1,5 +1,6 @@
 import { HttpService } from "@nestjs/axios"
 import { Injectable } from "@nestjs/common/decorators"
+import axiosRetry from "axios-retry"
 
 // ========== Interfaces for Method Parameters ==========
 interface GetUserTransactionsParams {
@@ -80,7 +81,7 @@ interface AllocationTransaction {
   tokenAmount: string;
 }
 
-interface VaultMetrics {
+export interface VaultMetrics {
   apy7d: string;
   apy24h: string;
   apy30d: string;
@@ -112,7 +113,7 @@ interface VaultMetrics {
   cumulativeManagementFeesSol: string;
 }
 
-interface VaultMetricsHistoryItem {
+export interface VaultMetricsHistoryItem {
   timestamp: string;
   tvl: string;
   solTvl: string;
@@ -198,7 +199,16 @@ export class KaminoApiService {
     private readonly baseUrl = "https://api.kamino.finance"
     private readonly hubbleBaseUrl = "https://api.hubbleprotocol.io"
 
-    constructor(private readonly httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {
+        axiosRetry(this.httpService.axiosRef, {
+            retries: 3,
+            retryDelay: retryCount => retryCount * 1000,
+            retryCondition: error => {
+                return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+                   (error.response?.status ?? 0) >= 500 // only retry if server or network error
+            },
+        })
+    }
 
     async getUserTransactions(
         params: GetUserTransactionsParams,

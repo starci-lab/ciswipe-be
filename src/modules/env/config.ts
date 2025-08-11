@@ -11,5 +11,9 @@ export const envConfig = () => ({
         data: {
             path: process.env.VOLUME_DATA_PATH || join(process.cwd(), ".volume", "data"),
         },
-    }
+    },
+    deepseek: {
+        apiKey: process.env.DEEPSEEK_API_KEY || "",
+        apiUrl: process.env.DEEPSEEK_API_URL || "https://api.deepseek.ai/v1/analyze",
+    },
 })

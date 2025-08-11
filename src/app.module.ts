@@ -13,6 +13,8 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default"
 import { GraphQLModule } from "@/graphql"
 import { CoreModule } from "@/modules/core"
+import { AiModule } from "./modules/ai"
+import GraphQLJSON from "graphql-type-json"
 
 @Module({
     imports: [
@@ -29,6 +31,9 @@ import { CoreModule } from "@/modules/core"
         CacheModule.register({
             isGlobal: true,
         }),
+        AiModule.register({
+            isGlobal: true,
+        }),
         BlockchainModule.register({
             isGlobal: true,
         }),
@@ -43,6 +48,7 @@ import { CoreModule } from "@/modules/core"
             playground: false,
             autoSchemaFile: true,
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
+            resolvers: { JSON: GraphQLJSON },
         }),
         GraphQLModule.register({
             isGlobal: true,
