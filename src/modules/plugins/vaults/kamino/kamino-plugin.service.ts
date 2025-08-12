@@ -110,7 +110,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                 },
                 metadata: {
                     vaultId: vault.address,
-                    url: `https://app.kamino.finance/lend/${vault.address}`,
+                    url: `https://app.kamino.finance/earn/lend/${vault.address}`,
                 },
                 strategyAnalysis: vault.strategyAnalysis,
             }
