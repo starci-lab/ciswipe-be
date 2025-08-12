@@ -2,8 +2,7 @@ import { VaultPluginAbstract } from "../abstract"
 import { Inject, Injectable } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
 import { TokenData, TokenId, tokens } from "@/modules/blockchain"
-import { KaminoVaultFetchService, Vault } from "./kamino-fetch.service"
-import { address } from "@solana/kit"
+import { KaminoVaultFetchService, Vault, VaultRaw } from "./kamino-fetch.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
@@ -41,7 +40,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
     // method to execute the plugin
     public async executeSingle(
         params: ExecuteSingleParams,
-    ): Promise<StrategyResult | null> {
+    ): Promise<Array<StrategyResult>> {
         let token = tokens[params.chainKey][params.network].find(
             (token) => token.id === params.inputToken.id,
         )
@@ -59,63 +58,80 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
         if (!token.tokenAddress) {
             throw new Error("Token address not found")
         }
-        // load from cache
-        const cacheKey = this.kaminoVaultFetchService.getVaultCacheKey(
-            params.network,
-            address(token.tokenAddress),
-        )
-        const vault = await this.cacheManager.get<Vault>(cacheKey)
-        if (!vault) {
-            return null
+        const vaultRaws = await this.cacheManager.get<Array<VaultRaw>>(this.kaminoVaultFetchService.getVaultsCacheKey(params.network))
+        if (!vaultRaws) {
+            return []
         }
-        
-        return {
-            id: randomUUID(),
-            outputTokens: {
-                tokens: [
-                    {
-                        id: randomUUID(),
-                        address: vault.state?.sharesMint,
-                        priceInUSD: Number(vault.metrics.sharePrice),
+        const vaults: Array<Vault> = []
+        const promises: Array<Promise<void>> = []
+        for (const vaultRaw of vaultRaws) {
+            promises.push(
+                (async () => {
+                    if (!vaultRaw.address) {
+                        return
+                    }
+                    const vault = await this.cacheManager.get<Vault>(
+                        this.kaminoVaultFetchService.getVaultCacheKey(params.network, vaultRaw.address)
+                    )
+                    if (vault) {
+                        vaults.push(vault)
+                    }
+                })(),
+            )
+        }
+        await Promise.all(promises)
+        return vaults.map((vault) => {
+            return {
+                id: randomUUID(),
+                outputTokens: {
+                    tokens: [
+                        {
+                            id: randomUUID(),
+                            address: vault.address,
+                            priceInUSD: Number(vault.metrics.sharePrice),
+                        },
+                    ],
+                },
+                yieldSummary: { 
+                    aprs: {
+                        base: calculateAPRFromAPY(Number(vault.metrics.apy)).toNumber(),
+                        day: calculateAPRFromAPY(Number(vault.metrics.apy24h)).toNumber(),
+                        week: calculateAPRFromAPY(Number(vault.metrics.apy7d)).toNumber(),
+                        month: calculateAPRFromAPY(Number(vault.metrics.apy30d)).toNumber(),
+                        year: calculateAPRFromAPY(Number(vault.metrics.apy365d)).toNumber(),
                     },
-                ],
-            },
-            metadata: {
-                vaultId: vault.address,
-                url: `https://app.kamino.finance/lend/${vault.address}`,
-            },
-            yieldSummary: {
-                aprs: {
-                    base: calculateAPRFromAPY(Number(vault.metrics.apy)).toNumber(),
-                    day: calculateAPRFromAPY(Number(vault.metrics.apy24h)).toNumber(),
-                    week: calculateAPRFromAPY(Number(vault.metrics.apy7d)).toNumber(),
-                    month: calculateAPRFromAPY(Number(vault.metrics.apy30d)).toNumber(),
-                    year: calculateAPRFromAPY(Number(vault.metrics.apy365d)).toNumber(),
+                    apys: {
+                        base: Number(vault.metrics.apy),
+                        day: Number(vault.metrics.apy24h),
+                        week: Number(vault.metrics.apy7d),
+                        month: Number(vault.metrics.apy30d),
+                        year: Number(vault.metrics.apy365d),
+                    },
                 },
-                apys: {
-                    base: Number(vault.metrics.apy),
-                    day: Number(vault.metrics.apy24h),
-                    week: Number(vault.metrics.apy7d),
-                    month: Number(vault.metrics.apy30d),
-                    year: Number(vault.metrics.apy365d),
+                metadata: {
+                    vaultId: vault.address,
+                    url: `https://app.kamino.finance/lend/${vault.address}`,
                 },
-            },
-            aiAnalysis: vault.aiAnalysis,
+                strategyAnalysis: vault.strategyAnalysis,
+            }
         }
+        )
     }
 
-    public async execute(params: ExecuteParams): Promise<Array<StrategyResult>> {
+    public async execute(
+        params: ExecuteParams
+    ): Promise<Array<StrategyResult>> {
         const result: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
         for (const inputToken of params.inputTokens) {
             promises.push(
                 (async () => {
-                    const singleResult = await this.executeSingle({
+                    const singleResults = await this.executeSingle({
                         ...params,
                         inputToken,
                     })
-                    if (singleResult) {
-                        result.push(singleResult)
+                    if (singleResults.length) {
+                        result.push(...singleResults)
                     }
                 })(),
             )

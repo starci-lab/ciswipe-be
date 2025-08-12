@@ -7,19 +7,19 @@
     "apy90d": "0",
     "apy180d": "0",
     "apy365d": "0",
-    "tokenPrice": "0.99974051",
-    "solPrice": "179.69657305",
+    "tokenPrice": "0.99980662",
+    "solPrice": "174.575",
     "tokensAvailable": "0.001",
-    "tokensAvailableUsd": "0.00099974051",
+    "tokensAvailableUsd": "0.00099980662",
     "tokensInvested": "0",
     "tokensInvestedUsd": "0",
-    "sharePrice": "0.99974051",
+    "sharePrice": "0.99980662",
     "tokensPerShare": "1",
     "apy": "0",
-    "apyTheoretical": null,
-    "apyActual": null,
-    "apyFarmRewards": null,
-    "apyReservesIncentives": null,
+    "apyTheoretical": "0",
+    "apyActual": "0",
+    "apyFarmRewards": "0",
+    "apyReservesIncentives": "0",
     "numberOfHolders": 0,
     "sharesIssued": "0.001",
     "cumulativeInterestEarned": "0",
@@ -8733,13 +8733,46 @@
     },
     {
       "timestamp": "2025-08-11T00:00:00.000Z",
-      "tvl": "0.00099974845",
-      "solTvl": "0.000005496173425912182035",
+      "tvl": "0.00099969024",
+      "solTvl": "0.000005711738660284627724",
       "apy": "0",
-      "sharePrice": "0.99974845",
+      "sharePrice": "0.99969024",
+      "interest": "0",
+      "interestUsd": "0",
+      "interestSol": "0"
+    },
+    {
+      "timestamp": "2025-08-12T00:00:00.000Z",
+      "tvl": "0.00099980582",
+      "solTvl": "0.000005717641349424899554",
+      "apy": "0",
+      "sharePrice": "0.99980582",
       "interest": "0",
       "interestUsd": "0",
       "interestSol": "0"
     }
-  ]
+  ],
+  "strategyAnalysis": {
+    "apyAnalysis": {
+      "confidenceScore": null,
+      "growthDaily": 0,
+      "growthWeekly": 0,
+      "growthMonthly": 0,
+      "growthYearly": 0
+    },
+    "shareTokenPriceAnalysis": {
+      "confidenceScore": 0.0006868260831125461,
+      "growthDaily": 1.482782280355295e-7,
+      "growthWeekly": 0.0000010379475962487064,
+      "growthMonthly": 0.000004448346841065885,
+      "growthYearly": 0.000054121553232968265
+    },
+    "tvlAnalysis": {
+      "confidenceScore": 0.0006868260830802386,
+      "growthDaily": 1.4827822578345756e-10,
+      "growthWeekly": 1.0379475804842029e-9,
+      "growthMonthly": 4.448346773503727e-9,
+      "growthYearly": 5.412155241096201e-8
+    }
+  }
 }

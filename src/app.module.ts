@@ -15,6 +15,7 @@ import { GraphQLModule } from "@/graphql"
 import { CoreModule } from "@/modules/core"
 import { AIModule } from "./modules/ai"
 import GraphQLJSON from "graphql-type-json"
+import { ProbabilityStatisticsModule } from "@/modules/probability-statistics"
 
 @Module({
     imports: [
@@ -23,6 +24,9 @@ import GraphQLJSON from "graphql-type-json"
         }),
         HttpModule.register({
             global: true,
+        }),
+        ProbabilityStatisticsModule.register({
+            isGlobal: true,
         }),
         VolumeModule.register({
             isGlobal: true,

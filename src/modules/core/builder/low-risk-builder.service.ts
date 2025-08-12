@@ -59,7 +59,7 @@ export class LowRiskBuilderService implements OnModuleInit {
                     if (intersectionChainKeys.length === 0) {
                         return
                     }
-                    const promose: Array<Promise<void>> = []
+                    const internalPromises: Array<Promise<void>> = []
                     for (const chainKey of intersectionChainKeys) {
                         const tokenIds = getIntersection(
                             tokens[chainKey][network].map((token) => token.id),
@@ -68,7 +68,7 @@ export class LowRiskBuilderService implements OnModuleInit {
                         if (tokenIds.length === 0) {
                             continue
                         }
-                        promose.push(
+                        internalPromises.push(
                             (async () => {
                                 const data = await plugin.execute({
                                     network,
@@ -77,7 +77,7 @@ export class LowRiskBuilderService implements OnModuleInit {
                                         id: tokenId,
                                     })),
                                 })
-                                const result: Array<BuildStrategyResult> = 
+                                const internalResults: Array<BuildStrategyResult> = 
                                 data.map((strategy) => ({
                                     id: randomUUID(),
                                     allocations: [
@@ -87,14 +87,15 @@ export class LowRiskBuilderService implements OnModuleInit {
                                         },
                                     ],
                                 }))
-                                results.push(...result)
+                                results.push(...internalResults)
                             })(),
                         )
                     }
-                    await Promise.all(promose)
+                    await Promise.all(internalPromises)
                 })(),
             )
         }
+        await Promise.all(promises)
         return results
     }
 }

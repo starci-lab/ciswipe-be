@@ -116,33 +116,81 @@ export class OutputTokens {
 }
 
 @ObjectType({
-    description: "AI analysis of the strategy",
+    description: "Statistical analysis of the strategy",
 })
-export class AIAnalysis {
+export class StrategyAnalysisField {
     @Field(() => Float, {
-        description: "Confident score calculated by AI, typically a numeric value from 0 to 100",
-    })
-        confidenceScore: number
-
-    @Field(() => Float, {
-        description: "Safety score of the strategy, higher means safer, typically a numeric value from 0 to 100",
-    })
-        safeScore: number
-
-    @Field(() => String, {
-        description: "Statistical analysis of the strategy",
-    })
-        statisticalAnalysis: string
-
-    @Field(() => String, {
-        description: "Insights of the strategy",
+        description: "Confidence score of the strategy (0 to 1). In regression models, this is typically the R² value.",
         nullable: true,
     })
-        insights?: string
+        confidenceScore?: number
+
+    @Field(() => Float, {
+        description: "Estimated daily growth rate in percentage. Positive means increase, negative means decrease.",
+        nullable: true,
+    })
+        growthDaily?: number
+
+    @Field(() => Float, {
+        description: "Estimated weekly growth rate in percentage. Positive means increase, negative means decrease.",
+        nullable: true,
+    })
+        growthWeekly?: number
+
+    @Field(() => Float, {
+        description: "Estimated monthly growth rate in percentage. Positive means increase, negative means decrease.",
+        nullable: true,
+    })
+        growthMonthly?: number
+
+    @Field(() => Float, {
+        description: "Estimated yearly growth rate in percentage. Positive means increase, negative means decrease.",
+        nullable: true,
+    })
+        growthYearly?: number
 }
 
 @ObjectType({
-    description: "Result of the strategy",
+    description: "Statistical analysis of the strategy",
+})
+export class StrategyAnalysis {
+    @Field(() => StrategyAnalysisField, {
+        description: "Statistical analysis of the strategy",
+        nullable: true,
+    })
+        tvlAnalysis?: StrategyAnalysisField
+
+    @Field(() => StrategyAnalysisField, {
+        description: "Statistical analysis of the strategy",
+        nullable: true,
+    })
+        aprAnalysis?: StrategyAnalysisField
+
+    @Field(() => StrategyAnalysisField, {
+        description: "Statistical analysis of the strategy",
+        nullable: true,
+    })
+        apyAnalysis?: StrategyAnalysisField
+
+    @Field(() => StrategyAnalysisField, {
+        description: "Share token price analysis",
+        nullable: true,
+    })
+        shareTokenPriceAnalysis?: StrategyAnalysisField
+}
+
+@ObjectType({
+    description: "AI insights of the strategy",
+})
+export class StrategyAIInsights {
+    @Field(() => String, {
+        description: "AI insights of the strategy",
+    })
+        insights: string
+}
+
+@ObjectType({
+    description: "Strategy result"
 })
 export class StrategyResult {
     @Field(() => String, {
@@ -158,13 +206,21 @@ export class StrategyResult {
     })
         yieldSummary: YieldSummary
 
-    @Field(() => AIAnalysis, {
-        description: "AI analysis of the strategy",
+    @Field(() => StrategyAnalysis, {
+        description: "Statistical analysis of the strategy",
+        nullable: true,
     })
-        aiAnalysis: AIAnalysis
+        strategyAnalysis?: StrategyAnalysis
+
+    @Field(() => StrategyAIInsights, {
+        description: "AI insights of the strategy",
+        nullable: true,
+    })
+        strategyAIInsights?: StrategyAIInsights
 
     @Field(() => GraphQLJSON, {
         description: "Metadata of the strategy",
+        nullable: true
     })
-        metadata: Record<string, Atomic>
+        metadata?: Record<string, Atomic>
 }

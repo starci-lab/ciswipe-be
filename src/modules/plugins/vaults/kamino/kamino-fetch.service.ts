@@ -4,7 +4,7 @@ import {
     VaultStateJSON,
 } from "@kamino-finance/klend-sdk"
 import { Inject, Injectable, OnModuleInit } from "@nestjs/common"
-import { AIAnalysis, ChainKey, Network } from "@/modules/common"
+import { StrategyAnalysis, ChainKey, Network, StrategyAIInsights } from "@/modules/common"
 import {
     Address,
     createDefaultRpcTransport,
@@ -28,7 +28,7 @@ import { createCacheKey } from "@/modules/cache"
 import dayjs from "dayjs"
 import { Logger } from "@nestjs/common"
 import { envConfig } from "@/modules/env"
-import { MetricAnalyzerGroupBy, MetricAnalyzerService } from "@/modules/ai"
+import { RegressionService, Point } from "@/modules/probability-statistics"
 
 export interface VaultRaw {
     state: VaultStateJSON | undefined;
@@ -44,10 +44,13 @@ export interface Vault {
     state: VaultStateJSON | undefined;
     // metrics history of the vault, about the apr, etc
     metricsHistory: Array<VaultMetricsHistoryItem>;
-    // ai analysis
-    aiAnalysis: AIAnalysis,
+    // strategy analysis
+    strategyAnalysis: StrategyAnalysis,
+    // ai insights
+    aiInsights?: StrategyAIInsights,
 }
 
+const DAY = 60 * 60 * 24
 @Injectable()
 export class KaminoVaultFetchService implements OnModuleInit {
     private debug = envConfig().debug.kaminoVaultFetch
@@ -69,7 +72,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
         private readonly kaminoApiService: KaminoApiService,
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
-        private readonly metricAnalyzerService: MetricAnalyzerService,
+        private readonly regressionService: RegressionService,
     ) { }
 
     async onModuleInit() {
@@ -177,6 +180,29 @@ export class KaminoVaultFetchService implements OnModuleInit {
         )
     }
 
+    private async computeRegression(metricsHistory: Array<VaultMetricsHistoryItem>) {
+        const apySamples: Array<Point> = metricsHistory.map((metric) => ({
+            x: dayjs(metric.timestamp).unix(),
+            y: Number(metric.apy),
+        }))
+        const sharePriceSamples: Array<Point> = metricsHistory.map((metric) => ({
+            x: dayjs(metric.timestamp).unix(),
+            y: Number(metric.sharePrice),
+        }))
+        const tvlSamples: Array<Point> = metricsHistory.map((metric) => ({
+            x: dayjs(metric.timestamp).unix(),
+            y: Number(metric.tvl),
+        }))
+        const apyRegression = this.regressionService.computeRegression(apySamples)
+        const sharePriceRegression = this.regressionService.computeRegression(sharePriceSamples)
+        const tvlRegression = this.regressionService.computeRegression(tvlSamples)
+        return {
+            apyRegression,
+            sharePriceRegression,
+            tvlRegression,
+        }
+    }
+
     private async loadVault(network: Network) {
         if (network === Network.Testnet) return
         if (!this.vaults[network]?.length) return
@@ -218,44 +244,37 @@ export class KaminoVaultFetchService implements OnModuleInit {
                         startDate: dayjs().subtract(1, "year").toISOString(),
                         endDate: dayjs().toISOString(),
                     })
+                // Compute regression for apy, sharePrice, tvl
+                const { apyRegression, sharePriceRegression, tvlRegression} = await this.computeRegression(metricsHistory)
                 // Onchain shareMint token spl metadata
                 return {
                     address: vaultToLoad.address.toString(),
                     metrics,
                     state: vaultToLoad.state,
                     metricsHistory,
-                    aiAnalysis: await this.metricAnalyzerService.analyzeSummary<{
-                    confidenceScore: number;
-                    safeScore: number;
-                    statisticalAnalysis: string;
-                  }>({
-                      points: metricsHistory.map((metric) => ({
-                          date: metric.timestamp,
-                          fields: metric,
-                      })),
-                      resultJsonFields: [
-                          {
-                              confidenceScore: "number",
-                              safeScore: "number",
-                              statisticalAnalysis: "string",
-                          },
-                      ],
-                      numericFields: ["apy", "interestUsd", "sharePrice", "tvl"],
-                      groupBy: MetricAnalyzerGroupBy.Month,
-                      prompt: `
-                                ANALYSIS REQUEST:
-Analyze these vault metrics and provide:
-1. confidenceScore (0-1): Your certainty in this assessment
-2. safeScore (0-1): Investment safety level
-3. statisticalAnalysis: Key findings
-
-STRICT OUTPUT REQUIREMENTS:
-- Return ONLY valid JSON
-- No additional text/comments
-- Round scores to 2 decimal places
-- Use this exact structure:
-                                `,
-                  }),
+                    strategyAnalysis: {
+                        apyAnalysis: {
+                            confidenceScore: apyRegression.rSquared,
+                            growthDaily: apyRegression.slope * DAY,
+                            growthWeekly: apyRegression.slope * DAY * 7,
+                            growthMonthly: apyRegression.slope * DAY * 30,
+                            growthYearly: apyRegression.slope * DAY * 365,
+                        },
+                        shareTokenPriceAnalysis: {
+                            confidenceScore: sharePriceRegression.rSquared,
+                            growthDaily: sharePriceRegression.slope * DAY,
+                            growthWeekly: sharePriceRegression.slope * DAY * 7,
+                            growthMonthly: sharePriceRegression.slope * DAY * 30,
+                            growthYearly: sharePriceRegression.slope * DAY * 365,
+                        },
+                        tvlAnalysis: {
+                            confidenceScore: tvlRegression.rSquared,
+                            growthDaily: tvlRegression.slope * DAY,
+                            growthWeekly: tvlRegression.slope * DAY * 7,
+                            growthMonthly: tvlRegression.slope * DAY * 30,
+                            growthYearly: tvlRegression.slope * DAY * 365,
+                        },
+                    }
                 }
             },
         })

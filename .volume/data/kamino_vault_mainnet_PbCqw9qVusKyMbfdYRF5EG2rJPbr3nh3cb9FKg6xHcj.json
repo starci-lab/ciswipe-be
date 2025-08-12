@@ -1,25 +1,25 @@
 {
   "address": "PbCqw9qVusKyMbfdYRF5EG2rJPbr3nh3cb9FKg6xHcj",
   "metrics": {
-    "apy7d": "0.0485305816376260932",
-    "apy24h": "0.03874773377156045263",
-    "apy30d": "0.05043179287583829693",
-    "apy90d": "0.08652006328566952426",
-    "apy180d": "0.07215521714947798503",
-    "apy365d": "0.07215521714947798503",
-    "tokenPrice": "0.99989365",
-    "solPrice": "179.565",
+    "apy7d": "0.05036323834267719337",
+    "apy24h": "0.05714142971031736836",
+    "apy30d": "0.05011850355937902095",
+    "apy90d": "0.08754134796077780749",
+    "apy180d": "0.07261267299546420953",
+    "apy365d": "0.07261267299546420953",
+    "tokenPrice": "0.99991769",
+    "solPrice": "174.575",
     "tokensAvailable": "0.001",
-    "tokensAvailableUsd": "0.00099989365",
+    "tokensAvailableUsd": "0.00099991769",
     "tokensInvested": "0",
     "tokensInvestedUsd": "0",
-    "sharePrice": "0.99989365",
+    "sharePrice": "0.99991769",
     "tokensPerShare": "1",
-    "apy": "0.038614918238785713",
-    "apyTheoretical": null,
-    "apyActual": null,
-    "apyFarmRewards": null,
-    "apyReservesIncentives": null,
+    "apy": "0.1067741828170354325",
+    "apyTheoretical": "0.1067741828170354325",
+    "apyActual": "0",
+    "apyFarmRewards": "0",
+    "apyReservesIncentives": "0",
     "numberOfHolders": 0,
     "sharesIssued": "0.001",
     "cumulativeInterestEarned": "0",
@@ -8733,13 +8733,46 @@
     },
     {
       "timestamp": "2025-08-11T00:00:00.000Z",
-      "tvl": "0.00099989165",
-      "solTvl": "0.0000054969606759795271",
-      "apy": "0.038553229363904263",
-      "sharePrice": "0.99989165",
+      "tvl": "0.00099989011",
+      "solTvl": "0.000005712880619223859829",
+      "apy": "0.125870911011717655",
+      "sharePrice": "0.99989011",
+      "interest": "0",
+      "interestUsd": "0",
+      "interestSol": "0"
+    },
+    {
+      "timestamp": "2025-08-12T00:00:00.000Z",
+      "tvl": "0.00099989326",
+      "solTvl": "0.000005718141397083747662",
+      "apy": "0.083680202304125875",
+      "sharePrice": "0.99989326",
       "interest": "0",
       "interestUsd": "0",
       "interestSol": "0"
     }
-  ]
+  ],
+  "strategyAnalysis": {
+    "apyAnalysis": {
+      "confidenceScore": 0.28563690039462963,
+      "growthDaily": 0.0007680273480938877,
+      "growthWeekly": 0.005376191436657214,
+      "growthMonthly": 0.02304082044281663,
+      "growthYearly": 0.280329982054269
+    },
+    "shareTokenPriceAnalysis": {
+      "confidenceScore": 0.18610070244933352,
+      "growthDaily": -6.736353448325479e-7,
+      "growthWeekly": -0.0000047154474138278355,
+      "growthMonthly": -0.000020209060344976438,
+      "growthYearly": -0.00024587690086388
+    },
+    "tvlAnalysis": {
+      "confidenceScore": 0.7454964499584232,
+      "growthDaily": -264.34427592912255,
+      "growthWeekly": -1850.409931503858,
+      "growthMonthly": -7930.328277873677,
+      "growthYearly": -96485.66071412973
+    }
+  }
 }
