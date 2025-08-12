@@ -4,7 +4,8 @@ import {
     GraphQLTypeNetwork,
     Network,
 } from "@/modules/common"
-import { RiskType, GraphQLTypeRiskType, BuildStrategyResult } from "@/modules/core"
+import { BuildStrategyResult } from "@/modules/core"
+import { GraphQLTypeRiskType, RiskType } from "@/modules/core/types"
 import { Field, InputType, ObjectType } from "@nestjs/graphql"
 
 @InputType()

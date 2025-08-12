@@ -7,13 +7,13 @@
     "apy90d": "0",
     "apy180d": "0",
     "apy365d": "0",
-    "tokenPrice": "1.00003604",
-    "solPrice": "174.1065281",
+    "tokenPrice": "1.00005001",
+    "solPrice": "178.07810209",
     "tokensAvailable": "0.001",
-    "tokensAvailableUsd": "0.00100003604",
+    "tokensAvailableUsd": "0.00100005001",
     "tokensInvested": "0",
     "tokensInvestedUsd": "0",
-    "sharePrice": "1.00003604",
+    "sharePrice": "1.00005001",
     "tokensPerShare": "1",
     "apy": "0",
     "apyTheoretical": "0",
@@ -8303,10 +8303,10 @@
     },
     {
       "timestamp": "2025-08-12T00:00:00.000Z",
-      "tvl": "0.00100014788",
-      "solTvl": "0.000005719597505671303762",
+      "tvl": "0.00100000007",
+      "solTvl": "0.000005710972813780521427",
       "apy": "0",
-      "sharePrice": "1.00014788",
+      "sharePrice": "1.00000007",
       "interest": "0",
       "interestUsd": "0",
       "interestSol": "0"
@@ -8318,21 +8318,24 @@
       "growthDaily": 0,
       "growthWeekly": 0,
       "growthMonthly": 0,
-      "growthYearly": 0
+      "growthYearly": 0,
+      "intercept": 0
     },
     "shareTokenPriceAnalysis": {
-      "confidenceScore": 0.018896391652705735,
-      "growthDaily": 4.399351568073639e-7,
-      "growthWeekly": 0.0000030795460976515476,
-      "growthMonthly": 0.000013198054704220918,
-      "growthYearly": 0.00016057633223468784
+      "confidenceScore": 0.01201484574820122,
+      "growthDaily": 3.4664039675552294e-7,
+      "growthWeekly": 0.0000024264827772886604,
+      "growthMonthly": 0.000010399211902665689,
+      "growthYearly": 0.00012652374481576586,
+      "intercept": 0.992986792608394
     },
     "tvlAnalysis": {
-      "confidenceScore": 0.018896391652700184,
-      "growthDaily": 4.3993518153867373e-10,
-      "growthWeekly": 3.079546270770716e-9,
-      "growthMonthly": 1.3198055446160211e-8,
-      "growthYearly": 1.605763412616159e-7
+      "confidenceScore": 0.012014845748390068,
+      "growthDaily": 3.4664041830264665e-10,
+      "growthWeekly": 2.4264829281185265e-9,
+      "growthMonthly": 1.03992125490794e-8,
+      "growthYearly": 1.2652375268046604e-7,
+      "intercept": 0.0009929867921717624
     }
   }
 }

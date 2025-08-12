@@ -259,6 +259,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
                             growthWeekly: apyRegression.slope * DAY * 7,
                             growthMonthly: apyRegression.slope * DAY * 30,
                             growthYearly: apyRegression.slope * DAY * 365,
+                            intercept: apyRegression.intercept,
                         },
                         shareTokenPriceAnalysis: {
                             confidenceScore: sharePriceRegression.rSquared,
@@ -266,6 +267,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
                             growthWeekly: sharePriceRegression.slope * DAY * 7,
                             growthMonthly: sharePriceRegression.slope * DAY * 30,
                             growthYearly: sharePriceRegression.slope * DAY * 365,
+                            intercept: sharePriceRegression.intercept,
                         },
                         tvlAnalysis: {
                             confidenceScore: tvlRegression.rSquared,
@@ -273,6 +275,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
                             growthWeekly: tvlRegression.slope * DAY * 7,
                             growthMonthly: tvlRegression.slope * DAY * 30,
                             growthYearly: tvlRegression.slope * DAY * 365,
+                            intercept: tvlRegression.intercept,
                         },
                     }
                 }

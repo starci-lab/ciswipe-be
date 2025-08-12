@@ -1,33 +1,34 @@
 {
   "address": "9EnCUR9rwuiPFT8kHYBn5wgRYfGkQNGPf1ACtNpDLGGV",
   "metrics": {
-    "apy7d": "0.063763553697840835682",
-    "apy24h": "0.066349276407540410862",
-    "apy30d": "0.061792587226789604801",
-    "apy90d": "0.083789825001149211759",
-    "apy180d": "0.074991051872834919738",
-    "apy365d": "0.074991051872834919738",
-    "tokenPrice": "174.1065281",
-    "solPrice": "174.1065281",
-    "tokensAvailable": "477.100165066",
-    "tokensAvailableUsd": "83066.253295578167355",
-    "tokensInvested": "5486.6679536570736529",
-    "tokensInvestedUsd": "955264.70824876479171",
-    "sharePrice": "0.17825260829545275535",
-    "tokensPerShare": "0.001023813467769981655",
-    "apy": "0.078489333998318729",
-    "apyTheoretical": "0.078489333998318729",
-    "apyActual": "0.071956863872171921565",
+    "apy7d": "0.064081194986224145806",
+    "apy24h": "0.06834882525958504987",
+    "apy30d": "0.061847617546582626908",
+    "apy90d": "0.083797469633066761533",
+    "apy180d": "0.074996282410462716951",
+    "apy365d": "0.074996282410462716951",
+    "tokenPrice": "178.12590293",
+    "solPrice": "178.12590293",
+    "tokensAvailable": "0.000000001",
+    "tokensAvailableUsd": "0.00000017812590293",
+    "tokensInvested": "5963.8934891435574831",
+    "tokensInvestedUsd": "1062323.9127320443291",
+    "sharePrice": "0.18237153211487153748",
+    "tokensPerShare": "0.0010238349903918240729",
+    "apy": "0.076749265263388707198",
+    "apyTheoretical": "0.076749265263388707198",
+    "apyActual": "0.076753700900473355247",
     "apyFarmRewards": "0",
-    "apyReservesIncentives": "0.000023485780289788213671",
+    "apyIncentives": null,
+    "apyReservesIncentives": "0.00002515511427550790822",
     "numberOfHolders": 3,
     "sharesIssued": "5825053.397386",
-    "cumulativeInterestEarned": "126.76865363807365294",
-    "cumulativeInterestEarnedUsd": "20883.404318957268701",
-    "cumulativeInterestEarnedSol": "126.76865363807365294",
-    "interestEarnedPerSecond": "0.000012718491079323867252",
-    "interestEarnedPerSecondUsd": "0.0022143723244919002226",
-    "interestEarnedPerSecondSol": "0.000012718491079323867252",
+    "cumulativeInterestEarned": "126.89402405955748314",
+    "cumulativeInterestEarnedUsd": "20905.36877249085674",
+    "cumulativeInterestEarnedSol": "126.89402405955748314",
+    "interestEarnedPerSecond": "0.000014478346420021243576",
+    "interestEarnedPerSecondUsd": "0.0025789685289996170418",
+    "interestEarnedPerSecondSol": "0.000014478346420021243576",
     "cumulativePerformanceFees": "0",
     "cumulativePerformanceFeesUsd": "0",
     "cumulativePerformanceFeesSol": "0",
@@ -51,8 +52,8 @@
     "unallocatedWeight": "0",
     "performanceFeeBps": "0",
     "managementFeeBps": "0",
-    "lastFeeChargeTimestamp": "1754994027",
-    "prevAumSf": "6875756820306886283603223084349",
+    "lastFeeChargeTimestamp": "1755002242",
+    "prevAumSf": "6875893298057505116614859147877",
     "pendingFeesSf": "0",
     "vaultAllocationStrategy": [
       {
@@ -1134,7 +1135,7 @@
       {
         "reserve": "DQ126djx5db6SMCbejHLNxoosonVes3qW5eVVUQuT93v",
         "ctokenVault": "EhELPhiGEnGF95tDWQPtks6ebR7REGQoXuiZwimJHnRv",
-        "targetAllocationWeight": "1461600",
+        "targetAllocationWeight": "1562400",
         "tokenAllocationCap": "18446744073709551615",
         "ctokenVaultBump": "255",
         "configPadding": [
@@ -1266,9 +1267,9 @@
           "0",
           "0"
         ],
-        "ctokenAllocation": "3412338845350",
-        "lastInvestSlot": "359540858",
-        "tokenTargetAllocationSf": "3987938955777994044489869388922",
+        "ctokenAllocation": "3647674806932",
+        "lastInvestSlot": "359561902",
+        "tokenTargetAllocationSf": "4263053844795653172301212671683",
         "statePadding": [
           "0",
           "0",
@@ -1403,7 +1404,7 @@
       {
         "reserve": "4oigbthMAgjTMPyw8dBxhxU59YMtvNDHqhpR3W4HAzBM",
         "ctokenVault": "3cV9F1cDhoFAgQDDqCc8g4H37855orcLJuCTxuy87EVG",
-        "targetAllocationWeight": "1058400",
+        "targetAllocationWeight": "957600",
         "tokenAllocationCap": "18446744073709551615",
         "ctokenVaultBump": "254",
         "configPadding": [
@@ -1535,9 +1536,9 @@
           "0",
           "0"
         ],
-        "ctokenAllocation": "2477351474052",
-        "lastInvestSlot": "359540859",
-        "tokenTargetAllocationSf": "2887817864528892239113353695426",
+        "ctokenAllocation": "2241410586313",
+        "lastInvestSlot": "359561899",
+        "tokenTargetAllocationSf": "2612839453261851944313646476193",
         "statePadding": [
           "0",
           "0",
@@ -7045,7 +7046,7 @@
     "minInvestDelaySlots": "0",
     "crankFundFeePerReserve": "0",
     "pendingAdmin": "11111111111111111111111111111111",
-    "cumulativeEarnedInterestSf": "146154614631727121462773251389",
+    "cumulativeEarnedInterestSf": "146291092382345954474409314917",
     "cumulativeMgmtFeesSf": "0",
     "cumulativePerfFeesSf": "0",
     "name": [
@@ -8663,36 +8664,39 @@
     },
     {
       "timestamp": "2025-08-12T00:00:00.000Z",
-      "tvl": "1042840.78574853526003091811578328",
-      "solTvl": "5963.74763797892045028618305272",
-      "apy": "0.076807265386289643599",
-      "sharePrice": "0.17902681994580708348",
-      "interest": "126.74817289392045028",
-      "interestUsd": "20879.836052763774172",
-      "interestSol": "126.74817289392045028"
+      "tvl": "1044279.36034953358334231755059854",
+      "solTvl": "5963.85061947875552463469215757",
+      "apy": "0.077502926890786673",
+      "sharePrice": "0.17927378327864861339",
+      "interest": "126.8511543937555245",
+      "interestUsd": "20897.823394996578899",
+      "interestSol": "126.8511543937555245"
     }
   ],
   "strategyAnalysis": {
     "apyAnalysis": {
-      "confidenceScore": 0.010179440229533654,
-      "growthDaily": 0.00020334209614785164,
-      "growthWeekly": 0.0014233946730349614,
-      "growthMonthly": 0.0061002628844355495,
-      "growthYearly": 0.07421986509396584
+      "confidenceScore": 0.01020286393508485,
+      "growthDaily": 0.00020357629932522958,
+      "growthWeekly": 0.001425034095276607,
+      "growthMonthly": 0.006107288979756887,
+      "growthYearly": 0.0743053492537088,
+      "intercept": -4.046609473728135
     },
     "shareTokenPriceAnalysis": {
-      "confidenceScore": 0.4511404272347578,
-      "growthDaily": 0.00035725740511053294,
-      "growthWeekly": 0.0025008018357737306,
-      "growthMonthly": 0.010717722153315987,
-      "growthYearly": 0.13039895286534453
+      "confidenceScore": 0.45126507110525915,
+      "growthDaily": 0.0003573405484160313,
+      "growthWeekly": 0.002501383838912219,
+      "growthMonthly": 0.010720216452480938,
+      "growthYearly": 0.13042930017185142,
+      "intercept": -7.076807111617606
     },
     "tvlAnalysis": {
-      "confidenceScore": 0.4853065519513279,
-      "growthDaily": 6611.614747738413,
-      "growthWeekly": 46281.30323416889,
-      "growthMonthly": 198348.4424321524,
-      "growthYearly": 2413239.382924521
+      "confidenceScore": 0.48535836075424155,
+      "growthDaily": 6612.099061935299,
+      "growthWeekly": 46284.693433547094,
+      "growthMonthly": 198362.97185805897,
+      "growthYearly": 2413416.1576063843,
+      "intercept": -133068956.81991948
     }
   }
 }

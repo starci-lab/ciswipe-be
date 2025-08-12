@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from "@nestjs/common"
-import { BuildStrategyResult, RiskType, StrategyQuoteRequest } from "./types"
+import { BuildStrategyResult, StrategyQuoteRequest } from "./types"
 import {
     LendingStorageService,
     StakingStorageService,
@@ -9,6 +9,8 @@ import { ChainKey, Network } from "@/modules/common"
 import { tokens } from "@/modules/blockchain/tokens"
 import { randomUUID } from "crypto"
 import { getIntersection } from "@/modules/common"
+import { ScoringService } from "../scoring"
+import { RiskType } from "../types"
 
 // low risk strategy builder
 // 1. Stablecoin lending (Aave, Compound, Kamino) -> base yield 3-6%
@@ -21,17 +23,18 @@ import { getIntersection } from "@/modules/common"
 @Injectable()
 export class LowRiskBuilderService implements OnModuleInit {
     constructor(
-    private readonly lendingStorageService: LendingStorageService,
-    private readonly stakingStorageService: StakingStorageService,
-    private readonly vaultStorageService: VaultStorageService,
-    ) {}
+        private readonly lendingStorageService: LendingStorageService,
+        private readonly stakingStorageService: StakingStorageService,
+        private readonly vaultStorageService: VaultStorageService,
+        private readonly scoringService: ScoringService,
+    ) { }
 
     async onModuleInit() {
         await this.build()
     }
 
     async build() {
-    // retrieve all plugins
+        // retrieve all plugins
         //const lendingPlugins = this.lendingStorageService.getPlugins()
         //const stakingPlugins = this.stakingStorageService.getPlugins()
         //const vaultPlugins = this.vaultStorageService.getPlugins()
@@ -77,16 +80,26 @@ export class LowRiskBuilderService implements OnModuleInit {
                                         id: tokenId,
                                     })),
                                 })
-                                const internalResults: Array<BuildStrategyResult> = 
-                                data.map((strategy) => ({
-                                    id: randomUUID(),
-                                    allocations: [
-                                        {
-                                            allocation: 100,
-                                            steps: [strategy],
-                                        },
-                                    ],
-                                }))
+                                const internalResults: Array<BuildStrategyResult> =
+                                    data.map((strategy) => ({
+                                        id: randomUUID(),
+                                        allocations: [
+                                            {
+                                                allocation: 100,
+                                                steps: [{
+                                                    strategy,
+                                                    score: this.scoringService.score(
+                                                        {
+                                                            chainKey,
+                                                            network,
+                                                            strategy,
+                                                            riskType: RiskType.LowRisk,
+                                                        },
+                                                    ),
+                                                }],
+                                            },
+                                        ],
+                                    }))
                                 results.push(...internalResults)
                             })(),
                         )

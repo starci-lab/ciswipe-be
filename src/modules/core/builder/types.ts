@@ -1,50 +1,42 @@
 import { ChainKey, Network, StrategyResult } from "@/modules/common"
-import { createEnumType } from "@/modules/common"
-import { Field, Float, ObjectType, registerEnumType } from "@nestjs/graphql"
+import { Field, Float, ObjectType } from "@nestjs/graphql"
+import { RiskType } from "../types"
 
-export enum RiskType {
-  LowRisk = "lowRisk", // Safe
-  MediumRisk = "mediumRisk", // Middle
-  HighRisk = "highRisk", // Risk
-  InsaneRisk = "insaneRisk", // Ultra degen, >200% APR
-}
 
-export const GraphQLTypeRiskType = createEnumType(RiskType)
-
-registerEnumType(GraphQLTypeRiskType, {
-    name: "RiskType",
-    description: "The risk type",
-    valuesMap: {
-        [RiskType.LowRisk]: { description: "Low risk" },
-        [RiskType.MediumRisk]: { description: "Medium risk" },
-        [RiskType.HighRisk]: { description: "High risk" },
-        [RiskType.InsaneRisk]: {
-            description: "Insane risk (Ultra degen, >200% APR)",
-        },
-    },
+@ObjectType({
+    description: "Step "
 })
-
-
-@ObjectType()
-export class StrategyAllocation {
-  @Field(() => Float, { description: "Allocation of the strategy" })
-      allocation: number // allocation of the strategy
-  @Field(() => [StrategyResult], { description: "Steps of the strategy" })
-      steps: Array<StrategyResult>
+export class Step {
+    @Field(() => StrategyResult, { description: "Step result" })
+        strategy: StrategyResult // result of the step
+    @Field(() => Float, { description: "Score of the step" })
+        score: number // score of the step  
 }
 
-@ObjectType()
+@ObjectType({
+    description: "Strategy allocation",
+})
+export class StrategyAllocation {
+    @Field(() => Float, { description: "Allocation of the strategy" })
+        allocation: number // allocation of the strategy
+    @Field(() => [Step], { description: "Steps of the strategy" })
+        steps: Array<Step>
+}
+
+@ObjectType({
+    description: "Build strategy result",
+})
 export class BuildStrategyResult {
-  @Field(() => String, { description: "Unique id of the strategy" })
-      id: string // unique id of the strategy
-  @Field(() => [StrategyAllocation], {
-      description: "Allocations of the strategy",
-  })
-      allocations: Array<StrategyAllocation>
+    @Field(() => String, { description: "Unique id of the strategy" })
+        id: string // unique id of the strategy
+    @Field(() => [StrategyAllocation], {
+        description: "Allocations of the strategy",
+    })
+        allocations: Array<StrategyAllocation>
 }
 
 export interface StrategyQuoteRequest {
-  chainKeys: Array<ChainKey>;
-  riskTypes: Array<RiskType>;
-  network?: Network; // default: mainnet
+    chainKeys: Array<ChainKey>;
+    riskTypes: Array<RiskType>;
+    network?: Network; // default: mainnet
 }

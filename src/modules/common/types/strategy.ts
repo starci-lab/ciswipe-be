@@ -51,6 +51,11 @@ export class YieldSummary {
         description: "Yield of the strategy in 24h, 7d, 30d, 365d",
     })
         apys?: YieldPeriodMetric
+    @Field(() => Float, {
+        nullable: true,
+        description: "TVL of the strategy",
+    })
+        tvl?: number
 }
 
 @ObjectType({
@@ -148,6 +153,7 @@ export class StrategyAnalysisField {
         nullable: true,
     })
         growthYearly?: number
+    intercept?: number
 }
 
 @ObjectType({
@@ -187,6 +193,7 @@ export class StrategyAIInsights {
         description: "AI insights of the strategy",
     })
         insights: string
+    score?: number
 }
 
 @ObjectType({

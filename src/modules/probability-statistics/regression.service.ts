@@ -12,8 +12,9 @@ export class RegressionService {
     // Method to compute linear regression from an array of points
     public computeRegression(points: Array<Point>) {
     // Check that the input array is not empty
-        if (points.length < 10) {
-            throw new Error("Input points array is too short")
+        if (points.length < 20) {
+            // new data, cannot compute regression
+            return { slope: 0, intercept: 0, rSquared: 0 }
         }
         // Perform linear regression using simple-statistics
         // linearRegression takes an array of [x, y] pairs and returns { m: slope, b: intercept }

@@ -107,6 +107,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                         month: Number(vault.metrics.apy30d),
                         year: Number(vault.metrics.apy365d),
                     },
+                    tvl: vault.metricsHistory[vault.metricsHistory.length - 1]?.tvl ? Number(vault.metricsHistory[vault.metricsHistory.length - 1].tvl) : undefined,
                 },
                 metadata: {
                     vaultId: vault.address,
