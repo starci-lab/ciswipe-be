@@ -35,7 +35,7 @@ export interface VaultRaw {
     address: Address | undefined;
 }
 
-export interface VaultRawData {
+export interface VaultRawsData {
     vaults: Array<VaultRaw>
     currentIndex: number
 }
@@ -80,41 +80,56 @@ export class KaminoVaultFetchService implements OnModuleInit {
         private readonly regressionService: RegressionService,
     ) { }
 
-    async onModuleInit() {
-        try {
-            const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> =
-                {}
-            for (const network of Object.values(Network)) {
-                if (network === Network.Testnet) {
-                    // do nothing for testnet
-                    continue
+    private async cacheAllOnInit() {
+        for (const network of Object.values(Network)) {
+            if (network === Network.Testnet) continue
+
+            // we do first with vaults
+            const vaultsVolumeName = this.getVaultsVolumeKey(network)
+            if (await this.volumeService.existsInDataVolume(vaultsVolumeName)) {
+                const vaults = await this.volumeService.readJsonFromDataVolume<VaultRawsData>(vaultsVolumeName)
+                this.cacheManager.set(this.getVaultsCacheKey(network), vaults)
+                // then we do iter for vaults
+                for (const vault of vaults.vaults) {
+                    if (!vault.address) continue
+                    const vaultVolumeName = this.getVaultVolumeKey(network, vault.address?.toString() || "")
+                    if (await this.volumeService.existsInDataVolume(vaultVolumeName)) {
+                        const vault = await this.volumeService.readJsonFromDataVolume<Vault>(vaultVolumeName)
+                        this.cacheManager.set(this.getVaultCacheKey(network, vault.address.toString()), vault)
+                    }
                 }
-                const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
-                const api = createSolanaRpcApi<SolanaRpcApi>({
-                    ...DEFAULT_RPC_CONFIG,
-                    defaultCommitment: "confirmed",
-                })
-                _kaminoVaultClients[network] = new KaminoVaultClient(
-                    createRpc({
-                        api,
-                        transport: createDefaultRpcTransport({
-                            url: this.solanaRpcProvider[network].rpcEndpoint,
-                        }),
-                    }),
-                    slotDuration,
-                )
             }
-            this.kaminoVaultClients = _kaminoVaultClients as Record<
+        }
+    }
+
+    async onModuleInit() {
+        await this.cacheAllOnInit()
+        const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
+        for (const network of Object.values(Network)) {
+            if (network === Network.Testnet) {
+                // do nothing for testnet
+                continue
+            }
+            const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
+            const api = createSolanaRpcApi<SolanaRpcApi>({
+                ...DEFAULT_RPC_CONFIG,
+                defaultCommitment: "confirmed",
+            })
+            _kaminoVaultClients[network] = new KaminoVaultClient(
+                createRpc({
+                    api,
+                    transport: createDefaultRpcTransport({
+                        url: this.solanaRpcProvider[network].rpcEndpoint,
+                    }),
+                }),
+                slotDuration,
+            )
+        }
+        this.kaminoVaultClients = _kaminoVaultClients as Record<
                 Network,
                 KaminoVaultClient
             >
-            // cache the vaults at initial
-            if (this.debug) {
-                this.handleLoadVaults()
-            }
-        } catch (error) {
-            this.logger.error(error)
-        }
+        this.handleLoadVaults()
     }
 
     // fetch api each 1s to ensure the api call not bri
@@ -131,15 +146,19 @@ export class KaminoVaultFetchService implements OnModuleInit {
         })
     }
 
-    public getVaultCacheKey(network: Network, vaultAddress: Address) {
+    public getVaultCacheKey(network: Network, vaultAddress: string) {
         return createCacheKey("kamino-vault", {
             vaultAddress,
             network,
         })
     }
 
-    private getVolumeKey(network: Network) {
+    private getVaultsVolumeKey(network: Network) {
         return `kamino-vaults-${network}.json`
+    }
+
+    private getVaultVolumeKey(network: Network, vaultAddress: string) {
+        return `kamino-vault-${network}-${vaultAddress}.json`
     }
 
     @Cron(CronExpression.EVERY_10_HOURS)
@@ -157,16 +176,16 @@ export class KaminoVaultFetchService implements OnModuleInit {
             return
         }
 
-        const volumeKey = this.getVolumeKey(network)
+        const volumeKey = this.getVaultsVolumeKey(network)
         const vaultsCacheKey = this.getVaultsCacheKey(network)
 
         const vaults = await this.volumeService.tryActionOrFallbackToVolume<
-            VaultRawData
+            VaultRawsData
         >({
             name: volumeKey,
             action: async () => {
                 const vaultsRaw = await this.kaminoVaultClients[network].getVaults()
-                const vaultsMapped: VaultRawData = {
+                const vaultsMapped: VaultRawsData = {
                     vaults: vaultsRaw.map((vaultRaw) => ({
                         state: vaultRaw?.state?.toJSON(),
                         address: vaultRaw?.address,
@@ -230,7 +249,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
             )
             return
         }
-        const vaultVolumeName = `kamino-vault-${network}-${vaultToLoad.address}.json`
+        const vaultVolumeName = this.getVaultVolumeKey(network, vaultToLoad.address.toString())
         const vaultCacheKey = this.getVaultCacheKey(network, vaultToLoad.address)
         const vault = await this.volumeService.tryActionOrFallbackToVolume<Vault>({
             name: vaultVolumeName,
@@ -289,7 +308,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
         await this.cacheManager.set(vaultCacheKey, vault)
         this.currentIndex[network] += 1
         // update the vaults data
-        await this.volumeService.updateJsonFromDataVolume<VaultRawData>(this.getVolumeKey(network), (prevData) => {
+        await this.volumeService.updateJsonFromDataVolume<VaultRawsData>(this.getVaultsVolumeKey(network), (prevData) => {
             prevData.currentIndex = this.currentIndex[network]
             return prevData
         })

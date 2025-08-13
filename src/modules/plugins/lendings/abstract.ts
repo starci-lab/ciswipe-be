@@ -6,8 +6,10 @@ import {
 import {
     ChainKey,
     Network,
+    StrategyResult,
 } from "@/modules/common"
 import { Token, TokenData } from "@/modules/blockchain"
+import { ExecuteParams } from "../types"
 
 export interface LendingPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
@@ -25,19 +27,7 @@ export abstract class LendingPluginAbstract extends BasePluginAbstract {
         })
     }
 
-  protected abstract execute(params: ExecuteParams): Promise<ExecuteResult>;
-  protected abstract getData(params: GetDataParams): Promise<unknown>;
-}
-
-export interface ExecuteParams {
-  // network, if not provided, use the default network
-  network: Network;
-  // chain key, if not provided, use the default chain key
-  chainKey: ChainKey;
-  // input tokens, if not provided, use the default input tokens
-  inputToken: TokenData;
-  // disable cache, if not provided, use the default disable cache
-  disableCache?: boolean;
+  protected abstract execute(params: ExecuteParams): Promise<Array<StrategyResult>>;
 }
 
 export interface LendingOutputApr {

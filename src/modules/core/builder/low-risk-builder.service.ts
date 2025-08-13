@@ -39,7 +39,6 @@ export class LowRiskBuilderService implements OnModuleInit {
         //const stakingPlugins = this.stakingStorageService.getPlugins()
         //const vaultPlugins = this.vaultStorageService.getPlugins()
         // since lending fit for this strategy, we will try to build a lending strategy
-
         return this.buildSimpleVaultStrategies({
             chainKeys: [ChainKey.Solana],
             riskTypes: [RiskType.LowRisk],

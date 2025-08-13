@@ -1,3 +1,3 @@
 export * from "./lendings.module"
-export * from "./kamino"
+export * from "./solend"
 export * from "./lending-storage.service"

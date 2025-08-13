@@ -16,11 +16,15 @@ import { CoreModule } from "@/modules/core"
 import { AIModule } from "./modules/ai"
 import GraphQLJSON from "graphql-type-json"
 import { ProbabilityStatisticsModule } from "@/modules/probability-statistics"
+import { CryptographyModule } from "@/modules/cryptography"
 
 @Module({
     imports: [
         EnvModule.forRoot({
             isGlobal: true,
+        }),
+        CryptographyModule.register({
+            isGlobal: true
         }),
         HttpModule.register({
             global: true,

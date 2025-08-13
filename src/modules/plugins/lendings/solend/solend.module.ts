@@ -7,4 +7,4 @@ import { SolendLendingApiService } from "./solend-api.service"
     providers: [SolendLendingFetchService, SolendLendingApiService],
     exports: [],
 })
-export class SolendModule extends ConfigurableModuleClass {}
+export class SolendLendingModule extends ConfigurableModuleClass {}

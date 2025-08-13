@@ -19,4 +19,7 @@ export const envConfig = () => ({
     debug: {
         kaminoVaultFetch: Boolean(process.env.KAMINO_VAULT_FETCH_DEBUG) || true,
     },
+    cryptography: {
+        sha256Salt: process.env.SHA256_SALT || "ciswipesha256",
+    }
 })

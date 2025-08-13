@@ -7,8 +7,8 @@ import {
     StrategyResult,
 } from "@/modules/common"
 import Decimal from "decimal.js"
-import { blocksPerYear } from "./blocks"
 import { RiskType } from "../types"
+import { InterestRateConverterService } from "@/modules/blockchain"
 
 export interface ScoreParams {
     chainKey: ChainKey
@@ -19,7 +19,9 @@ export interface ScoreParams {
 
 @Injectable()
 export class ScoringService {
-    constructor() {}
+    constructor(
+        private readonly interestRateConverterService: InterestRateConverterService,
+    ) {}
 
     /**
    * Scores a strategy based on:
@@ -45,20 +47,6 @@ export class ScoringService {
         return roundNumber(score)
     }
 
-    private toAPY(apr: Decimal, chainKey: ChainKey, network: Network) {
-        return new Decimal(1)
-            .plus(new Decimal(apr).dividedBy(blocksPerYear[chainKey][network]))
-            .pow(blocksPerYear[chainKey][network])
-            .minus(1)
-    }
-
-    private toAPR(apy: Decimal, chainKey: ChainKey, network: Network) {
-        return apy
-            .plus(1)
-            .pow(new Decimal(1).dividedBy(blocksPerYear[chainKey][network]))
-            .minus(1)
-            .times(blocksPerYear[chainKey][network])
-    }
 
     private calculateAPYAPRScore(
         yieldSummary: StrategyResult["yieldSummary"],
@@ -90,22 +78,22 @@ export class ScoringService {
 
         const useApyOverApr = !!yieldSummary.apys
         if (useApyOverApr) {
-            base = this.toAPR(
+            base = this.interestRateConverterService.toAPR(
                 new Decimal(yieldSummary.apys?.base ?? 0),
                 chainKey,
                 network,
             )
-            year = this.toAPR(
+            year = this.interestRateConverterService.toAPR(
                 new Decimal(yieldSummary.apys?.year ?? 0),
                 chainKey,
                 network,
             )
-            month = this.toAPR(
+            month = this.interestRateConverterService.toAPR(
                 new Decimal(yieldSummary.apys?.month ?? 0),
                 chainKey,
                 network,
             )
-            week = this.toAPR(
+            week = this.interestRateConverterService.toAPR(
                 new Decimal(yieldSummary.apys?.week ?? 0),
                 chainKey,
                 network,
