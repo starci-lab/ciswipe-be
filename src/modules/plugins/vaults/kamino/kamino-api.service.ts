@@ -195,7 +195,7 @@ interface KvaultTokenMetadata {
 
 // ========== Updated Service with Typed Methods ==========
 @Injectable()
-export class KaminoApiService {
+export class KaminoVaultApiService {
     private readonly baseUrl = "https://api.kamino.finance"
     private readonly hubbleBaseUrl = "https://api.hubbleprotocol.io"
 

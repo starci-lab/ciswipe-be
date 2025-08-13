@@ -183,6 +183,12 @@ export class StrategyAnalysis {
         nullable: true,
     })
         shareTokenPriceAnalysis?: StrategyAnalysisField
+
+    @Field(() => StrategyAnalysisField, {
+        description: "Share token price analysis",
+        nullable: true,
+    })
+        cTokenExchangeRateAnalysis?: StrategyAnalysisField
 }
 
 @ObjectType({

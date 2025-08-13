@@ -17,7 +17,7 @@ import { Connection } from "@solana/web3.js"
 import { createProviderToken, RecordRpcProvider } from "@/modules/blockchain"
 import { VolumeService } from "@/modules/volume"
 import {
-    KaminoApiService,
+    KaminoVaultApiService,
     VaultMetrics,
     VaultMetricsHistoryItem,
 } from "./kamino-api.service"
@@ -33,6 +33,11 @@ import { RegressionService, Point } from "@/modules/probability-statistics"
 export interface VaultRaw {
     state: VaultStateJSON | undefined;
     address: Address | undefined;
+}
+
+export interface VaultRawData {
+    vaults: Array<VaultRaw>
+    currentIndex: number
 }
 
 export interface Vault {
@@ -69,7 +74,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
         private readonly volumeService: VolumeService,
         @Inject(createProviderToken(ChainKey.Solana))
         private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-        private readonly kaminoApiService: KaminoApiService,
+        private readonly kaminoApiService: KaminoVaultApiService,
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
         private readonly regressionService: RegressionService,
@@ -156,27 +161,27 @@ export class KaminoVaultFetchService implements OnModuleInit {
         const vaultsCacheKey = this.getVaultsCacheKey(network)
 
         const vaults = await this.volumeService.tryActionOrFallbackToVolume<
-            Array<VaultRaw>
+            VaultRawData
         >({
             name: volumeKey,
             action: async () => {
                 const vaultsRaw = await this.kaminoVaultClients[network].getVaults()
-                const vaultsMapped: Array<VaultRaw> = vaultsRaw.map((vaultRaw) => ({
-                    state: vaultRaw?.state?.toJSON(),
-                    address: vaultRaw?.address,
-                }))
-                // store to volume
-                await this.volumeService.writeJsonToDataVolume(volumeKey, vaultsMapped)
+                const vaultsMapped: VaultRawData = {
+                    vaults: vaultsRaw.map((vaultRaw) => ({
+                        state: vaultRaw?.state?.toJSON(),
+                        address: vaultRaw?.address,
+                    })),
+                    currentIndex: 0,
+                }
                 return vaultsMapped
             },
         })
-
-        this.vaults[network] = vaults
-        this.currentIndex[network] = 0
+        this.vaults[network] = vaults.vaults
+        this.currentIndex[network] = vaults.currentIndex
         await this.cacheManager.set(vaultsCacheKey, vaults)
 
-        this.logger.log(
-            `Loaded ${vaults.length} vaults for ${network} from API or volume fallback.`,
+        this.logger.verbose(
+            `Loaded ${vaults.vaults.length} vaults for ${network} from API or volume fallback.`,
         )
     }
 
@@ -283,6 +288,11 @@ export class KaminoVaultFetchService implements OnModuleInit {
         })
         await this.cacheManager.set(vaultCacheKey, vault)
         this.currentIndex[network] += 1
+        // update the vaults data
+        await this.volumeService.updateJsonFromDataVolume<VaultRawData>(this.getVolumeKey(network), (prevData) => {
+            prevData.currentIndex = this.currentIndex[network]
+            return prevData
+        })
         this.logger.debug(
             `Updated vault ${vaultToLoad.address} (${network}) from API`,
         )
