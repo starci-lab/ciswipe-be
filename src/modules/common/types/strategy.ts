@@ -61,7 +61,7 @@ export class YieldSummary {
 @ObjectType({
     description: "Output token of the strategy",
 })
-export class OutputToken {
+export class GraphQLToken {
     @Field(() => String, {
         description: "Token id, use string-friendly format, if not found, we return a generated UUID instead",
     })
@@ -114,10 +114,10 @@ export class OutputToken {
     description: "Output tokens of the strategy",
 })
 export class OutputTokens {
-    @Field(() => [OutputToken], {
+    @Field(() => [GraphQLToken], {
         description: "Output tokens",
     })
-        tokens: Array<OutputToken>
+        tokens: Array<GraphQLToken>
 }
 
 @ObjectType({
@@ -202,6 +202,41 @@ export class StrategyAIInsights {
     score?: number
 }
 
+@ObjectType({})
+export class StrategyRewardToken {
+    @Field(() => GraphQLToken, {
+        description: "Reward token address",
+    })
+        token: GraphQLToken
+    @Field(() => Float, {
+        description: "Reward APR",
+        nullable: true,
+    })
+        apr?: number
+    @Field(() => Float, {
+        description: "Reward amount per day",
+        nullable: true,
+    })
+        rewardAmountPerDay?: number
+    @Field(() => Float, {
+        description: "Reward per share",
+        nullable: true,
+    })
+        rewardPerShare?: number
+}
+
+@ObjectType({
+    description: "Strategy rewards"
+})
+export class StrategyRewards {
+    @Field(() => [StrategyRewardToken], {
+        description: "Reward tokens of the strategy",
+        nullable: true,
+    })
+        rewardTokens?: Array<StrategyRewardToken>
+}
+
+
 @ObjectType({
     description: "Strategy result"
 })
@@ -236,4 +271,10 @@ export class StrategyResult {
         nullable: true
     })
         metadata?: Record<string, Atomic>
+
+    @Field(() => StrategyRewards, {
+        description: "Rewards of the strategy",
+        nullable: true,
+    })
+        rewards?: StrategyRewards
 }

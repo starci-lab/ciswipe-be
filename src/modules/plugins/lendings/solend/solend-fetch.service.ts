@@ -1,57 +1,50 @@
 import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
-import { createProviderToken, RecordRpcProvider } from "@/modules/blockchain"
-import { ChainKey, Network, StrategyAnalysis } from "@/modules/common"
-import { Address } from "@solana/kit"
-import { Connection } from "@solana/web3.js"
+import {
+    Network,
+    StrategyAnalysis,
+    StrategyRewards,
+    StrategyRewardToken,
+    TokenType,
+} from "@/modules/common"
 import dayjs from "dayjs"
 import { VolumeService } from "@/modules/volume"
 import { RegressionService, Point } from "@/modules/probability-statistics"
+
 import {
-    SolendLendingApiService,
     HistoricalInterestRateItem,
+    HistoricalInterestRatesResponse,
     Market,
-    HistoricalInterestRatesResponse
+    SolendLendingApiService,
 } from "./solend-api.service"
-import { ReserveConfigType, SolendMarket, ReserveDataType, SolendReserve } from "@solendprotocol/solend-sdk"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { sleep } from "@/modules/common"
 import { createCacheKey } from "@/modules/cache"
+import { SolendRpcService, WithAddressAndStats } from "./solend-rpc.service"
+import { Reserve } from "./schema"
+import { randomUUID } from "crypto"
 
-export interface LendingRaw {
-    address: Address | undefined;
+export interface LendingReserve {
+  reserve: WithAddressAndStats<Reserve>;
+  rewards: StrategyRewards;
 }
 
-export interface JSONReserve {
-    config: ReserveConfigType
-    stats?: ReserveDataType
-    totalBorrowAPY: ReturnType<SolendReserve["totalBorrowAPY"]>
-    totalSupplyAPY: ReturnType<SolendReserve["totalSupplyAPY"]>
+export interface LendingReserveMetadata {
+  metricsHistory: Array<HistoricalInterestRateItem>;
+  strategyAnalysis: StrategyAnalysis;
+}
+export interface LendingPool {
+  market: Market;
+  reserves: Array<LendingReserve>;
 }
 
-export interface LendingVault {
-    address: string
-    reserve: JSONReserve
-    metricsHistory: Array<HistoricalInterestRateItem>
-    strategyAnalysis: StrategyAnalysis
-}
-
-export interface LendingVaultsData {
-    market: Market
-    lendingVaults: Array<LendingVault>
-}
-
-export interface MarketExtends {
-    markets: Array<Market>
-    currentIndex: number
+export interface PoolsData {
+  pools: Array<LendingPool>;
+  currentIndex: number;
 }
 
 const DAY = 60 * 60 * 24
-interface SolendMarketData {
-    instance: SolendMarket
-    timestamp: number
-}
+const FOLDER_NAMES = ["lendings", "solend"]
 @Injectable()
 export class SolendLendingFetchService implements OnModuleInit {
     private logger = new Logger(SolendLendingFetchService.name)
@@ -59,226 +52,285 @@ export class SolendLendingFetchService implements OnModuleInit {
         [Network.Mainnet]: 0,
         [Network.Testnet]: 0,
     }
-    private markets: Record<Network, Array<Market>> = {
+    private reserves: Record<Network, Array<WithAddressAndStats<Reserve>>> = {
         [Network.Mainnet]: [],
         [Network.Testnet]: [],
     }
-    // map market address to each solend market instance
-    private solendMarkets: Record<Network, Record<string, SolendMarketData>> = {
-        [Network.Mainnet]: {},
-        [Network.Testnet]: {},
-    }
-
     constructor(
-        private readonly volumeService: VolumeService,
-        @Inject(createProviderToken(ChainKey.Solana))
-        private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-        private readonly solendApiService: SolendLendingApiService,
-        @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache,
-        private readonly regressionService: RegressionService,
+    private readonly volumeService: VolumeService,
+    private readonly solendApiService: SolendLendingApiService,
+    private readonly solendRpcService: SolendRpcService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+    private readonly regressionService: RegressionService,
     ) {}
 
     private async cacheAllOnInit() {
         for (const network of Object.values(Network)) {
             if (network === Network.Testnet) continue
-
-            // we do first with vaults
-            const marketsVolumeName = this.getMarketsVolumeKey(network)
-            if (await this.volumeService.existsInDataVolume(marketsVolumeName)) {
-                const markets = await this.volumeService.readJsonFromDataVolume<MarketExtends>(marketsVolumeName)
-                this.cacheManager.set(this.getMarketsCacheKey(network), markets)
-                // then we do iter for vaults
-                for (const market of markets.markets) {
-                    if (!market.address) continue
-                    const lendingVaultsVolumeName = this.getLendingVaultsVolumeKey(network, market.address?.toString() || "")
-                    if (await this.volumeService.existsInDataVolume(lendingVaultsVolumeName)) {
-                        const lendingVaults = await this.volumeService.readJsonFromDataVolume<LendingVaultsData>(lendingVaultsVolumeName)
-                        this.cacheManager.set(this.getLendingVaultsCacheKey(network, market.address.toString()), lendingVaults)
-                    }
+            const lendingPoolsVolumeName = this.getLendingPoolsVolumeKey(network)
+            if (
+                await this.volumeService.existsInDataVolume({
+                    name: lendingPoolsVolumeName,
+                })
+            ) {
+                const lendingPools = await this.volumeService.readJsonFromDataVolume<
+          Array<LendingPool>
+        >({ name: lendingPoolsVolumeName })
+                this.cacheManager.set(
+                    this.getLendingPoolsCacheKey(network),
+                    lendingPools,
+                )
+                const reserves = lendingPools.map((pool) => pool.reserves).flat()
+                // thus, load metadata for each reserves
+                const promises: Array<Promise<void>> = []
+                for (const reserve of reserves) {
+                    promises.push(
+                        (async () => {
+                            if (
+                                await this.volumeService.existsInDataVolume({
+                                    name: this.getReserveMetadataCacheKey(
+                                        network,
+                                        reserve.reserve.address,
+                                    ),
+                                    folderNames: FOLDER_NAMES,
+                                })
+                            ) {
+                                this.cacheManager.set(
+                                    this.getReserveMetadataCacheKey(
+                                        network,
+                                        reserve.reserve.address,
+                                    ),
+                                    await this.volumeService.readJsonFromDataVolume<LendingReserveMetadata>(
+                                        {
+                                            name: this.getReserveMetadataCacheKey(
+                                                network,
+                                                reserve.reserve.address,
+                                            ),
+                                            folderNames: FOLDER_NAMES,
+                                        },
+                                    ),
+                                )
+                            }
+                        })(),
+                    )
                 }
+                await Promise.all(promises)
             }
         }
     }
 
     async onModuleInit() {
         await this.cacheAllOnInit()
-        await this.loadMarkets(Network.Mainnet)
+        await this.handleLoadLendingPools()
     }
 
-    // load markets each week
-    @Cron(CronExpression.EVERY_WEEK)
-    async handleLoadMarkets() {
+  // Load lending pools each week
+  @Cron(CronExpression.EVERY_WEEK)
+    async handleLoadLendingPools() {
         for (const network of Object.values(Network)) {
-            await this.loadMarkets(network)
+            await this.loadLendingPools(network)
         }
     }
 
-    // Load lending vaults each 10s
-    @Cron(CronExpression.EVERY_10_SECONDS)
-    async handleLoadLendingVaults() {
-        for (const network of Object.values(Network)) {
-            await this.loadLendingVaults(network)
-        }
-    }
+  public getLendingPoolsCacheKey(network: Network) {
+      return createCacheKey("lending-pools", {
+          network,
+      })
+  }
 
-    public getLendingVaultsCacheKey(network: Network, marketAddress: string) {
-        return createCacheKey("solend-lending-lending-vaults", {
-            network,
-            marketAddress,
-        })
-    }
+  private getLendingPoolsVolumeKey(network: Network) {
+      return `lending-pools-${network}.json`
+  }
 
-    public getMarketsCacheKey(network: Network) {
-        return createCacheKey("solend-lending-markets", {
-            network,
-        })
-    }
+  public getReserveMetadataCacheKey(network: Network, reserveId: string) {
+      return createCacheKey("solend-historical-interest-rates", {
+          network,
+          reserveId,
+      })
+  }
 
-    private getMarketsVolumeKey(network: Network) {
-        return `solend-lending-markets-${network}.json`
-    }
+  public getReserveMetadataVolumeKey(network: Network, reserveId: string) {
+      return `historical-interest-rates-${network}-${reserveId}.json`
+  }
 
-    private getLendingVaultsVolumeKey(network: Network, marketAddress: string) {
-        return `solend-lending-lending-vaults-${network}-${marketAddress}.json`
-    }
+  @Cron(CronExpression.EVERY_SECOND)
+  async handleLoadReserveMetadata() {
+      for (const network of Object.values(Network)) {
+          await this.loadReserveMetadata(network)
+      }
+  }
 
-    async loadMarkets(network: Network) {
-        if (network === Network.Testnet) return
-        const marketsVolumeKey = this.getMarketsVolumeKey(network)
-        const marketCacheKey = this.getMarketsCacheKey(network)
-        const marketsRaw = await this.volumeService.tryActionOrFallbackToVolume<
-            MarketExtends
-        >({
-            name: marketsVolumeKey,
-            action: async () => {
-                const marketsRaw = await this.solendApiService.getMarkets("all", network)
-                return {
-                    markets: marketsRaw.results,
-                    currentIndex: 0,
-                }
-            },
-        })
-        this.markets[network] = marketsRaw.markets
-        this.currentIndex[network] = marketsRaw.currentIndex
-        await this.cacheManager.set(marketCacheKey, marketsRaw)
-        this.logger.verbose(
-            `Loaded ${marketsRaw.markets.length} markets for ${network} from API or volume fallback.`,
-        )
-    }
+  async loadReserveMetadata(network: Network) {
+      if (network === Network.Testnet) return
+      if (!this.reserves[network]?.length) {
+          this.logger.verbose(`No reserves to load for ${network}`)
+          return
+      }
+      if (typeof this.currentIndex[network] === "undefined") {
+          this.currentIndex[network] = 0
+      }
+      if (
+          this.currentIndex[network] >= this.reserves[network].length
+      ) {
+          this.logger.verbose(`No more reserves to load for ${network}`)
+          return
+      }
+      const reserve = this.reserves[network][this.currentIndex[network]]
+      const reserveMetadataVolumeKey = this.getReserveMetadataVolumeKey(
+          network,
+          reserve.address,
+      )
+      const metadata =
+      await this.volumeService.tryActionOrFallbackToVolume<LendingReserveMetadata>(
+          {
+              name: reserveMetadataVolumeKey,
+              action: async (): Promise<LendingReserveMetadata> => {
+                  const results =
+              await this.solendApiService.getHistoricalInterestRates({
+                  ids: [reserve.address],
+                  span: "1d",
+              })
+                  if (!results) {
+                      throw new Error(`No results found with id ${reserve.address}`)
+                  }
+                  const strategyAnalysis = this.computeRegression(results, reserve.address)
+                  return {
+                      metricsHistory: results[reserve.address],
+                      strategyAnalysis: strategyAnalysis,
+                  }
+              },
+              folderNames: FOLDER_NAMES,
+          },
+      )
+      // store in cache
+      this.cacheManager.set(
+          this.getReserveMetadataCacheKey(network, reserve.address),
+          metadata,
+      )
+      // plus to next reserve
+      this.currentIndex[network]++
+      // update the original data
+      await this.volumeService.updateJsonFromDataVolume<PoolsData>({
+          name: this.getLendingPoolsVolumeKey(network),
+          updateFn: (prevData) => {
+              prevData.currentIndex = this.currentIndex[network]
+              return prevData
+          },
+          folderNames: FOLDER_NAMES,
+      })
+      this.logger.verbose(
+          `Loaded historical interest rates for ${network} reserve ${reserve.address}`,
+      )
+  }
 
-    async loadLendingVaults(network: Network) {
-        if (network === Network.Testnet) return
-        if (!this.markets[network]?.length) return
-        const currentIdx = this.currentIndex[network]
-        if (currentIdx >= this.markets[network].length) {
-            this.logger.debug(`Reached end of lendings list for ${network}`)
-            return
-        }
-        const marketToLoad = this.markets[network][currentIdx]
-        if (!marketToLoad?.address) {
-            this.logger.error(`Market address missing for index ${currentIdx} (${network})`)
-            return
-        }
-        if (!this.solendMarkets[network][marketToLoad.address] 
-            || dayjs().diff(dayjs.unix(this.solendMarkets[network][marketToLoad.address].timestamp), "day") > 1
-        ) {
-            const instance = await SolendMarket.initialize(
-                this.solanaRpcProvider[network],
-            )
-            await instance.loadReserves()
-            // sleep 1s to ensure the api rate limit is not exceeded
-            await sleep(1000)
-            await instance.loadRewards()
-            // reset each market once a day
-            this.solendMarkets[network][marketToLoad.address] = {
-                instance,
-                timestamp: dayjs().unix(),
-            }
-        }
-        const solendMarket = this.solendMarkets[network][marketToLoad.address].instance
-        const lendingVaultsCacheKey = this.getLendingVaultsCacheKey(network, marketToLoad.address)
-        const lendingVaultsVolumeName = this.getLendingVaultsVolumeKey(network, marketToLoad.address)
+  async loadLendingPools(network: Network) {
+      if (network === Network.Testnet) return
+      const lendingPoolsVolumeKey = this.getLendingPoolsVolumeKey(network)
+      const lendingPoolsRaw =
+      await this.volumeService.tryActionOrFallbackToVolume<PoolsData>({
+          name: lendingPoolsVolumeKey,
+          action: async (): Promise<PoolsData> => {
+              const { results: markets } = await this.solendApiService.getMarkets(
+                  "all",
+                  network,
+              )
+              const reserves = await this.solendRpcService.fetchReserves({
+                  network,
+              })
+              const rewards = await this.solendApiService.getExternalRewardStats()
+              const lendingPools: Array<LendingPool> = markets.map((market) => ({
+                  market,
+                  reserves: reserves.reserves
+                      .filter(
+                          (reserve) =>
+                              reserve.data.lendingMarket.toBase58() === market.address,
+                      )
+                      .map<LendingReserve>((reserve) => ({
+                          reserve: reserve,
+                          rewards: {
+                              rewardTokens: rewards
+                                  .filter((reward) => reward.reserveID === reserve.address)
+                                  .map<StrategyRewardToken>((reward) => ({
+                                      token: {
+                                          id: randomUUID(),
+                                          address: reward.rewardMint,
+                                          type: TokenType.Regular,
+                                      },
+                                      rewardPerShare: Number(reward.rewardsPerShare),
+                                  })),
+                          },
+                      })),
+              }))
+              return {
+                  pools: lendingPools,
+                  currentIndex: 0,
+              }
+          },
+          folderNames: FOLDER_NAMES,
+      })
+      this.currentIndex[network] = lendingPoolsRaw.currentIndex
+      this.reserves[network] = lendingPoolsRaw.pools
+          .map((pool) => pool.reserves)
+          .flat()
+          .map((reserve) => reserve.reserve)
+      console.log(this.reserves[network])
+      await this.cacheManager.set(
+          this.getLendingPoolsCacheKey(network),
+          lendingPoolsRaw,
+      )
+      this.logger.verbose(
+          `Loaded ${lendingPoolsRaw.pools.length} pools for ${network} from API or volume fallback.`,
+      )
+  }
 
-        const lendingVaultDatas: LendingVaultsData = await this.volumeService.tryActionOrFallbackToVolume<LendingVaultsData>({
-            name: lendingVaultsVolumeName,
-            action: async () => {
-                const reserves = solendMarket.reserves
-                const jsonReserves = reserves.map<JSONReserve>(reserve => ({
-                    config: reserve.config,
-                    stats: reserve.stats ?? undefined,
-                    totalBorrowAPY: reserve.totalBorrowAPY(),
-                    totalSupplyAPY: reserve.totalSupplyAPY(),
-                }))
-                const metricsHistories = await this.solendApiService.getHistoricalInterestRates(
-                    {
-                        ids: jsonReserves.map(reserve => reserve.config.address.toString()),
-                        span: "1d",
-                    }
-                )
-                const lendingVaults = jsonReserves.map<LendingVault>(reserve => ({
-                    address: reserve.config.address,
-                    reserve: reserve,
-                    metricsHistory: metricsHistories[reserve.config.address],
-                    strategyAnalysis: this.computeRegression(metricsHistories, reserve),
-                }))
-                return {
-                    market: marketToLoad,
-                    lendingVaults,
-                }
-            },
-        })
-
-        await this.cacheManager.set(lendingVaultsCacheKey, lendingVaultDatas)
-        this.currentIndex[network] += 1
-        await this.volumeService.updateJsonFromDataVolume<MarketExtends>(this.getMarketsVolumeKey(network), (prevData) => {
-            prevData.currentIndex = this.currentIndex[network]
-            return prevData
-        })
-        this.logger.debug(`Updated lending ${marketToLoad.address} (${network}) from API`)
-    }
-
-    private computeRegression(metricsHistories: HistoricalInterestRatesResponse, reserve: JSONReserve) {
-        const apySamples: Array<Point> = metricsHistories[reserve.config.address].map(metricsHistory => ({
-            x: dayjs(metricsHistory.timestamp).unix(),
-            y: Number(metricsHistory.supplyAPY),
-        }))
-        const apyRegression = this.regressionService.computeRegression(apySamples)
-        const aprSamples: Array<Point> = metricsHistories[reserve.config.address].map(metricsHistory => ({
-            x: dayjs(metricsHistory.timestamp).unix(),
-            y: Number(metricsHistory.borrowAPY),
-        }))
-        const aprRegression = this.regressionService.computeRegression(aprSamples)
-        const cTokenExchangeRateSamples: Array<Point> = metricsHistories[reserve.config.address].map(metricsHistory => ({
-            x: dayjs(metricsHistory.timestamp).unix(),
-            y: Number(metricsHistory.cTokenExchangeRate),
-        }))
-        const cTokenExchangeRateRegression = this.regressionService.computeRegression(cTokenExchangeRateSamples)
-        return {
-            apyAnalysis: {
-                confidenceScore: apyRegression.rSquared,
-                growthDaily: apyRegression.slope * DAY,
-                growthWeekly: apyRegression.slope * DAY * 7,
-                growthMonthly: apyRegression.slope * DAY * 30,
-                growthYearly: apyRegression.slope * DAY * 365,
-                intercept: apyRegression.intercept,
-            },
-            aprAnalysis: {
-                confidenceScore: aprRegression.rSquared,
-                growthDaily: aprRegression.slope * DAY,
-                growthWeekly: aprRegression.slope * DAY * 7,
-                growthMonthly: aprRegression.slope * DAY * 30,
-                growthYearly: aprRegression.slope * DAY * 365,
-                intercept: aprRegression.intercept,
-            },
-            cTokenExchangeRateAnalysis: {
-                confidenceScore: cTokenExchangeRateRegression.rSquared,
-                growthDaily: cTokenExchangeRateRegression.slope * DAY,
-                growthWeekly: cTokenExchangeRateRegression.slope * DAY * 7,
-                growthMonthly: cTokenExchangeRateRegression.slope * DAY * 30,
-                growthYearly: cTokenExchangeRateRegression.slope * DAY * 365,
-                intercept: cTokenExchangeRateRegression.intercept,
-            },
-        }
-    }
+  private computeRegression(
+      metricsHistories: HistoricalInterestRatesResponse,
+      reserveId: string,
+  ) {
+      const apySamples: Array<Point> = metricsHistories[reserveId].map((metricsHistory) => ({
+          x: dayjs(metricsHistory.timestamp).unix(),
+          y: Number(metricsHistory.supplyAPY),
+      }))
+      const apyRegression = this.regressionService.computeRegression(apySamples)
+      const aprSamples: Array<Point> = metricsHistories[reserveId].map((metricsHistory) => ({
+          x: dayjs(metricsHistory.timestamp).unix(),
+          y: Number(metricsHistory.borrowAPY),
+      }))
+      const aprRegression = this.regressionService.computeRegression(aprSamples)
+      const cTokenExchangeRateSamples: Array<Point> = metricsHistories[reserveId].map(
+          (metricsHistory) => ({
+              x: dayjs(metricsHistory.timestamp).unix(),
+              y: Number(metricsHistory.cTokenExchangeRate),
+          }),
+      )
+      const cTokenExchangeRateRegression =
+      this.regressionService.computeRegression(cTokenExchangeRateSamples)
+      return {
+          apyAnalysis: {
+              confidenceScore: apyRegression.rSquared,
+              growthDaily: apyRegression.slope * DAY,
+              growthWeekly: apyRegression.slope * DAY * 7,
+              growthMonthly: apyRegression.slope * DAY * 30,
+              growthYearly: apyRegression.slope * DAY * 365,
+              intercept: apyRegression.intercept,
+          },
+          aprAnalysis: {
+              confidenceScore: aprRegression.rSquared,
+              growthDaily: aprRegression.slope * DAY,
+              growthWeekly: aprRegression.slope * DAY * 7,
+              growthMonthly: aprRegression.slope * DAY * 30,
+              growthYearly: aprRegression.slope * DAY * 365,
+              intercept: aprRegression.intercept,
+          },
+          cTokenExchangeRateAnalysis: {
+              confidenceScore: cTokenExchangeRateRegression.rSquared,
+              growthDaily: cTokenExchangeRateRegression.slope * DAY,
+              growthWeekly: cTokenExchangeRateRegression.slope * DAY * 7,
+              growthMonthly: cTokenExchangeRateRegression.slope * DAY * 30,
+              growthYearly: cTokenExchangeRateRegression.slope * DAY * 365,
+              intercept: cTokenExchangeRateRegression.intercept,
+          },
+      }
+  }
 }

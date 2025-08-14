@@ -1,0 +1,977 @@
+{
+  "data": {
+    "metricsHistory": [
+      {
+        "id": 26106254,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755090900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755091800
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755092700
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755093600
+      },
+      {
+        "id": 26108633,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755094500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755095400
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755096300
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755097200
+      },
+      {
+        "id": 26111014,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755098100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26111609,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755099000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26112206,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755099900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26112798,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755100800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26113392,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755101700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26113987,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755102600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26114585,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755103500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26115178,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755104400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26115772,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755105300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26116370,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755106200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26116966,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755107100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26117558,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755108000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755108900
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755109800
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755110700
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755111600
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755112500
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755113400
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755114300
+      },
+      {
+        "id": 26122318,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755115200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26122916,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755116100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26123508,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755117000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26124105,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755117900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26124698,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755118800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26125294,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755119700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26125891,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755120600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26126485,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755121500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26127081,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755122400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26127675,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755123300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26128268,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755124200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26128863,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755125100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26129458,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755126000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26130056,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755126900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26130651,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755127800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26131242,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755128700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26131837,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755129600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755130500
+      },
+      {
+        "id": 26132438,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755131400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26133032,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755132300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26133630,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755133200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755134100
+      },
+      {
+        "id": 26134846,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755135000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26135441,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755135900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26136040,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755136800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26136633,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755137700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26137259,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755138600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26137854,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755139500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26138445,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755140400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26139040,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755141300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26139638,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755142200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26140233,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755143100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26140825,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755144000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26141423,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755144900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26142016,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755145800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26142611,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755146700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26143208,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755147600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26143826,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755148500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26144421,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755149400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26145012,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755150300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26145640,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755151200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26146264,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755152100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26146892,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755153000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26147486,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755153900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "cTokenExchangeRate": "1",
+        "timestamp": 1755154800
+      },
+      {
+        "id": 26148680,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755155700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26149275,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755156600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26149869,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755157500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26150464,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755158400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26151083,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755159300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26151680,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755160200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26152272,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755161100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26152870,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755162000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26153463,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755162900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26154059,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755163800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26154656,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755164700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26155248,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755165600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26155844,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755166500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26156441,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755167400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26157055,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755168300,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26157650,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755169200,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26158248,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755170100,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26158841,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755171000,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26159439,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755171900,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26160033,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755172800,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26160626,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755173700,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26161220,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755174600,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26161816,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755175500,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      },
+      {
+        "id": 26161816,
+        "reserveID": "8i58uNEa9AqGo3L3fb1SWEirknH5Ep4yBfRcytSfD2Ua",
+        "supplyAPY": 0,
+        "borrowAPY": 0,
+        "timestamp": 1755176400,
+        "supplyAPR": 0,
+        "borrowAPR": 0,
+        "cTokenExchangeRate": "1"
+      }
+    ],
+    "strategyAnalysis": {
+      "apyAnalysis": {
+        "confidenceScore": null,
+        "growthDaily": 0,
+        "growthWeekly": 0,
+        "growthMonthly": 0,
+        "growthYearly": 0,
+        "intercept": 0
+      },
+      "aprAnalysis": {
+        "confidenceScore": null,
+        "growthDaily": 0,
+        "growthWeekly": 0,
+        "growthMonthly": 0,
+        "growthYearly": 0,
+        "intercept": 0
+      },
+      "cTokenExchangeRateAnalysis": {
+        "confidenceScore": null,
+        "growthDaily": 0,
+        "growthWeekly": 0,
+        "growthMonthly": 0,
+        "growthYearly": 0,
+        "intercept": 1
+      }
+    }
+  },
+  "timeout": "2025-08-14T13:22:28.412Z"
+}

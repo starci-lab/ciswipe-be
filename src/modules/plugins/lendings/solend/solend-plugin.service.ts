@@ -1,27 +1,37 @@
 import { LendingPluginAbstract } from "../abstract"
 import { Inject, Injectable } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
-import { InterestRateConverterService, TokenId, tokens } from "@/modules/blockchain"
-import { LendingVaultsData, MarketExtends, SolendLendingFetchService } from "./solend-fetch.service"
+import {
+    InterestRateConverterService,
+    TokenId,
+    tokens,
+} from "@/modules/blockchain"
+import {
+    LendingReserveMetadata,
+    PoolsData,
+    SolendLendingFetchService,
+} from "./solend-fetch.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
-import { randomUUID } from "crypto"
 import { ExecuteSingleParams } from "./types"
+import { randomUUID } from "crypto"
 import { Decimal } from "decimal.js"
+
 @Injectable()
 export class SolendLendingPluginService extends LendingPluginAbstract {
     constructor(
-        private readonly solendFetchService: SolendLendingFetchService,
-        @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache,
-        private readonly interestRateConverterService: InterestRateConverterService,
+    private readonly solendFetchService: SolendLendingFetchService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+    private readonly interestRateConverterService: InterestRateConverterService,
     ) {
         super({
             name: "Solend",
             icon: "https://solend.fi/icons/favicon.ico",
             url: "https://solend.fi",
-            description: "Solend is a decentralized lending and borrowing protocol on Solana, allowing users to earn interest on deposits or borrow assets seamlessly.",
+            description:
+        "Solend is a decentralized lending and borrowing protocol on Solana, allowing users to earn interest on deposits or borrow assets seamlessly.",
             tags: ["lending", "borrowing", "DeFi"],
             chainKeys: [ChainKey.Solana],
         })
@@ -59,65 +69,79 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
         if (!token.tokenAddress) {
             throw new Error("Token address not found")
         }
-        const marketsData = await this.cacheManager.get<MarketExtends>(this.solendFetchService.getMarketsCacheKey(params.network))
+        const marketsData = await this.cacheManager.get<PoolsData>(
+            this.solendFetchService.getLendingPoolsCacheKey(params.network),
+        )
         if (!marketsData) {
             return []
         }
         const results: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
-        for (const market of marketsData.markets) {
+        for (const pool of marketsData.pools) {
             promises.push(
                 (async () => {
-                    if (!market.address) {
-                        return
-                    }
-                    const vaults = await this.cacheManager.get<LendingVaultsData>(
-                        this.solendFetchService.getLendingVaultsCacheKey(
-                            params.network,
-                            market.address
+                    const internalPromises: Array<Promise<void>> = []
+                    for (const reserve of pool.reserves) {
+                        internalPromises.push(
+                            (async () => {
+                                const metadata =
+                  await this.cacheManager.get<LendingReserveMetadata>(
+                      this.solendFetchService.getReserveMetadataCacheKey(
+                          params.network,
+                          reserve.reserve.address,
+                      ),
+                  )
+                                if (!metadata) {
+                                    return
+                                }
+                                if (
+                                    reserve.reserve.data.liquidity.mintPubkey.toBase58() ===
+                  token.tokenAddress
+                                ) {
+                                    results.push({
+                                        id: randomUUID(),
+                                        outputTokens: {
+                                            tokens: [
+                                                {
+                                                    id: randomUUID(),
+                                                    address:
+                            reserve.reserve.data.collateral.mintPubkey.toBase58(),
+                                                    type: TokenType.Regular,
+                                                },
+                                            ],
+                                        },
+                                        yieldSummary: {
+                                            aprs: {
+                                                base: this.interestRateConverterService
+                                                    .toAPR(
+                                                        new Decimal(reserve.reserve.supplyAPR),
+                                                        params.chainKey,
+                                                        params.network,
+                                                    )
+                                                    .toNumber(),
+                                            },
+                                            apys: {
+                                                base: this.interestRateConverterService
+                                                    .toAPY(
+                                                        new Decimal(reserve.reserve.supplyAPR),
+                                                        params.chainKey,
+                                                        params.network,
+                                                    )
+                                                    .toNumber(),
+                                            },
+                                        },
+                                        metadata: {
+                                            vaultId: reserve.reserve.address,
+                                            market: pool.market,
+                                        },
+                                        strategyAnalysis: metadata.strategyAnalysis,
+                                        rewards: reserve.rewards,
+                                    })
+                                }
+                            })(),
                         )
-                    )
-                    if (!vaults) {
-                        return
                     }
-                    for (const vault of vaults.lendingVaults) {
-                        if (vault.reserve.config.liquidityAddress === token.tokenAddress) {
-                            results.push({
-                                id: randomUUID(),
-                                outputTokens: {
-                                    tokens: [
-                                        {
-                                            id: randomUUID(),
-                                            address: vault.reserve.stats?.mintAddress,
-                                            priceInUSD: vault.reserve.stats?.assetPriceUSD,
-                                            type: TokenType.Regular,
-                                        }
-                                    ],
-                                },
-                                yieldSummary: {
-                                    aprs: {
-                                        base: this.interestRateConverterService.toAPR(
-                                            new Decimal(vault.reserve.totalSupplyAPY.totalAPY),
-                                            params.chainKey,
-                                            params.network
-                                        ).toNumber(),
-                                    },
-                                    apys: {
-                                        base: this.interestRateConverterService.toAPY(
-                                            new Decimal(vault.reserve.totalSupplyAPY.totalAPY),
-                                            params.chainKey,
-                                            params.network
-                                        ).toNumber(),
-                                    }
-                                },
-                                metadata: {
-                                    vaultId: vault.address,
-                                    market: market
-                                },
-                                strategyAnalysis: vault.strategyAnalysis,
-                            })
-                        }
-                    }
+                    await Promise.all(internalPromises)
                 })(),
             )
         }
@@ -125,9 +149,7 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
         return results
     }
 
-    public async execute(
-        params: ExecuteParams
-    ): Promise<Array<StrategyResult>> {
+    public async execute(params: ExecuteParams): Promise<Array<StrategyResult>> {
         const result: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
         for (const inputToken of params.inputTokens) {

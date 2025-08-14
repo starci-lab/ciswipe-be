@@ -76,7 +76,9 @@ export class JitoPluginService
             try {
                 const stats =
           await this.volumeService.readJsonFromDataVolume<JitoPoolStats>(
-              volumeName,
+              {
+                  name: volumeName,
+              }
           )
                 return { stats }
             } catch (error) {

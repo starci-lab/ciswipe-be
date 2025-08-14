@@ -8,13 +8,47 @@ export interface FileContent<T = unknown> {
     data: T;
     timeout: string;
 }
-    
+
+export interface TryActionOrFallbackToVolumeParams<T> {
+    action: () => Promise<T>;
+    name: string;
+    folderNames?: Array<string>;
+}
+
+export interface UpdateJsonFromDataVolumeParams<T> {
+    name: string;
+    updateFn: (prevData: T) => T;
+    folderNames?: Array<string>;
+}
+
+export interface ReadJsonFromDataVolumeParams {
+    name: string;
+    folderNames?: Array<string>;
+}
+
+export interface ExistsInDataVolumeParams {
+    name: string;
+    folderNames?: Array<string>;
+}
+
+export interface IsExpiredInDataVolumeParams {
+    name: string;
+    folderNames?: Array<string>;
+}
+
+export interface WriteJsonToDataVolumeParams<T> {
+    name: string;
+    data: T;
+    folderNames?: Array<string>;
+    timeout?: number;
+}
+
 @Injectable()
 export class VolumeService implements OnModuleInit {
-    constructor() {}
+    constructor() { }
 
     onModuleInit() {
-    // mkdir if not exists
+        // mkdir if not exists (root path)
         fsPromises.mkdir(envConfig().volume.data.path, { recursive: true })
     }
 
@@ -31,49 +65,77 @@ export class VolumeService implements OnModuleInit {
     async writeJsonToDataVolume<T>(
         name: string,
         data: T,
-        // timeout = 15min, to ensure the application do not load data instanly after each reboot
-        timeout = 1000 * 60 * 15,
+        folderNames: Array<string> = [],
+        timeout = 1000 * 60 * 15
     ) {
         const fileContent: FileContent<T> = {
-            data: data,
+            data,
             timeout: dayjs().add(timeout, "ms").toISOString(),
         }
+
+        const fullPath = join(envConfig().volume.data.path, ...folderNames)
+
+        // Create nested folder if not exists
+        await fsPromises.mkdir(fullPath, { recursive: true })
+
+        // Write JSON file
         await fsPromises.writeFile(
-            join(envConfig().volume.data.path, this.safeFileName(name)),
-            JSON.stringify(fileContent, null, 2),
+            join(fullPath, this.safeFileName(name)),
+            JSON.stringify(fileContent, null, 2)
         )
     }
 
-    async readJsonFromDataVolume<T>(name: string): Promise<T> {
-        const filePath = join(envConfig().volume.data.path, this.safeFileName(name))
+    async readJsonFromDataVolume<T>(
+        { name, folderNames }: ReadJsonFromDataVolumeParams
+    ): Promise<T> {
+        const filePath = join(
+            envConfig().volume.data.path,
+            ...folderNames || [],
+            this.safeFileName(name)
+        )
         const raw = await fsPromises.readFile(filePath, "utf-8")
         const fileContent = JSON.parse(raw) as FileContent<T>
         return fileContent.data
     }
 
     async updateJsonFromDataVolume<T>(
-        name: string,
-        updateFn: (prevData: T) => T
+        { name, updateFn, folderNames }: UpdateJsonFromDataVolumeParams<T>
     ): Promise<void> {
-        const prevData = await this.readJsonFromDataVolume<T>(name)
+        const prevData = await this.readJsonFromDataVolume<T>({
+            name,
+            folderNames
+        })
         const newData = updateFn(prevData)
-        await this.writeJsonToDataVolume(name, newData)
+        await this.writeJsonToDataVolume(name, newData, folderNames)
     }
 
-    async existsInDataVolume(name: string): Promise<boolean> {
-        const tryAccess = await fsPromises
-            .access(join(envConfig().volume.data.path, this.safeFileName(name)))
+    async existsInDataVolume(
+        { name, folderNames }: ExistsInDataVolumeParams
+    ): Promise<boolean> {
+        const filePath = join(
+            envConfig().volume.data.path,
+            ...folderNames || [],
+            this.safeFileName(name)
+        )
+        return fsPromises
+            .access(filePath)
             .then(() => true)
             .catch(() => false)
-        return tryAccess
     }
 
-    async isExpiredInDataVolume(name: string): Promise<boolean> {
+    async isExpiredInDataVolume(
+        {
+            name,
+            folderNames
+        }: IsExpiredInDataVolumeParams
+    ): Promise<boolean> {
         try {
-            const fileContent = await this.readJsonFromDataVolume<FileContent>(name)
+            const fileContent = await this.readJsonFromDataVolume<FileContent>(
+                { name, folderNames }
+            )
             return dayjs(fileContent.timeout).isBefore(dayjs())
         } catch {
-            // when not found, we can treated as true
+            // when not found, treat as expired
             return true
         }
     }
@@ -81,28 +143,23 @@ export class VolumeService implements OnModuleInit {
     async tryActionOrFallbackToVolume<T>({
         action,
         name,
+        folderNames = [],
     }: TryActionOrFallbackToVolumeParams<T>): Promise<T> {
         try {
-            // check if the file exists
-            const isExpired = await this.isExpiredInDataVolume(name)
+            const isExpired = await this.isExpiredInDataVolume({ name, folderNames })
             if (!isExpired) {
-                const result = await this.readJsonFromDataVolume<T>(name)
-                return result
+                return await this.readJsonFromDataVolume<T>({ name, folderNames })
             }
+
             const result = await action()
-            await this.writeJsonToDataVolume(name, result)
+            await this.writeJsonToDataVolume(name, result, folderNames)
             return result
         } catch (error) {
             try {
-                const result = await this.readJsonFromDataVolume<T>(name)
-                return result
+                return await this.readJsonFromDataVolume<T>({ name, folderNames })
             } catch {
                 throw error
             }
         }
     }
-}
-export interface TryActionOrFallbackToVolumeParams<T> {
-  action: () => Promise<T>;
-  name: string;
 }

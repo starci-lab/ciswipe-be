@@ -71,7 +71,9 @@ export class RaydiumPluginService
             // if error happlen, we try to read from volume
             try {
                 return await this.volumeService.readJsonFromDataVolume<PoolsApiReturn>(
-                    volumeName,
+                    {
+                        name: volumeName,
+                    }
                 )
             } catch (error) {
                 console.error(error)

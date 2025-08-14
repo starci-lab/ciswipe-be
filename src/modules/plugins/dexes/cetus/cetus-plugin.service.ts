@@ -46,7 +46,9 @@ export class CetusPluginService
             // to ensure high-availability in case the provider refused to serve
             try {
                 return await this.volumeService.readJsonFromDataVolume<CetusApiResponse>(
-                    volumeName,
+                    {
+                        name: volumeName,
+                    }
                 )
             } catch (error) {
                 console.error(error)
