@@ -17,10 +17,14 @@ import { AIModule } from "./modules/ai"
 import GraphQLJSON from "graphql-type-json"
 import { ProbabilityStatisticsModule } from "@/modules/probability-statistics"
 import { CryptographyModule } from "@/modules/cryptography"
+import { MiscModule } from "@/modules/misc"
 
 @Module({
     imports: [
         EnvModule.forRoot({
+            isGlobal: true,
+        }),
+        MiscModule.register({
             isGlobal: true,
         }),
         CryptographyModule.register({

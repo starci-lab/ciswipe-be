@@ -1,5 +1,5 @@
 import { LendingPluginAbstract } from "../abstract"
-import { Inject, Injectable } from "@nestjs/common"
+import { Inject, Injectable, Logger } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
 import {
     InterestRateConverterService,
@@ -9,8 +9,8 @@ import {
 import {
     LendingReserveMetadata,
     PoolsData,
-    SolendLendingFetchService,
-} from "./solend-fetch.service"
+    SolendLendingInitService,
+} from "./solend-init.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
@@ -20,18 +20,20 @@ import { Decimal } from "decimal.js"
 
 @Injectable()
 export class SolendLendingPluginService extends LendingPluginAbstract {
+    private readonly logger = new Logger(SolendLendingPluginService.name)
+
     constructor(
-    private readonly solendFetchService: SolendLendingFetchService,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
-    private readonly interestRateConverterService: InterestRateConverterService,
+        private readonly solendInitService: SolendLendingInitService,
+        @Inject(CACHE_MANAGER)
+        private readonly cacheManager: Cache,
+        private readonly interestRateConverterService: InterestRateConverterService,
     ) {
         super({
             name: "Solend",
             icon: "https://solend.fi/icons/favicon.ico",
             url: "https://solend.fi",
             description:
-        "Solend is a decentralized lending and borrowing protocol on Solana, allowing users to earn interest on deposits or borrow assets seamlessly.",
+                "Solend is a decentralized lending and borrowing protocol on Solana, allowing users to earn interest on deposits or borrow assets seamlessly.",
             tags: ["lending", "borrowing", "DeFi"],
             chainKeys: [ChainKey.Solana],
         })
@@ -52,120 +54,157 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
     public async executeSingle(
         params: ExecuteSingleParams,
     ): Promise<Array<StrategyResult>> {
-        let token = tokens[params.chainKey][params.network].find(
-            (token) => token.id === params.inputToken.id,
-        )
-        if (!token) {
-            throw new Error("Token not found")
-        }
-        if (token.type === TokenType.Native) {
-            token = tokens[params.chainKey][params.network].find(
-                (token) => token.type === TokenType.Wrapper,
+        try {
+            let token = tokens[params.chainKey][params.network].find(
+                (token) => token.id === params.inputToken.id,
             )
             if (!token) {
-                throw new Error("Wrapper token not found")
+                this.logger.warn(`Token not found for id: ${params.inputToken.id}`)
+                return []
             }
-        }
-        if (!token.tokenAddress) {
-            throw new Error("Token address not found")
-        }
-        const marketsData = await this.cacheManager.get<PoolsData>(
-            this.solendFetchService.getLendingPoolsCacheKey(params.network),
-        )
-        if (!marketsData) {
+            
+            if (token.type === TokenType.Native) {
+                token = tokens[params.chainKey][params.network].find(
+                    (token) => token.type === TokenType.Wrapper,
+                )
+                if (!token) {
+                    this.logger.warn("Wrapper token not found for native token")
+                    return []
+                }
+            }
+            
+            if (!token.tokenAddress) {
+                this.logger.warn("Token address not found")
+                return []
+            }
+
+            const marketsData = await this.cacheManager.get<PoolsData>(
+                this.solendInitService.getLendingPoolsCacheKey(params.network),
+            )
+            
+            if (!marketsData || !marketsData.pools || marketsData.pools.length === 0) {
+                this.logger.debug(`No lending pools data found for network: ${params.network}`)
+                return []
+            }
+
+            const results: Array<StrategyResult> = []
+
+            // Process all pools and reserves efficiently
+            for (const pool of marketsData.pools) {
+                for (const reserve of pool.reserves) {
+                    try {
+                        // Check if this reserve matches the input token
+                        if (
+                            reserve.reserve.data.liquidity.mintPubkey.toBase58() ===
+                            token.tokenAddress
+                        ) {
+                            const metadata = await this.cacheManager.get<LendingReserveMetadata>(
+                                this.solendInitService.getReserveMetadataCacheKey(
+                                    params.network,
+                                    reserve.reserve.address,
+                                ),
+                            )
+
+                            if (!metadata) {
+                                this.logger.debug(`No metadata found for reserve: ${reserve.reserve.address}`)
+                                continue
+                            }
+
+                            const strategyResult: StrategyResult = {
+                                outputTokens: {
+                                    tokens: [
+                                        {
+                                            id: randomUUID(),
+                                            address: reserve.reserve.data.collateral.mintPubkey.toBase58(),
+                                            type: TokenType.Regular,
+                                        },
+                                    ],
+                                },
+                                yieldSummary: {
+                                    aprs: {
+                                        base: this.interestRateConverterService
+                                            .toAPR(
+                                                new Decimal(reserve.reserve.supplyAPR),
+                                                params.chainKey,
+                                                params.network,
+                                            )
+                                            .toNumber(),
+                                    },
+                                    apys: {
+                                        base: this.interestRateConverterService
+                                            .toAPY(
+                                                new Decimal(reserve.reserve.supplyAPR),
+                                                params.chainKey,
+                                                params.network,
+                                            )
+                                            .toNumber(),
+                                    },
+                                },
+                                metadata: {
+                                    vaultId: reserve.reserve.address,
+                                    market: pool.market,
+                                },
+                                strategyAnalysis: metadata.strategyAnalysis,
+                                rewards: reserve.rewards,
+                            }
+
+                            results.push(strategyResult)
+                        }
+                    } catch (error) {
+                        this.logger.error(
+                            `Error processing reserve ${reserve.reserve.address}: ${error.message}`,
+                            error.stack,
+                        )
+                        continue
+                    }
+                }
+            }
+
+            this.logger.debug(`Found ${results.length} strategies for token ${token.tokenAddress}`)
+            return results
+
+        } catch (error) {
+            this.logger.error(
+                `Error executing single strategy for token ${params.inputToken.id}: ${error.message}`,
+                error.stack,
+            )
             return []
         }
-        const results: Array<StrategyResult> = []
-        const promises: Array<Promise<void>> = []
-        for (const pool of marketsData.pools) {
-            promises.push(
-                (async () => {
-                    const internalPromises: Array<Promise<void>> = []
-                    for (const reserve of pool.reserves) {
-                        internalPromises.push(
-                            (async () => {
-                                const metadata =
-                  await this.cacheManager.get<LendingReserveMetadata>(
-                      this.solendFetchService.getReserveMetadataCacheKey(
-                          params.network,
-                          reserve.reserve.address,
-                      ),
-                  )
-                                if (!metadata) {
-                                    return
-                                }
-                                if (
-                                    reserve.reserve.data.liquidity.mintPubkey.toBase58() ===
-                  token.tokenAddress
-                                ) {
-                                    results.push({
-                                        id: randomUUID(),
-                                        outputTokens: {
-                                            tokens: [
-                                                {
-                                                    id: randomUUID(),
-                                                    address:
-                            reserve.reserve.data.collateral.mintPubkey.toBase58(),
-                                                    type: TokenType.Regular,
-                                                },
-                                            ],
-                                        },
-                                        yieldSummary: {
-                                            aprs: {
-                                                base: this.interestRateConverterService
-                                                    .toAPR(
-                                                        new Decimal(reserve.reserve.supplyAPR),
-                                                        params.chainKey,
-                                                        params.network,
-                                                    )
-                                                    .toNumber(),
-                                            },
-                                            apys: {
-                                                base: this.interestRateConverterService
-                                                    .toAPY(
-                                                        new Decimal(reserve.reserve.supplyAPR),
-                                                        params.chainKey,
-                                                        params.network,
-                                                    )
-                                                    .toNumber(),
-                                            },
-                                        },
-                                        metadata: {
-                                            vaultId: reserve.reserve.address,
-                                            market: pool.market,
-                                        },
-                                        strategyAnalysis: metadata.strategyAnalysis,
-                                        rewards: reserve.rewards,
-                                    })
-                                }
-                            })(),
-                        )
-                    }
-                    await Promise.all(internalPromises)
-                })(),
-            )
-        }
-        await Promise.all(promises)
-        return results
     }
 
     public async execute(params: ExecuteParams): Promise<Array<StrategyResult>> {
-        const result: Array<StrategyResult> = []
-        const promises: Array<Promise<void>> = []
-        for (const inputToken of params.inputTokens) {
-            promises.push(
-                (async () => {
+        try {
+            const result: Array<StrategyResult> = []
+            
+            // Process all input tokens
+            for (const inputToken of params.inputTokens) {
+                try {
                     const singleResults = await this.executeSingle({
                         ...params,
                         inputToken,
                     })
-                    if (singleResults.length) {
+                    
+                    if (singleResults.length > 0) {
                         result.push(...singleResults)
                     }
-                })(),
+                } catch (error) {
+                    this.logger.error(
+                        `Error processing input token ${inputToken.id}: ${error.message}`,
+                        error.stack,
+                    )
+                    continue
+                }
+            }
+
+            this.logger.debug(`Total strategies found: ${result.length}`)
+            return result
+
+        } catch (error) {
+            this.logger.error(
+                `Error executing strategies: ${error.message}`,
+                error.stack,
             )
+            return []
         }
-        await Promise.all(promises)
-        return result
     }
 }

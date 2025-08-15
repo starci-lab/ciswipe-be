@@ -236,15 +236,53 @@ export class StrategyRewards {
         rewardTokens?: Array<StrategyRewardToken>
 }
 
+// @ObjectType({ description: "Atomic transaction in a strategy" })
+// export class GraphQLTxAtom {
+//   @Field(() => String, { description: "Transaction hash, optional", nullable: true })
+//       hash?: string
+
+//   @Field(() => String, { description: "Raw transaction payload for execution", nullable: true })
+//       payload?: string
+// }
+
+// @ObjectType({
+//     description: "Transaction"
+// })
+// export class GraphQLTransaction {
+//     @Field(() => String, {
+//         description: "Transaction batch id",
+//     })
+//         id: string
+//     @Field(() => String, {
+//         description: "Transaction batch name",
+//         nullable: true,
+//     })
+//         name?: string
+//     @Field(() => String, {
+//         description: "Transaction batch description",
+//         nullable: true,
+//     })
+//         description?: string
+//     @Field(() => [GraphQLTxAtom], {
+//         description: "Transactions in the batch",
+//     })
+//         transactions: Array<GraphQLTxAtom>
+// }
+
+// @ObjectType({
+//     description: "Transaction"
+// })
+// export class GraphQLTransactions {
+//     @Field(() => [GraphQLTransaction], {
+//         description: "Transactions form this strategy",
+//     })
+//         transactions: Array<GraphQLTransaction>
+// }
 
 @ObjectType({
     description: "Strategy result"
 })
 export class StrategyResult {
-    @Field(() => String, {
-        description: "Strategy id",
-    })
-        id: string
     @Field(() => OutputTokens, {
         description: "Output tokens of the strategy",
     })
@@ -277,4 +315,9 @@ export class StrategyResult {
         nullable: true,
     })
         rewards?: StrategyRewards
+
+    // @Field(() => GraphQLTransactions, {
+    //     description: "Transactions of the strategy",
+    // })
+    //     transactions: GraphQLTransactions
 }

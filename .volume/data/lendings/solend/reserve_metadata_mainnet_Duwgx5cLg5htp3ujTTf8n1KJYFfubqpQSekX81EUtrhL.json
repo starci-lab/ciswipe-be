@@ -1,0 +1,899 @@
+{
+  "data": {
+    "metricsHistory": [
+      {
+        "id": 26148282,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "timestamp": 1755154800,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "cTokenExchangeRate": "1.05739397414297343089"
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755155700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755156600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755157500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755158400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755159300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755160200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755161100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755162000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755162900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755163800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755164700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755165600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755166500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755167400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755168300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755169200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755170100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755171000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755171900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755172800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755173700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755174600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755175500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755176400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755177300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755178200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755179100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755180000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755180900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755181800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755182700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755183600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755184500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755185400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755186300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755187200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755188100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755189000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755189900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755190800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755191700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755192600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755193500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755194400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755195300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755196200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755197100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755198000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755198900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755199800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755200700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755201600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755202500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755203400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755204300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755205200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755206100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755207000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755207900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755208800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755209700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755210600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755211500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755212400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755213300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755214200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755215100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755216000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755216900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755217800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755218700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755219600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755220500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755221400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755222300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755223200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755224100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755225000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755225900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755226800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755227700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755228600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755229500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755230400
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755231300
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755232200
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755233100
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755234000
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755234900
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755235800
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755236700
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755237600
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755238500
+      },
+      {
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "cTokenExchangeRate": "1.05739397414297343089",
+        "timestamp": 1755239400
+      },
+      {
+        "id": 26204816,
+        "reserveID": "Duwgx5cLg5htp3ujTTf8n1KJYFfubqpQSekX81EUtrhL",
+        "supplyAPY": 0.00270996560888186,
+        "borrowAPY": 0.0194753643921511,
+        "timestamp": 1755240300,
+        "supplyAPR": 0.00270663084138385,
+        "borrowAPR": 0.0193052055636845,
+        "cTokenExchangeRate": "1.05739397414297343089"
+      }
+    ],
+    "strategyAnalysis": {
+      "apyAnalysis": {
+        "confidenceScore": -4412487669.804141,
+        "growthDaily": -8.9801845835189e-10,
+        "growthWeekly": -6.2861292084632304e-9,
+        "growthMonthly": -2.69405537505567e-8,
+        "growthYearly": -3.2777673729843984e-7,
+        "intercept": 0.002709983851930339
+      },
+      "aprAnalysis": {
+        "confidenceScore": -5584554900.797406,
+        "growthDaily": 6.2861292084632304e-9,
+        "growthWeekly": 4.400290445924261e-8,
+        "growthMonthly": 1.8858387625389692e-7,
+        "growthYearly": 0.000002294437161089079,
+        "intercept": 0.019475236690811748
+      },
+      "cTokenExchangeRateAnalysis": {
+        "confidenceScore": -6410841502.352253,
+        "growthDaily": 4.3104886000890727e-7,
+        "growthWeekly": 0.000003017342020062351,
+        "growthMonthly": 0.000012931465800267219,
+        "growthYearly": 0.00015733283390325116,
+        "intercept": 1.0573852174797038
+      }
+    }
+  },
+  "timeout": "2025-08-15T07:13:50.270Z"
+}

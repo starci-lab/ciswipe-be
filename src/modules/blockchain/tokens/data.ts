@@ -1,5 +1,11 @@
 import { registerEnumType, ObjectType, Field } from "@nestjs/graphql"
-import { createEnumType, ChainKey, Network, TokenType } from "@/modules/common"
+import {
+    createEnumType,
+    ChainKey,
+    Network,
+    TokenType,
+    combinations,
+} from "@/modules/common"
 
 export enum TokenId {
   SolanaSolMainnet = "solanaSolMainnet",
@@ -31,33 +37,33 @@ export class TokenData {
 
 // temporary file
 export interface Project {
-    // project name
-    name: string;
-    // project website
-    website: string;
-    // project social links
-    socialLinks?: Record<string, string>;
+  // project name
+  name: string;
+  // project website
+  website: string;
+  // project social links
+  socialLinks?: Record<string, string>;
 }
 
 export interface Token {
-    // token id
-    id: TokenId;
-    // token icon
-    icon: string;
-    // token name
-    name: string;
-    // token address, put nothing if it's a native token
-    tokenAddress?: string;
-    // token symbol
-    symbol: string;
-    // token decimals
-    decimals: number;
-    // token chain key
-    chainKey: ChainKey;
-    // token type
-    type: TokenType;
-    // project
-    project?: Project;
+  // token id
+  id: TokenId;
+  // token icon
+  icon: string;
+  // token name
+  name: string;
+  // token address, put nothing if it's a native token
+  tokenAddress?: string;
+  // token symbol
+  symbol: string;
+  // token decimals
+  decimals: number;
+  // token chain key
+  chainKey: ChainKey;
+  // token type
+  type: TokenType;
+  // project
+  project?: Project;
 }
 
 export const GraphQLTypeTokenId = createEnumType(TokenId)
@@ -259,3 +265,22 @@ export const tokens: Record<ChainKey, Record<Network, Array<Token>>> = {
         ],
     },
 }
+
+export const tokenPairs: Record<
+  ChainKey,
+  Record<Network, Array<[Token, Token]>>
+> = Object.entries(tokens).reduce(
+    (acc, [chainKey, networks]) => {
+        acc[chainKey as ChainKey] = Object.entries(networks).reduce(
+            (networkAcc, [network, tokenList]) => {
+                networkAcc[network as Network] = combinations(tokenList, 2) as Array<
+          [Token, Token]
+        >
+                return networkAcc
+            },
+      {} as Record<Network, Array<[Token, Token]>>,
+        )
+        return acc
+    },
+  {} as Record<ChainKey, Record<Network, Array<[Token, Token]>>>,
+)

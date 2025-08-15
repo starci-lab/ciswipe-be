@@ -8,22 +8,22 @@ import {
     tokens,
 } from "@/modules/blockchain"
 import {
-    KaminoVaultFetchService,
     Vault,
     VaultRawsData,
-} from "./kamino-fetch.service"
+} from "./kamino-init.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
 import { randomUUID } from "crypto"
 import { Decimal } from "decimal.js"
+import { KaminoVaultInitService } from "./kamino-init.service"
 @Injectable()
 export class KaminoVaultPluginService extends VaultPluginAbstract {
     constructor(
-    private readonly kaminoVaultFetchService: KaminoVaultFetchService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly interestRateConverterService: InterestRateConverterService,
+    private readonly kaminoVaultInitService: KaminoVaultInitService,
     ) {
         super({
             name: "Kamino",
@@ -68,7 +68,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
             throw new Error("Token address not found")
         }
         const vaultRaws = await this.cacheManager.get<VaultRawsData>(
-            this.kaminoVaultFetchService.getVaultsCacheKey(params.network),
+            this.kaminoVaultInitService.getVaultsCacheKey(params.network),
         )
         if (!vaultRaws) {
             return []
@@ -82,7 +82,7 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                         return
                     }
                     const vault = await this.cacheManager.get<Vault>(
-                        this.kaminoVaultFetchService.getVaultCacheKey(
+                        this.kaminoVaultInitService.getVaultCacheKey(
                             params.network,
                             vaultRaw.address,
                         ),
@@ -91,7 +91,6 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                         return
                     }
                     results.push({
-                        id: randomUUID(),
                         outputTokens: {
                             tokens: [
                                 {

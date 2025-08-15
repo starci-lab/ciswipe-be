@@ -1,42 +1,34 @@
 import {
-    createProviderToken,
-    RecordRpcProvider,
+    InterestRateConverterService,
 } from "@/modules/blockchain"
 import {
     DexPluginAbstract,
-    GetDataParams,
     V3ExecuteParams,
-    V3ExecuteResult,
-    V3StrategyAprDuration,
-    V3Strategy,
-    StrategyType,
+    V3ExecuteSingleParams,
 } from "../abstract"
-import { PoolsApiReturn, Raydium } from "@raydium-io/raydium-sdk-v2"
-import {
-    Inject,
-    Injectable,
-    OnApplicationBootstrap,
-    OnModuleInit,
-} from "@nestjs/common"
-import { Connection } from "@solana/web3.js"
+import { Inject, Injectable } from "@nestjs/common"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
-import { createCacheKey } from "@/modules/cache"
-import { VolumeService } from "@/modules/volume"
-import { ChainKey, Network, TokenType } from "@/modules/common"
-import { TokenId, tokens } from "@/modules/blockchain"
+import {
+    ChainKey,
+    combinations,
+    StrategyResult,
+    TokenType,
+} from "@/modules/common"
+import { tokens } from "@/modules/blockchain"
+import {
+    PoolBatch,
+    PoolLines,
+    RaydiumInitService,
+} from "./raydium-init.service"
+import { Decimal } from "decimal.js"
 
 @Injectable()
-export class RaydiumPluginService
-    extends DexPluginAbstract
-    implements OnModuleInit, OnApplicationBootstrap
-{
-    private raydiums: Record<Network, Raydium>
+export class RaydiumPluginService extends DexPluginAbstract {
     constructor(
-    @Inject(createProviderToken(ChainKey.Solana))
-    private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-    private readonly volumeService: VolumeService,
+    private readonly interestRateConverterService: InterestRateConverterService,
+    private readonly raydiumInitService: RaydiumInitService,
     ) {
         super({
             name: "Raydium",
@@ -48,182 +40,141 @@ export class RaydiumPluginService
         })
     }
 
-    protected async getData({
-        ...coreParams
-    }: GetDataParams): Promise<PoolsApiReturn> {
-        const volumeName = `raydium-${coreParams.token1.id}-${coreParams.token2.id}.json`
-        try {
-            if (!coreParams.token1.tokenAddress || !coreParams.token2.tokenAddress) {
-                throw new Error("Token address is required")
-            }
-            const raydium = this.raydiums[coreParams.network]
-            const pools = await raydium.api.fetchPoolByMints({
-                mint1: coreParams.token1.tokenAddress,
-                mint2: coreParams.token2.tokenAddress,
-            })
-            await this.volumeService.writeJsonToDataVolume<PoolsApiReturn>(
-                volumeName,
-                pools,
-            )
-            return pools
-        } catch (error) {
-            console.error(error)
-            // if error happlen, we try to read from volume
-            try {
-                return await this.volumeService.readJsonFromDataVolume<PoolsApiReturn>(
-                    {
-                        name: volumeName,
-                    }
-                )
-            } catch (error) {
-                console.error(error)
-            }
-            throw error
-        }
-    }
-    async onApplicationBootstrap() {
-        const output = await this.v3Execute({
-            network: Network.Mainnet,
-            chainKey: ChainKey.Solana,
-            inputTokens: [
-                {
-                    id: TokenId.SolanaSolMainnet,
-                },
-                {
-                    id: TokenId.SolanaUsdcMainnet,
-                },
-            ],
-            disableCache: false,
-        })
-        console.dir(output, { depth: null })
-    }
-
-    async onModuleInit() {
-        const _raydiums: Partial<Record<Network, Raydium>> = {}
-        for (const network of Object.values(Network)) {
-            _raydiums[network] = await Raydium.load({
-                connection: this.solanaRpcProvider[network],
-            })
-        }
-        this.raydiums = _raydiums as Record<Network, Raydium>
-    }
-
-    // method to add liquidity to a pool
-    protected async v3Execute(params: V3ExecuteParams): Promise<V3ExecuteResult> {
-    // raydium support only for Solana so that we dont care about chainKey
-        if (params.inputTokens.length !== 2) {
+    private async v3ExecuteSingle({
+        network,
+        chainKey,
+        inputTokens,
+    }: V3ExecuteSingleParams): Promise<Array<StrategyResult>> {
+        if (inputTokens.length !== 2) {
             throw new Error("Raydium add liquidity v3 only supports 2 input tokens")
         }
         // get the pool info
-        const [token1, token2] = params.inputTokens
-        // if token1 = token2, throw error
+        const [token1, token2] = inputTokens
         if (token1.id === token2.id) {
             throw new Error(
                 "Raydium add liquidity v3 only supports 2 different input tokens",
             )
         }
-        let [token1Entity, token2Entity] = tokens[ChainKey.Solana][
-            params.network
-        ].filter(
-            (token) => token.id === token1.id || token.id === token2.id,
+        // get the token info
+        const token1Entity = tokens[chainKey][network].find(
+            (token) => token.id === token1.id,
         )
-        // if token1 or token2 = sol, we change to wsol
+        const token2Entity = tokens[chainKey][network].find(
+            (token) => token.id === token2.id,
+        )
+        if (!token1Entity || !token2Entity) {
+            throw new Error("Raydium token not found")
+        }
         if (token1Entity.type === TokenType.Native) {
-            const wrapper = tokens[ChainKey.Solana][params.network].find(
+            const wrapper = tokens[chainKey][network].find(
                 (token) => token.type === TokenType.Wrapper,
             )
             if (!wrapper) {
                 throw new Error("Raydium wrapper token not found")
             }
-            token1Entity = wrapper
         }
         if (token2Entity.type === TokenType.Native) {
-            const wrapper = tokens[ChainKey.Solana][params.network].find(
+            const wrapper = tokens[chainKey][network].find(
                 (token) => token.type === TokenType.Wrapper,
             )
             if (!wrapper) {
                 throw new Error("Raydium wrapper token not found")
             }
-            token2Entity = wrapper
         }
-        if (!token1Entity?.tokenAddress || !token2Entity?.tokenAddress) {
-            return {
-                strategies: [],
-            }
+        const poolBatch = await this.cacheManager.get<PoolBatch>(
+            this.raydiumInitService.getPoolBatchCacheKey(
+                network,
+                token1Entity.id,
+                token2Entity.id,
+            ),
+        )
+        if (!poolBatch) {
+            throw new Error("Raydium pool batch not found")
         }
-        const cacheKey = createCacheKey("Raydium", params)
-        if (!params.disableCache) {
-            const outputResult =
-        await this.cacheManager.get<V3ExecuteResult>(cacheKey)
-            if (outputResult) {
-                return outputResult
-            }
-        }
-        const poolsApiReturn = await this.getData({
-            network: params.network,
-            chainKey: ChainKey.Solana,
-            token1: token1Entity,
-            token2: token2Entity,
-        })
-        // write to file
-        const strategies: Array<V3Strategy> = poolsApiReturn.data
-            .filter((pool) => pool.type === "Concentrated")
-            .sort((poolPrev, poolNext) => poolPrev.tvl - poolNext.tvl)
-            .map((pool) => {
-                const rewardTokenAddresses = pool.rewardDefaultInfos.map(
-                    (info) => info.mint.address,
-                )
-                const rewardTokenIds = rewardTokenAddresses.map((address) => {
-                    const token = tokens[ChainKey.Solana][params.network].find(
-                        (token) => token.tokenAddress === address,
+        const results: Array<StrategyResult> = []
+        const promises: Array<Promise<void>> = []
+        for (const pool of poolBatch.pools) {
+            promises.push(
+                (async () => {
+                    const poolLines = await this.cacheManager.get<PoolLines>(
+                        this.raydiumInitService.getPoolLinesCacheKey(network, pool.id),
                     )
-                    if (!token) {
-                        throw new Error("Raydium reward token not found")
+                    if (!poolLines) {
+                        return
                     }
-                    return token.id
-                })
-                return {
-                    aprs: {
-                        [V3StrategyAprDuration.Day]: {
-                            apr: pool.day.apr,
-                            feeApr: pool.day.feeApr,
-                            rewards: pool.day.rewardApr.map((rewardApr, index) => ({
-                                apr: rewardApr,
-                                tokenId: rewardTokenIds[index],
+                    results.push({
+                        outputTokens: {
+                            tokens: [],
+                        },
+                        metadata: {
+                            poolId: pool.id,
+                            feeRate: pool.feeRate,
+                            tvl: pool.tvl,
+                            openTime: pool.openTime,
+                        },
+                        rewards: {
+                            rewardTokens: pool.rewardDefaultInfos.map((info) => ({
+                                token: {
+                                    id: info.mint.address,
+                                    name: info.mint.name,
+                                    symbol: info.mint.symbol,
+                                    decimals: info.mint.decimals,
+                                    icon: info.mint.logoURI,
+                                },
                             })),
                         },
-                        [V3StrategyAprDuration.Week]: {
-                            apr: pool.week.apr,
-                            feeApr: pool.week.feeApr,
-                            rewards: pool.week.rewardApr.map((rewardApr, index) => ({
-                                apr: rewardApr,
-                                tokenId: rewardTokenIds[index],
-                            })),
+                        yieldSummary: {
+                            aprs: {
+                                base: pool.day.apr,
+                                day: pool.day.apr,
+                                week: pool.week.apr,
+                                month: pool.month.apr,
+                            },
+                            apys: {
+                                base: this.interestRateConverterService
+                                    .toAPY(new Decimal(pool.day.apr), chainKey, network)
+                                    .toNumber(),
+                                day: this.interestRateConverterService
+                                    .toAPY(new Decimal(pool.day.apr), chainKey, network)
+                                    .toNumber(),
+                                week: this.interestRateConverterService
+                                    .toAPY(new Decimal(pool.week.apr), chainKey, network)
+                                    .toNumber(),
+                                month: this.interestRateConverterService
+                                    .toAPY(new Decimal(pool.month.apr), chainKey, network)
+                                    .toNumber(),
+                            },
                         },
-                        [V3StrategyAprDuration.Month]: {
-                            apr: pool.month.apr,
-                            feeApr: pool.month.feeApr,
-                            rewards: pool.month.rewardApr.map((rewardApr, index) => ({
-                                apr: rewardApr,
-                                tokenId: rewardTokenIds[index],
-                            })),
-                        },
-                    },
-                    metadata: {
-                        poolId: pool.id,
-                        feeRate: pool.feeRate,
-                        tvl: pool.tvl,
-                    },
-                    type: StrategyType.AddLiquidityV3,
-                }
-            })
-        if (!params.disableCache) {
-            await this.cacheManager.set<V3ExecuteResult>(cacheKey, {
-                strategies,
-            })
+                    })
+                })(),
+            )
         }
-        return {
-            strategies,
+        await Promise.all(promises)
+        return results
+    }
+
+    // method to add liquidity to a pool
+    protected async v3Execute({
+        network,
+        chainKey,
+        inputTokens,
+    }: V3ExecuteParams): Promise<Array<StrategyResult>> {
+        const tokenPairs = combinations(inputTokens, 2)
+        const results: Array<StrategyResult> = []
+        const promises: Array<Promise<void>> = []
+        for (const tokenPair of tokenPairs) {
+            promises.push(
+                (async () => {
+                    const results = await this.v3ExecuteSingle({
+                        network,
+                        chainKey,
+                        inputTokens: tokenPair,
+                    })
+                    results.push(...results)
+                })(),
+            )
         }
+        await Promise.all(promises)
+        return results
     }
 }
