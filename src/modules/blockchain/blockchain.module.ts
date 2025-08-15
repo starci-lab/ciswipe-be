@@ -2,6 +2,7 @@ import { DynamicModule, Module } from "@nestjs/common"
 import { RpcModule } from "./rpc"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./blockchain.module-definition"
 import { BlockModule } from "./block"
+import { TokensModule } from "./tokens"
 
 @Module({})
 export class BlockchainModule extends ConfigurableModuleClass {
@@ -15,15 +16,20 @@ export class BlockchainModule extends ConfigurableModuleClass {
         const blockModule = BlockModule.register({
             isGlobal: options.isGlobal,
         })
+        const tokensModule = TokensModule.register({
+            isGlobal: options.isGlobal,
+        })
         return {
             ...dynamicModule,
             imports: [
                 rpcModule,
-                blockModule
+                blockModule,
+                tokensModule
             ],
             exports: [
                 rpcModule,
-                blockModule
+                blockModule,
+                tokensModule
             ],
         }
     }

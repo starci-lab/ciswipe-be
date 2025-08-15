@@ -98,47 +98,53 @@ export class KaminoVaultFetchService implements OnModuleInit {
     }
 
     private async loadVaults(network: Network) {
-        this.lockService.withLocks([LOCK_KEYS.VAULTS], network, async () => {
-            try {
-                if (network === Network.Testnet) return
+        this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.VAULT],
+            acquiredKeys: [LOCK_KEYS.VAULTS],
+            releaseKeys: [LOCK_KEYS.VAULTS],
+            network,
+            callback: async () => {
+                try {
+                    if (network === Network.Testnet) return
 
-                if (!this.kaminoVaultClients?.[network]) {
-                    this.logger.warn(`KaminoVaultClient not initialized for ${network}`)
-                    return
+                    if (!this.kaminoVaultClients?.[network]) {
+                        this.logger.warn(`KaminoVaultClient not initialized for ${network}`)
+                        return
+                    }
+
+                    const volumeKey = this.initService.getVaultsVolumeKey(network)
+                    const vaultsCacheKey = this.initService.getVaultsCacheKey(network)
+
+                    const vaults =
+                        await this.volumeService.tryActionOrFallbackToVolume<VaultRawsData>({
+                            name: volumeKey,
+                            action: async () => {
+                                const vaultsRaw =
+                                    await this.kaminoVaultClients[network].getVaults()
+                                const vaultsMapped: VaultRawsData = {
+                                    vaults: vaultsRaw.map((vaultRaw) => ({
+                                        state: vaultRaw?.state?.toJSON(),
+                                        address: vaultRaw?.address,
+                                    })),
+                                    currentIndex: 0,
+                                }
+                                return vaultsMapped
+                            },
+                            folderNames: FOLDER_NAMES,
+                        })
+                    this.indexerService.setVaults(network, vaults.vaults)
+                    this.indexerService.setCurrentIndex(network, vaults.currentIndex)
+                    await this.cacheManager.set(vaultsCacheKey, vaults)
+                    this.logger.verbose(
+                        `Loaded ${vaults.vaults.length} vaults for ${network} from API or volume fallback.`,
+                    )
+                } catch (error) {
+                    this.logger.error(
+                        `Error loading vaults for ${network}: ${error.message}`,
+                    )
                 }
-
-                const volumeKey = this.initService.getVaultsVolumeKey(network)
-                const vaultsCacheKey = this.initService.getVaultsCacheKey(network)
-
-                const vaults =
-                    await this.volumeService.tryActionOrFallbackToVolume<VaultRawsData>({
-                        name: volumeKey,
-                        action: async () => {
-                            const vaultsRaw =
-                                await this.kaminoVaultClients[network].getVaults()
-                            const vaultsMapped: VaultRawsData = {
-                                vaults: vaultsRaw.map((vaultRaw) => ({
-                                    state: vaultRaw?.state?.toJSON(),
-                                    address: vaultRaw?.address,
-                                })),
-                                currentIndex: 0,
-                            }
-                            return vaultsMapped
-                        },
-                        folderNames: FOLDER_NAMES,
-                    })
-                this.indexerService.setVaults(network, vaults.vaults)
-                this.indexerService.setCurrentIndex(network, vaults.currentIndex)
-                await this.cacheManager.set(vaultsCacheKey, vaults)
-                this.logger.verbose(
-                    `Loaded ${vaults.vaults.length} vaults for ${network} from API or volume fallback.`,
-                )
-            } catch (error) {
-                this.logger.error(
-                    `Error loading vaults for ${network}: ${error.message}`,
-                )
             }
-        })
+        })  
     }
 
     private async computeRegression(
@@ -168,124 +174,131 @@ export class KaminoVaultFetchService implements OnModuleInit {
     }
 
     private async loadVault(network: Network) {
-        this.lockService.withLocks([LOCK_KEYS.VAULT], network, async () => {
-            if (network === Network.Testnet) return
-            const currentIndex = this.indexerService.getCurrentIndex(network)
-            const vaults = this.indexerService.getVaults(network)
-            const vaultToLoad = vaults[currentIndex]
-            if (!vaults?.length) return
-            try {
-                if (!this.kaminoVaultClients?.[network]) {
-                    this.logger.warn(`KaminoVaultClient not initialized for ${network}`)
-                    return
-                }
-                // if current index is greater than the length of the vaults, return
-                if (currentIndex >= vaults.length) {
-                    this.logger.debug(
-                        `Reached end of vault list for ${network}, stopping fetch.`,
-                    )
-                    return
-                }
-                if (!vaultToLoad?.address) {
-                    this.logger.error(
-                        `Vault address missing for index ${currentIndex} (${network})`,
-                    )
-                    return
-                }
-                const vaultVolumeName = this.initService.getVaultVolumeKey(
-                    network,
-                    vaultToLoad.address.toString(),
-                )
-                const vaultCacheKey = this.initService.getVaultCacheKey(
-                    network,
-                    vaultToLoad.address,
-                )
-                const vault =
-                    await this.volumeService.tryActionOrFallbackToVolume<Vault>({
-                        name: vaultVolumeName,
-                        folderNames: FOLDER_NAMES,
-                        action: async () => {
-                            if (!vaultToLoad.address) {
-                                throw new Error("Vault address not found")
-                            }
-                            // Fetch metrics from API
-                            const metrics = await this.kaminoApiService.getVaultMetrics({
-                                vaultPubkey: vaultToLoad.address?.toString(),
-                            })
-                            // Fetch metrics history from API (1 year)
-                            const metricsHistory =
-                                await this.kaminoApiService.getVaultMetricsHistory({
-                                    vaultPubkey: vaultToLoad.address.toString(),
-                                    startDate: dayjs().subtract(1, "year").toISOString(),
-                                    endDate: dayjs().toISOString(),
-                                })
-                            // Compute regression for apy, sharePrice, tvl
-                            const { apyRegression, sharePriceRegression, tvlRegression } =
-                                await this.computeRegression(metricsHistory)
-                            // Onchain shareMint token spl metadata
-                            return {
-                                address: vaultToLoad.address.toString(),
-                                metrics,
-                                state: vaultToLoad.state,
-                                metricsHistory,
-                                strategyAnalysis: {
-                                    apyAnalysis: {
-                                        confidenceScore: apyRegression.rSquared,
-                                        growthDaily: apyRegression.slope * DAY,
-                                        growthWeekly: apyRegression.slope * DAY * 7,
-                                        growthMonthly: apyRegression.slope * DAY * 30,
-                                        growthYearly: apyRegression.slope * DAY * 365,
-                                        intercept: apyRegression.intercept,
-                                    },
-                                    shareTokenPriceAnalysis: {
-                                        confidenceScore: sharePriceRegression.rSquared,
-                                        growthDaily: sharePriceRegression.slope * DAY,
-                                        growthWeekly: sharePriceRegression.slope * DAY * 7,
-                                        growthMonthly: sharePriceRegression.slope * DAY * 30,
-                                        growthYearly: sharePriceRegression.slope * DAY * 365,
-                                        intercept: sharePriceRegression.intercept,
-                                    },
-                                    tvlAnalysis: {
-                                        confidenceScore: tvlRegression.rSquared,
-                                        growthDaily: tvlRegression.slope * DAY,
-                                        growthWeekly: tvlRegression.slope * DAY * 7,
-                                        growthMonthly: tvlRegression.slope * DAY * 30,
-                                        growthYearly: tvlRegression.slope * DAY * 365,
-                                        intercept: tvlRegression.intercept,
-                                    },
-                                },
-                            }
-                        },
-                    })
-                await this.cacheManager.set(vaultCacheKey, vault)
-                this.logger.debug(
-                    `Updated vault ${vaultToLoad.address} (${network}) from API`,
-                )
-            } catch (error) {
-                this.logger.error(
-                    `Error loading vault ${vaultToLoad?.address} (${network}): ${error.message}`,
-                    error,
-                )
-            } finally {
+        this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.VAULT, LOCK_KEYS.VAULTS],
+            acquiredKeys: [LOCK_KEYS.VAULT],
+            // not authorize to release the vaults lock
+            releaseKeys: [LOCK_KEYS.VAULT],
+            network,
+            callback: async () => {
+                if (network === Network.Testnet) return
+                const currentIndex = this.indexerService.getCurrentIndex(network)
+                const vaults = this.indexerService.getVaults(network)
+                const vaultToLoad = vaults[currentIndex]
+                if (!vaults?.length) return
                 try {
-                    this.indexerService.nextIndex(network)
-                    // update the vaults data
-                    await this.volumeService.updateJsonFromDataVolume<VaultRawsData>({
-                        name: this.initService.getVaultsVolumeKey(network),
-                        folderNames: FOLDER_NAMES,
-                        updateFn: (prevData) => {
-                            prevData.currentIndex =
-                            this.indexerService.getCurrentIndex(network)
-                            return prevData
-                        },
-                    })
-                }  catch (error) {
-                    this.logger.error(
-                        `Error updating current index for ${network}: ${error.message}`,
-                        error.stack,
+                    if (!this.kaminoVaultClients?.[network]) {
+                        this.logger.warn(`KaminoVaultClient not initialized for ${network}`)
+                        return
+                    }
+                    // if current index is greater than the length of the vaults, return
+                    if (currentIndex >= vaults.length) {
+                        this.logger.debug(
+                            `Reached end of vault list for ${network}, stopping fetch.`,
+                        )
+                        return
+                    }
+                    if (!vaultToLoad?.address) {
+                        this.logger.error(
+                            `Vault address missing for index ${currentIndex} (${network})`,
+                        )
+                        return
+                    }
+                    const vaultVolumeName = this.initService.getVaultVolumeKey(
+                        network,
+                        vaultToLoad.address.toString(),
                     )
+                    const vaultCacheKey = this.initService.getVaultCacheKey(
+                        network,
+                        vaultToLoad.address,
+                    )
+                    const vault =
+                        await this.volumeService.tryActionOrFallbackToVolume<Vault>({
+                            name: vaultVolumeName,
+                            folderNames: FOLDER_NAMES,
+                            action: async () => {
+                                if (!vaultToLoad.address) {
+                                    throw new Error("Vault address not found")
+                                }
+                                // Fetch metrics from API
+                                const metrics = await this.kaminoApiService.getVaultMetrics({
+                                    vaultPubkey: vaultToLoad.address?.toString(),
+                                })
+                                // Fetch metrics history from API (1 year)
+                                const metricsHistory =
+                                    await this.kaminoApiService.getVaultMetricsHistory({
+                                        vaultPubkey: vaultToLoad.address.toString(),
+                                        startDate: dayjs().subtract(1, "year").toISOString(),
+                                        endDate: dayjs().toISOString(),
+                                    })
+                                // Compute regression for apy, sharePrice, tvl
+                                const { apyRegression, sharePriceRegression, tvlRegression } =
+                                    await this.computeRegression(metricsHistory)
+                                // Onchain shareMint token spl metadata
+                                return {
+                                    address: vaultToLoad.address.toString(),
+                                    metrics,
+                                    state: vaultToLoad.state,
+                                    metricsHistory,
+                                    strategyAnalysis: {
+                                        apyAnalysis: {
+                                            confidenceScore: apyRegression.rSquared,
+                                            growthDaily: apyRegression.slope * DAY,
+                                            growthWeekly: apyRegression.slope * DAY * 7,
+                                            growthMonthly: apyRegression.slope * DAY * 30,
+                                            growthYearly: apyRegression.slope * DAY * 365,
+                                            intercept: apyRegression.intercept,
+                                        },
+                                        shareTokenPriceAnalysis: {
+                                            confidenceScore: sharePriceRegression.rSquared,
+                                            growthDaily: sharePriceRegression.slope * DAY,
+                                            growthWeekly: sharePriceRegression.slope * DAY * 7,
+                                            growthMonthly: sharePriceRegression.slope * DAY * 30,
+                                            growthYearly: sharePriceRegression.slope * DAY * 365,
+                                            intercept: sharePriceRegression.intercept,
+                                        },
+                                        tvlAnalysis: {
+                                            confidenceScore: tvlRegression.rSquared,
+                                            growthDaily: tvlRegression.slope * DAY,
+                                            growthWeekly: tvlRegression.slope * DAY * 7,
+                                            growthMonthly: tvlRegression.slope * DAY * 30,
+                                            growthYearly: tvlRegression.slope * DAY * 365,
+                                            intercept: tvlRegression.intercept,
+                                        },
+                                    },
+                                }
+                            },
+                        })
+                    await this.cacheManager.set(vaultCacheKey, vault)
+                    this.logger.debug(
+                        `Updated vault ${vaultToLoad.address} (${network}) from API`,
+                    )
+                } catch (error) {
+                    this.logger.error(
+                        `Error loading vault ${vaultToLoad?.address} (${network}): ${error.message}`,
+                        error,
+                    )
+                } finally {
+                    try {
+                        this.indexerService.nextIndex(network)
+                        // update the vaults data
+                        await this.volumeService.updateJsonFromDataVolume<VaultRawsData>({
+                            name: this.initService.getVaultsVolumeKey(network),
+                            folderNames: FOLDER_NAMES,
+                            updateFn: (prevData) => {
+                                prevData.currentIndex =
+                                    this.indexerService.getCurrentIndex(network)
+                                return prevData
+                            },
+                        })
+                    } catch (error) {
+                        this.logger.error(
+                            `Error updating current index for ${network}: ${error.message}`,
+                            error.stack,
+                        )
+                    }
                 }
-            }
+            },
         })
     }
 }

@@ -4,6 +4,7 @@ import { RaydiumPluginService } from "./raydium-plugin.service"
 import { RaydiumFetchService } from "./raydium-fetch.service"
 import { RaydiumIndexerService } from "./raydium-indexer.service"
 import { RaydiumInitService } from "./raydium-init.service"
+import { RaydiumApiService } from "./raydium-api.service"
 
 @Module({
     providers: [
@@ -11,6 +12,7 @@ import { RaydiumInitService } from "./raydium-init.service"
         RaydiumFetchService,
         RaydiumIndexerService,
         RaydiumInitService,
+        RaydiumApiService,
     ],
     exports: [
         RaydiumPluginService,

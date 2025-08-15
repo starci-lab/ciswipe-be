@@ -7,6 +7,7 @@ import { createCacheKey } from "@/modules/cache"
 import { Token, tokenPairs } from "@/modules/blockchain"
 import { PoolBatch, PoolLines, GlobalData, RaydiumIndexerService } from "./raydium-indexer.service"
 import { FOLDER_NAMES } from "./constants"
+import { TokenUtilsService } from "@/modules/blockchain/tokens"
 
 @Injectable()
 export class RaydiumInitService {
@@ -16,10 +17,11 @@ export class RaydiumInitService {
         private readonly volumeService: VolumeService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly indexerService: RaydiumIndexerService,
+        private readonly tokenUtilsService: TokenUtilsService,
     ) {}
 
     public getPoolBatchCacheKey(network: Network, token1: string, token2: string) {
-        [token1, token2] = this.ensureTokensOrder(token1, token2)
+        [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(token1, token2)
         return createCacheKey("pool-batch", {
             network,
             token1,
@@ -33,16 +35,8 @@ export class RaydiumInitService {
             poolId,
         })
     }
-
-    private ensureTokensOrder(token1: string, token2: string) {
-        if (Buffer.byteLength(token1) > Buffer.byteLength(token2)) {
-            [token1, token2] = [token2, token1]
-        }
-        return [token1, token2]
-    }
-
     public getPoolBatchVolumeKey(network: Network, token1: string, token2: string) {
-        [token1, token2] = this.ensureTokensOrder(token1, token2)
+        [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(token1, token2)
         return `pool-batch-${network}-${token1}-${token2}.json`
     }
 
@@ -57,8 +51,10 @@ export class RaydiumInitService {
     private async loadAndCachePoolBatchFromVolume(
         network: Network,
         token1: Token, 
-        token2: Token
+        token2: Token,
+        currentIndex: number
     ) {
+        [token1, token2] = this.tokenUtilsService.ensureTokensOrder(token1, token2)
         const poolBatchVolumeName = this.getPoolBatchVolumeKey(network, token1.id, token2.id)
         if (!await this.volumeService.existsInDataVolume({
             name: poolBatchVolumeName,
@@ -72,6 +68,7 @@ export class RaydiumInitService {
             this.getPoolBatchCacheKey(network, token1.id, token2.id),
             poolBatch
         )
+        this.indexerService.setV3PoolBatch(network, currentIndex, poolBatch.pools)
         return poolBatch
     }
     
@@ -103,7 +100,7 @@ export class RaydiumInitService {
                     (async () => {
                         const [token1, token2] = pairs[index] || []
                         if (!token1 || !token2) return
-                        const poolBatch = await this.loadAndCachePoolBatchFromVolume(network, token1, token2)
+                        const poolBatch = await this.loadAndCachePoolBatchFromVolume(network, token1, token2, index)
                         if (!poolBatch?.pools) return
                         const internalPromises: Array<Promise<void>> = []  
                         for (const pool of poolBatch.pools) {   
@@ -114,8 +111,9 @@ export class RaydiumInitService {
                         await Promise.all(internalPromises)
                     })()
                 )
-                await Promise.all(promises)
             }
+            await Promise.all(promises)
+            this.logger.fatal(`Initialized batches for ${network}: ${this.indexerService.getInitializedBatches(network)}`)
         }
     }
 

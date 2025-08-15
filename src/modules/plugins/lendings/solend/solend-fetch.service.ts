@@ -91,180 +91,186 @@ export class SolendLendingFetchService implements OnModuleInit {
     }
 
     async loadReserveMetadata(network: Network) {
-        this.lockService.withLocks([
-            LOCK_KEYS.RESERVE_METADATA,
-            LOCK_KEYS.LENDING_POOLS
-        ], network, async () => {
-            const currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
-            const reserves = this.solendLendingIndexerService.getReserves(network)
-            if (!reserves?.length) {
-                this.logger.verbose(`No reserves to load for ${network}`)
-                return
-            }
-            try {
-                if (network === Network.Testnet) return
+        this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.RESERVE_METADATA, LOCK_KEYS.LENDING_POOLS],
+            acquiredKeys: [LOCK_KEYS.RESERVE_METADATA],
+            // not authorize to release the lending pools lock
+            releaseKeys: [LOCK_KEYS.RESERVE_METADATA],
+            network,
+            callback: async () => {
+                const currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
+                const reserves = this.solendLendingIndexerService.getReserves(network)
                 if (!reserves?.length) {
                     this.logger.verbose(`No reserves to load for ${network}`)
                     return
                 }
-            
-                if (typeof currentIndex === "undefined") {
-                    this.solendLendingIndexerService.setCurrentIndex(network, 0)
-                    return
-                }
-            
-                if (currentIndex >= reserves.length) {
-                    this.logger.verbose(`No more reserves to load for ${network}`)
-                    return
-                }
-            
-                const reserve = reserves[currentIndex]
-                if (!reserve) {
-                    this.logger.warn(`No reserve found at index ${currentIndex} for ${network}`)
-                    return
-                }
-
-                const reserveMetadataVolumeKey = this.solendLendingInitService.getReserveMetadataVolumeKey(
-                    network,
-                    reserve.address,
-                )
-            
-                const metadata = await this.volumeService.tryActionOrFallbackToVolume<LendingReserveMetadata>(
-                    {
-                        name: reserveMetadataVolumeKey,
-                        action: async (): Promise<LendingReserveMetadata> => {
-                            const results = await this.solendApiService.getHistoricalInterestRates({
-                                ids: [reserve.address],
-                                span: "1d",
-                            })
-                        
-                            if (!results || !results[reserve.address]) {
-                                throw new Error(`No results found with id ${reserve.address}`)
-                            }
-                        
-                            const strategyAnalysis = this.computeRegression(
-                                results,
-                                reserve.address,
-                            )
-                        
-                            return {
-                                metricsHistory: results[reserve.address],
-                                strategyAnalysis: strategyAnalysis,
-                            }
-                        },
-                        folderNames: FOLDER_NAMES,
-                    },
-                )
-            
-                // store in cache
-                await this.cacheManager.set(
-                    this.solendLendingInitService.getReserveMetadataCacheKey(network, reserve.address),
-                    metadata,
-                )
-                this.logger.verbose(
-                    `Loaded historical interest rates for ${network} reserve ${reserve.address}`,
-                )
-            } catch (error) {
-                this.logger.error(
-                    `Error loading metadata for ${network} reserve: ${error.message}`,
-                    error.stack,
-                )
-            } finally {
                 try {
-                // plus to next index, regardless of success or failure
-                    this.solendLendingIndexerService.nextIndex(network)
-                    // update current index in volume
-                    await this.volumeService.updateJsonFromDataVolume<PoolsData>({
-                        name: this.solendLendingInitService.getLendingPoolsVolumeKey(network),
-                        updateFn: (prevData) => {
-                            prevData.currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
-                            return prevData
+                    if (network === Network.Testnet) return
+                    if (!reserves?.length) {
+                        this.logger.verbose(`No reserves to load for ${network}`)
+                        return
+                    }
+            
+                    if (typeof currentIndex === "undefined") {
+                        this.solendLendingIndexerService.setCurrentIndex(network, 0)
+                        return
+                    }
+            
+                    if (currentIndex >= reserves.length) {
+                        this.logger.verbose(`No more reserves to load for ${network}`)
+                        return
+                    }
+            
+                    const reserve = reserves[currentIndex]
+                    if (!reserve) {
+                        this.logger.warn(`No reserve found at index ${currentIndex} for ${network}`)
+                        return
+                    }
+
+                    const reserveMetadataVolumeKey = this.solendLendingInitService.getReserveMetadataVolumeKey(
+                        network,
+                        reserve.address,
+                    )
+            
+                    const metadata = await this.volumeService.tryActionOrFallbackToVolume<LendingReserveMetadata>(
+                        {
+                            name: reserveMetadataVolumeKey,
+                            action: async (): Promise<LendingReserveMetadata> => {
+                                const results = await this.solendApiService.getHistoricalInterestRates({
+                                    ids: [reserve.address],
+                                    span: "1d",
+                                })
+                        
+                                if (!results || !results[reserve.address]) {
+                                    throw new Error(`No results found with id ${reserve.address}`)
+                                }
+                        
+                                const strategyAnalysis = this.computeRegression(
+                                    results,
+                                    reserve.address,
+                                )
+                        
+                                return {
+                                    metricsHistory: results[reserve.address],
+                                    strategyAnalysis: strategyAnalysis,
+                                }
+                            },
+                            folderNames: FOLDER_NAMES,
                         },
-                        folderNames: FOLDER_NAMES,
-                    })  
+                    )
+            
+                    // store in cache
+                    await this.cacheManager.set(
+                        this.solendLendingInitService.getReserveMetadataCacheKey(network, reserve.address),
+                        metadata,
+                    )
+                    this.logger.verbose(
+                        `Loaded historical interest rates for ${network} reserve ${reserve.address}`,
+                    )
                 } catch (error) {
                     this.logger.error(
-                        `Error updating current index for ${network}: ${error.message}`,
+                        `Error loading metadata for ${network} reserve: ${error.message}`,
                         error.stack,
                     )
+                } finally {
+                    try {
+                        // plus to next index, regardless of success or failure
+                        this.solendLendingIndexerService.nextIndex(network)
+                        // update current index in volume
+                        await this.volumeService.updateJsonFromDataVolume<PoolsData>({
+                            name: this.solendLendingInitService.getLendingPoolsVolumeKey(network),
+                            updateFn: (prevData) => {
+                                prevData.currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
+                                return prevData
+                            },
+                            folderNames: FOLDER_NAMES,
+                        })  
+                    } catch (error) {
+                        this.logger.error(
+                            `Error updating current index for ${network}: ${error.message}`,
+                            error.stack,
+                        )
+                    }
                 }
-            }
+            },
         })
     }
 
     async loadLendingPools(network: Network) {
-        this.lockService.withLocks([
-            LOCK_KEYS.LENDING_POOLS,
-        ], 
-        network, 
-        async () => {
-            try {
-                if (network === Network.Testnet) return
-                const lendingPoolsVolumeKey = this.solendLendingInitService.getLendingPoolsVolumeKey(network)
-                const lendingPoolsRaw = await this.volumeService.tryActionOrFallbackToVolume<PoolsData>({
-                    name: lendingPoolsVolumeKey,
-                    action: async (): Promise<PoolsData> => {
-                        const { results: markets } = await this.solendApiService.getMarkets(
-                            "all",
-                            network,
-                        )
-                        const reserves = await this.solendRpcService.fetchReserves({
-                            network,
-                        })
-                        const rewards = await this.solendApiService.getExternalRewardStats()
-                        const lendingPools: Array<LendingPool> = markets.map((market) => ({
-                            market,
-                            reserves: reserves.reserves
-                                .filter(
-                                    (reserve) => reserve.data.lendingMarket.toBase58() === market.address,
-                                )
-                                .map<LendingReserve>((reserve) => ({
-                                    reserve,
-                                    rewards: {
-                                        rewardTokens: rewards
-                                            .filter((reward) => reward.reserveID === reserve.address)
-                                            .map<StrategyRewardToken>((reward) => ({
-                                                token: {
-                                                    id: randomUUID(),
-                                                    address: reward.rewardMint,
-                                                    type: TokenType.Regular,
-                                                },
-                                                rewardPerShare: Number(reward.rewardsPerShare),
-                                            })),
-                                    },
-                                })),
-                        }))
-                        return {
-                            pools: lendingPools,
-                            currentIndex: 0,
-                        }
-                    },
-                    folderNames: FOLDER_NAMES,
-                })
-                // Update indexer service with new data
-                this.solendLendingIndexerService.setCurrentIndex(network, lendingPoolsRaw.currentIndex)
-                this.solendLendingIndexerService.setReserves(
-                    network, 
-                    lendingPoolsRaw.pools
-                        .map((pool) => pool.reserves)
-                        .flat()
-                        .map((reserve) => reserve.reserve))
+        this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.LENDING_POOLS],
+            acquiredKeys: [LOCK_KEYS.LENDING_POOLS],
+            releaseKeys: [LOCK_KEYS.LENDING_POOLS],
+            network,
+            callback: async () => {
+                try {
+                    if (network === Network.Testnet) return
+                    const lendingPoolsVolumeKey = this.solendLendingInitService.getLendingPoolsVolumeKey(network)
+                    const lendingPoolsRaw = await this.volumeService.tryActionOrFallbackToVolume<PoolsData>({
+                        name: lendingPoolsVolumeKey,
+                        action: async (): Promise<PoolsData> => {
+                            const { results: markets } = await this.solendApiService.getMarkets(
+                                "all",
+                                network,
+                            )
+                            const reserves = await this.solendRpcService.fetchReserves({
+                                network,
+                            })
+                            const rewards = await this.solendApiService.getExternalRewardStats()
+                            const lendingPools: Array<LendingPool> = markets.map((market) => ({
+                                market,
+                                reserves: reserves.reserves
+                                    .filter(
+                                        (reserve) => reserve.data.lendingMarket.toBase58() === market.address,
+                                    )
+                                    .map<LendingReserve>((reserve) => ({
+                                        reserve,
+                                        rewards: {
+                                            rewardTokens: rewards
+                                                .filter((reward) => reward.reserveID === reserve.address)
+                                                .map<StrategyRewardToken>((reward) => ({
+                                                    token: {
+                                                        id: randomUUID(),
+                                                        address: reward.rewardMint,
+                                                        type: TokenType.Regular,
+                                                    },
+                                                    rewardPerShare: Number(reward.rewardsPerShare),
+                                                })),
+                                        },
+                                    })),
+                            }))
+                            return {
+                                pools: lendingPools,
+                                currentIndex: 0,
+                            }
+                        },
+                        folderNames: FOLDER_NAMES,
+                    })
+                    // Update indexer service with new data
+                    this.solendLendingIndexerService.setCurrentIndex(network, lendingPoolsRaw.currentIndex)
+                    this.solendLendingIndexerService.setReserves(
+                        network, 
+                        lendingPoolsRaw.pools
+                            .map((pool) => pool.reserves)
+                            .flat()
+                            .map((reserve) => reserve.reserve))
             
-                // Store in cache
-                await this.cacheManager.set(
-                    this.solendLendingInitService.getLendingPoolsCacheKey(network),
-                    lendingPoolsRaw,
-                )
+                    // Store in cache
+                    await this.cacheManager.set(
+                        this.solendLendingInitService.getLendingPoolsCacheKey(network),
+                        lendingPoolsRaw,
+                    )
             
-                this.logger.verbose(
-                    `Loaded ${lendingPoolsRaw.pools.length} pools for ${network} from API or volume fallback.`,
-                )
-            } catch (error) {
-                this.logger.error(
-                    `Error loading lending pools for ${network}: ${error.message}`,
-                    error.stack,
-                )
-            }
+                    this.logger.verbose(
+                        `Loaded ${lendingPoolsRaw.pools.length} pools for ${network} from API or volume fallback.`,
+                    )
+                } catch (error) {
+                    this.logger.error(
+                        `Error loading lending pools for ${network}: ${error.message}`,
+                        error.stack,
+                    )
+                }
+            },
         })
     }
 

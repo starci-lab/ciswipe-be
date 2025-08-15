@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { Network } from "@/modules/common"
 
 @Injectable()
 export class LockService {
+    private logger = new Logger(LockService.name)
     private locks = new Map<string, Set<Network>>()
 
     /** Check and acquire lock */
@@ -23,25 +24,31 @@ export class LockService {
     /**
    * With lock
    */
-    async withLocks(
-        keys: Array<string>, 
-        network: Network, 
-        callback: () => Promise<void> | void
-    ): Promise<void> {
-        // try acquire all keys
-        const acquired: string[] = []
-        for (const key of keys) {
-            if (!this.acquire(key, network)) {
-            // if any key fails, release all acquired keys
-                for (const k of acquired) this.release(k, network)
+    async withLocks({
+        blockedKeys,
+        acquiredKeys,
+        releaseKeys,
+        network,
+        callback,
+    }: WithLockParams): Promise<void> {
+        // if blocked keys is not empty, we will block all keys
+        for (const blockKey of blockedKeys) {
+            if (this.isLocked(blockKey, network)) {
+                this.logger.debug(
+                    `This execution is blocked with ${blockKey}`,
+                )
+                return
             }
-            acquired.push(key)
-        }    
+        }
+        // try acquire all keys
+        for (const acquiredKey of acquiredKeys) {
+            this.acquire(acquiredKey, network)
+        }
         try {
             await callback()
         } finally {
             // release all keys
-            for (const k of acquired) this.release(k, network)
+            for (const releaseKey of releaseKeys) this.release(releaseKey, network)
         }
     }
 
@@ -49,4 +56,15 @@ export class LockService {
     isLocked(key: string, network: Network): boolean {
         return this.locks.get(key)?.has(network) ?? false
     }
+}
+
+export interface WithLockParams {
+  // the keys you want to block
+  blockedKeys: Array<string>;
+  // the keys you want to acquired
+  acquiredKeys: Array<string>;
+  // the keys you want to release
+  releaseKeys: Array<string>;
+  network: Network;
+  callback: () => Promise<void> | void;
 }
