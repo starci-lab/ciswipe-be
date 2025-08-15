@@ -24,12 +24,8 @@ import { Cache } from "cache-manager"
 import dayjs from "dayjs"
 import { Logger } from "@nestjs/common"
 import { RegressionService, Point } from "@/modules/probability-statistics"
-import { KaminoVaultIndexerService } from "./kamino-indexer.service"
-import {
-    KaminoVaultInitService,
-    VaultRawsData,
-    Vault,
-} from "./kamino-init.service"
+import { KaminoVaultIndexerService, VaultRawsData, Vault } from "./kamino-indexer.service"
+import { KaminoVaultInitService } from "./kamino-init.service"
 import { LockService } from "@/modules/misc"
 import { FOLDER_NAMES } from "./constants"
 const DAY = 60 * 60 * 24
@@ -134,7 +130,6 @@ export class KaminoVaultFetchService implements OnModuleInit {
                 this.indexerService.setVaults(network, vaults.vaults)
                 this.indexerService.setCurrentIndex(network, vaults.currentIndex)
                 await this.cacheManager.set(vaultsCacheKey, vaults)
-
                 this.logger.verbose(
                     `Loaded ${vaults.vaults.length} vaults for ${network} from API or volume fallback.`,
                 )

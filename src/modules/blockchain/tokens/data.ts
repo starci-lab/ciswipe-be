@@ -284,3 +284,4 @@ export const tokenPairs: Record<
     },
   {} as Record<ChainKey, Record<Network, Array<[Token, Token]>>>,
 )
+console.log(tokenPairs)

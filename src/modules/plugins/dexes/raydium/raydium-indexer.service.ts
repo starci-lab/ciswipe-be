@@ -2,6 +2,26 @@ import { Injectable } from "@nestjs/common"
 import { Network } from "@/modules/common"
 import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
 
+export interface PoolBatch {
+    pools: Array<ApiV3PoolInfoBaseItem>;
+    currentLineIndex: number;
+}
+
+export interface PoolLine {
+    liquidity: number;
+    price: number;
+    tick: number;
+}
+
+export interface PoolLines {
+    poolId: string;
+    lines: Array<PoolLine>;
+}
+
+export interface GlobalData {
+    currentIndex: number
+}
+
 @Injectable()
 export class RaydiumIndexerService {
     // current index for load pools

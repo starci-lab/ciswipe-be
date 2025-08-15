@@ -10,7 +10,7 @@ import {
 import {
     Vault,
     VaultRawsData,
-} from "./kamino-init.service"
+} from "./kamino-indexer.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"

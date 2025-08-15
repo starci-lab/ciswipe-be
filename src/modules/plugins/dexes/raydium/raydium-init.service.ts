@@ -4,29 +4,9 @@ import { Cache } from "cache-manager"
 import { Network, ChainKey } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
 import { createCacheKey } from "@/modules/cache"
-import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
 import { tokenPairs } from "@/modules/blockchain"
+import { PoolBatch, PoolLines, GlobalData, RaydiumIndexerService } from "./raydium-indexer.service"
 import { FOLDER_NAMES } from "./constants"
-
-export interface PoolBatch {
-    pools: Array<ApiV3PoolInfoBaseItem>;
-    currentLineIndex: number;
-}
-
-export interface PoolLine {
-    liquidity: number;
-    price: number;
-    tick: number;
-}
-
-export interface PoolLines {
-    poolId: string;
-    lines: Array<PoolLine>;
-}
-
-export interface GlobalData {
-    currentIndex: number
-}
 
 @Injectable()
 export class RaydiumInitService {
@@ -34,7 +14,8 @@ export class RaydiumInitService {
 
     constructor(
         private readonly volumeService: VolumeService,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+        private readonly indexerService: RaydiumIndexerService,
     ) {}
 
     public getPoolBatchCacheKey(network: Network, token1: string, token2: string) {
@@ -73,12 +54,12 @@ export class RaydiumInitService {
         return `global-data-${network}.json`
     }
 
-    async cacheAllOnInit(currentIndexes: Record<Network, number>) {
+    async cacheAllOnInit(
+    ) {
         for (const network of Object.values(Network)) {
             if (network === Network.Testnet) continue
-    
-            const pairs = tokenPairs[network][ChainKey.Solana] || []
-            for (let index = 0; index < currentIndexes[network]; index++) {
+            const pairs = tokenPairs[ChainKey.Solana][network] || []
+            for (let index = 0; index < this.indexerService.getCurrentIndex(network); index++) {
                 const [token1, token2] = pairs[index] || []
                 if (!token1 || !token2) continue
                 try {

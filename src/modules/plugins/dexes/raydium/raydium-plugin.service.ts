@@ -16,10 +16,12 @@ import {
 } from "@/modules/common"
 import { tokens } from "@/modules/blockchain"
 import {
-    PoolBatch,
-    PoolLines,
     RaydiumInitService,
 } from "./raydium-init.service"
+import {
+    PoolBatch,
+    PoolLines,
+} from "./raydium-indexer.service"
 import { Decimal } from "decimal.js"
 
 @Injectable()

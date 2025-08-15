@@ -7,10 +7,12 @@ import {
     tokens,
 } from "@/modules/blockchain"
 import {
-    LendingReserveMetadata,
-    PoolsData,
     SolendLendingInitService,
 } from "./solend-init.service"
+import {
+    LendingReserveMetadata,
+    PoolsData,
+} from "./solend-fetch.service"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"

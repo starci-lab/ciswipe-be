@@ -3,6 +3,8 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import {
     Network,
+    StrategyAnalysis,
+    StrategyRewards,
     StrategyRewardToken,
     TokenType,
 } from "@/modules/common"
@@ -11,8 +13,10 @@ import { VolumeService } from "@/modules/volume"
 import { RegressionService, Point } from "@/modules/probability-statistics"
 
 import {
+    HistoricalInterestRateItem,
     HistoricalInterestRatesResponse,
     SolendLendingApiService,
+    Market,
 } from "./solend-api.service"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { SolendRpcService } from "./solend-rpc.service"
@@ -20,14 +24,34 @@ import { randomUUID } from "crypto"
 import { SolendLendingInitService } from "./solend-init.service"
 import { SolendLendingIndexerService } from "./solend-indexer.service"
 import { FOLDER_NAMES } from "./constants"
-import { LendingReserveMetadata, LendingPool, LendingReserve, PoolsData } from "./solend-init.service"
 import { LockService } from "@/modules/misc"
+import { WithAddressAndStats } from "./solend-rpc.service"
+import { Reserve } from "./schema"
 
 const DAY = 60 * 60 * 24
 const LOCK_KEYS = {
     LENDING_POOLS: "lending-pools",
     RESERVE_METADATA: "reserve-metadata",
 }
+
+export interface LendingReserve {
+    reserve: WithAddressAndStats<Reserve>;
+    rewards: StrategyRewards;
+}
+
+export interface LendingReserveMetadata {
+    metricsHistory: Array<HistoricalInterestRateItem>;
+    strategyAnalysis: StrategyAnalysis;
+}
+export interface LendingPool {
+    market: Market;
+    reserves: Array<LendingReserve>;
+}
+
+export interface PoolsData {
+    pools: Array<LendingPool>;
+    currentIndex: number;
+}    
 
 @Injectable()
 export class SolendLendingFetchService implements OnModuleInit {
@@ -73,7 +97,6 @@ export class SolendLendingFetchService implements OnModuleInit {
         ], network, async () => {
             const currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
             const reserves = this.solendLendingIndexerService.getReserves(network)
-        
             try {
                 if (network === Network.Testnet) return
                 if (!reserves?.length) {
@@ -135,7 +158,17 @@ export class SolendLendingFetchService implements OnModuleInit {
                     this.solendLendingInitService.getReserveMetadataCacheKey(network, reserve.address),
                     metadata,
                 )
-            
+                // update current index in vok
+                this.solendLendingIndexerService.nextIndex(network)
+                // update current index in volume
+                await this.volumeService.updateJsonFromDataVolume<PoolsData>({
+                    name: this.solendLendingInitService.getReserveMetadataVolumeKey(network, reserve.address),
+                    updateFn: (prevData) => {
+                        prevData.currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
+                        return prevData
+                    },
+                    folderNames: FOLDER_NAMES,
+                })  
                 this.logger.verbose(
                     `Loaded historical interest rates for ${network} reserve ${reserve.address}`,
                 )

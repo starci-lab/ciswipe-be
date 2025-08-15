@@ -1,6 +1,33 @@
 import { Injectable } from "@nestjs/common"
-import { Network } from "@/modules/common"
-import { VaultRaw } from "./kamino-init.service"
+import { Network, StrategyAnalysis, StrategyAIInsights } from "@/modules/common"
+import { VaultStateJSON } from "@kamino-finance/klend-sdk/dist/lib"
+import { VaultMetrics, VaultMetricsHistoryItem } from "./kamino-api.service"
+import { Address } from "@solana/kit"
+
+export interface VaultRaw {
+    state: VaultStateJSON | undefined;
+    address: Address | undefined;
+  }
+  
+export interface VaultRawsData {
+    vaults: Array<VaultRaw>;
+    currentIndex: number;
+}
+  
+export interface Vault {
+    // address of the vault
+    address: string;
+    // metrics of the vault, about the apr, etc
+    metrics: VaultMetrics;
+    // state of the vault, about the vault address, etc
+    state: VaultStateJSON | undefined;
+    // metrics history of the vault, about the apr, etc
+    metricsHistory: Array<VaultMetricsHistoryItem>;
+    // strategy analysis
+    strategyAnalysis: StrategyAnalysis;
+    // ai insights
+    aiInsights?: StrategyAIInsights;
+}     
 
 @Injectable()
 export class KaminoVaultIndexerService {

@@ -1,38 +1,11 @@
 import { Injectable, Logger, Inject } from "@nestjs/common"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
-import { Network, StrategyAIInsights, StrategyAnalysis } from "@/modules/common"
+import { Network } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
 import { createCacheKey } from "@/modules/cache"
-import { VaultMetrics, VaultMetricsHistoryItem } from "./kamino-api.service"
-import { VaultStateJSON } from "@kamino-finance/klend-sdk"
-import { Address } from "@solana/kit"
+import { VaultRawsData, Vault } from "./kamino-indexer.service"
 import { FOLDER_NAMES } from "./constants"
-
-export interface VaultRaw {
-    state: VaultStateJSON | undefined;
-    address: Address | undefined;
-  }
-  
-export interface VaultRawsData {
-    vaults: Array<VaultRaw>;
-    currentIndex: number;
-}
-  
-export interface Vault {
-    // address of the vault
-    address: string;
-    // metrics of the vault, about the apr, etc
-    metrics: VaultMetrics;
-    // state of the vault, about the vault address, etc
-    state: VaultStateJSON | undefined;
-    // metrics history of the vault, about the apr, etc
-    metricsHistory: Array<VaultMetricsHistoryItem>;
-    // strategy analysis
-    strategyAnalysis: StrategyAnalysis;
-    // ai insights
-    aiInsights?: StrategyAIInsights;
-}     
 
 @Injectable()
 export class KaminoVaultInitService {
@@ -40,7 +13,7 @@ export class KaminoVaultInitService {
 
     constructor(
         private readonly volumeService: VolumeService,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
     public getVaultsCacheKey(network: Network) {

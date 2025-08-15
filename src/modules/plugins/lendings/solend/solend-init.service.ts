@@ -1,32 +1,11 @@
 import { Injectable, Logger, Inject } from "@nestjs/common"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
-import { Network, StrategyRewards, StrategyAnalysis } from "@/modules/common"
+import { Network } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
-import { HistoricalInterestRateItem, Market } from "./solend-api.service"
-import { WithAddressAndStats } from "./solend-rpc.service"
 import { FOLDER_NAMES } from "./constants"
 import { createCacheKey } from "@/modules/cache"
-import { Reserve } from "./schema"
-
-export interface LendingReserve {
-    reserve: WithAddressAndStats<Reserve>;
-    rewards: StrategyRewards;
-}
-
-export interface LendingReserveMetadata {
-    metricsHistory: Array<HistoricalInterestRateItem>;
-    strategyAnalysis: StrategyAnalysis;
-}
-export interface LendingPool {
-    market: Market;
-    reserves: Array<LendingReserve>;
-}
-
-export interface PoolsData {
-    pools: Array<LendingPool>;
-    currentIndex: number;
-}       
+import { LendingPool, LendingReserveMetadata, PoolsData } from "./solend-fetch.service"
 
 @Injectable()
 export class SolendLendingInitService {
@@ -34,7 +13,7 @@ export class SolendLendingInitService {
 
     constructor(
     private readonly volumeService: VolumeService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
     public getLendingPoolsCacheKey(network: Network) {
@@ -63,14 +42,14 @@ export class SolendLendingInitService {
             if (network === Network.Testnet) continue
             const lendingPools = await this.loadAndCacheLendingPoolsFromVolume(network)
             if (!lendingPools) continue
-            for (const pool of lendingPools) {
+            for (const pool of lendingPools.pools) {
                 await this.loadAndCacheReserveMetadata(network, pool)
             }
         }
     }
 
     // Load lending pools from volume if exists
-    private async loadAndCacheLendingPoolsFromVolume(network: Network): Promise<Array<LendingPool> | null> {
+    private async loadAndCacheLendingPoolsFromVolume(network: Network): Promise<PoolsData | null> {
         if (network === Network.Testnet) return null
         try {
             const exists = await this.volumeService.existsInDataVolume({
@@ -79,7 +58,7 @@ export class SolendLendingInitService {
             })
             if (!exists) return null
 
-            const lendingPools = await this.volumeService.readJsonFromDataVolume<Array<LendingPool>>({
+            const lendingPools = await this.volumeService.readJsonFromDataVolume<PoolsData>({
                 name: this.getLendingPoolsVolumeKey(network),
                 folderNames: FOLDER_NAMES
             })

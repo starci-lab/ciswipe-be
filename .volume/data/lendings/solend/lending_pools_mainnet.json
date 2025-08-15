@@ -16,7 +16,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1575387d",
+                  "slot": "1577c1d4",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -26,14 +26,14 @@
                   "supplyPubkey": "3R5SVe3qABRUYozgeMNVkSotVoa4HhTFFgWgx2G2QMov",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "01656a600a3e52",
+                  "availableAmount": "01655f513efe4c",
                   "borrowedAmountWads": "53f712d4df3e9700",
                   "cummlativeBorrowRateWads": "0df18df6533d9619",
-                  "marketPrice": "0c7b042ca0a4733000"
+                  "marketPrice": "0cc9bd5ef2be48ff00"
                 },
                 "collateral": {
                   "mintPubkey": "3JFC4cB56Er45nWVe29Bhnn5GnwQzSmHVf6eUq9ac91h",
-                  "mintTotalSupply": "01655ccf6701ef",
+                  "mintTotalSupply": "016551c10731cb",
                   "supplyPubkey": "FG7yuhS6udX8v2LQYxqwpcsdC2J1pUREoGrRYsQjr1uh"
                 },
                 "config": {
@@ -90,14 +90,14 @@
                   255,
                   255,
                   0,
-                  172,
-                  189,
+                  80,
+                  65,
+                  122,
+                  56,
                   36,
-                  198,
-                  188,
-                  249,
-                  15,
-                  13,
+                  140,
+                  194,
+                  12,
                   0,
                   0,
                   0,
@@ -123,7 +123,7 @@
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "c836ee88-1e31-4ebb-9a72-1e6c2f921dfb",
+                    "id": "a5088afe-d400-4db3-ae38-a45cbdc5d945",
                     "address": "MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey",
                     "type": "regular"
                   },
@@ -477,7 +477,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15746c1f",
+                  "slot": "157883c4",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -487,14 +487,14 @@
                   "supplyPubkey": "67cMu9ny7QAkFZ7pFzukTakeJtstDGy883nLhUWN4wH",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "1230fbf02e99",
+                  "availableAmount": "1230fcf411d9",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0d288c37eafaa87800"
+                  "marketPrice": "0c6589ccc8671a4080"
                 },
                 "collateral": {
                   "mintPubkey": "EaxVjZ4qFxCeg3mAus5epMSpfsh3pmMuqVUzmUgHuE5p",
-                  "mintTotalSupply": "1230fbf02e99",
+                  "mintTotalSupply": "1230fcf411d9",
                   "supplyPubkey": "Hss63mHNNKpHbarDVnpHiErrFqkshDQj6nr9U4xkUcmv"
                 },
                 "config": {
@@ -551,14 +551,14 @@
                   255,
                   255,
                   0,
-                  7,
-                  116,
+                  194,
+                  114,
+                  232,
+                  149,
+                  172,
+                  95,
+                  112,
                   12,
-                  21,
-                  227,
-                  27,
-                  57,
-                  13,
                   0,
                   0,
                   0,
@@ -1042,8 +1042,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15747c62",
-                  "stale": 0
+                  "slot": "157874de",
+                  "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -1052,14 +1052,14 @@
                   "supplyPubkey": "8STS7KeeoKsA8oBD2TwEEeNrYHQJh9dyKSLFhVUhGk4z",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "97cdc9e4c9ef",
+                  "availableAmount": "97c225a955ef",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0d146ce8f022049000"
+                  "marketPrice": "0c5f8280cda1b80000"
                 },
                 "collateral": {
                   "mintPubkey": "FZ8KVvJ1QiytR29ykNz6kkhV6tvsB7XdiKW2s14DftFt",
-                  "mintTotalSupply": "97cdc9e4c9ef",
+                  "mintTotalSupply": "97c225a955ef",
                   "supplyPubkey": "3ZT6KCf7xyYMjtCFmfnaBJb3fgedkXZ7QGMF9o87CtKz"
                 },
                 "config": {
@@ -1116,14 +1116,14 @@
                   255,
                   255,
                   0,
-                  0,
-                  20,
-                  105,
-                  151,
-                  237,
+                  192,
                   134,
-                  30,
-                  13,
+                  230,
+                  153,
+                  191,
+                  132,
+                  96,
+                  12,
                   0,
                   0,
                   0,
@@ -1381,8 +1381,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15752e59",
-                  "stale": 0
+                  "slot": "1578841a",
+                  "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -1391,14 +1391,14 @@
                   "supplyPubkey": "GxBnxJ16qBaz3oTbUQ5GwhULoUvu9nUEvs4TDjw2zZRc",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "215e5fda12e9",
+                  "availableAmount": "217c0a66a33e",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0a31b8462333c390c0"
+                  "marketPrice": "0a394455b9e9e2d1c0"
                 },
                 "collateral": {
                   "mintPubkey": "2bBV9hD7qLPPwWgDHXoT9GYYNpkcD4ZEeYTCBmsjQcye",
-                  "mintTotalSupply": "215e5fda12e9",
+                  "mintTotalSupply": "217c0a66a33e",
                   "supplyPubkey": "497NCW6Fvpw1B1PBzhJNZviZ1i8MubsC7bW1dF7D7Z9D"
                 },
                 "config": {
@@ -1455,13 +1455,13 @@
                   255,
                   255,
                   0,
-                  95,
-                  189,
-                  200,
-                  141,
-                  64,
-                  137,
-                  129,
+                  233,
+                  65,
+                  55,
+                  157,
+                  184,
+                  21,
+                  40,
                   10,
                   0,
                   0,
@@ -1488,7 +1488,7 @@
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "670d2f5c-3781-4be6-a5f0-a23c5a8ef42a",
+                    "id": "fb983a52-738f-405d-80d1-e389656b6db5",
                     "address": "SAVEDpx3nFNdzG3ymJfShYnrBuYy7LtQEABZQ3qtTFt",
                     "type": "regular"
                   },
@@ -1503,7 +1503,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1574eaf1",
+                  "slot": "15771d13",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -1516,7 +1516,7 @@
                   "availableAmount": "f194c329",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "febb2b77d7c9880000"
+                  "marketPrice": "faf9e62d4491a5d000"
                 },
                 "collateral": {
                   "mintPubkey": "HUitrgPKt5sgJwZhSmh4zxmL3hLHVNskc6C5Hv4JA8cb",
@@ -1577,15 +1577,15 @@
                   255,
                   255,
                   0,
+                  128,
+                  119,
+                  103,
+                  52,
+                  166,
+                  171,
+                  87,
+                  249,
                   0,
-                  16,
-                  131,
-                  131,
-                  120,
-                  122,
-                  33,
-                  1,
-                  1,
                   0,
                   0,
                   0,
@@ -1729,7 +1729,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157209dd",
+                  "slot": "15773087",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -1739,14 +1739,14 @@
                   "supplyPubkey": "FpQXQn8TkyKJEjTjp9k1DTrnMcXcKWVDMRC1hWcFqkdo",
                   "pythOracle": "nu11111111111111111111111111111111111111111",
                   "switchboardOracle": "Cn9jrMqmRnPNqwwo8vJiHfQFasvKEehxro1HEWposgAa",
-                  "availableAmount": "0580128d99",
-                  "borrowedAmountWads": "50b8a6c9084c2fd4133efb",
-                  "cummlativeBorrowRateWads": "11c96aef4e69478d",
+                  "availableAmount": "06275d1c2c",
+                  "borrowedAmountWads": "50ced73ffa26b56d5fce79",
+                  "cummlativeBorrowRateWads": "11ce4e9d5a3775ce",
                   "marketPrice": "524f77fb4ab2f7"
                 },
                 "collateral": {
                   "mintPubkey": "4xA8NwLq7xyzY32guSHuaeqhfJ8ag42zJZspe5V7DCt1",
-                  "mintTotalSupply": "0577c9a08b",
+                  "mintTotalSupply": "061d6be7c9",
                   "supplyPubkey": "84wFBK3onyuHxTwVEwvkCwUwmVGH5RXnP5wcKGDaXsbk"
                 },
                 "config": {
@@ -1770,8 +1770,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "37806748dd9e5165",
-                    "windowDuration": "0163b6"
+                    "maxOutflow": "4f4a5fc9fc473ae4",
+                    "windowDuration": "016826"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -1829,8 +1829,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.000824893263252705,
-              "borrowAPR": 0.20051423609572222
+              "supplyAPR": 0.0007382089014945713,
+              "borrowAPR": 0.20046032108592338
             },
             "rewards": {
               "rewardTokens": []
@@ -1955,8 +1955,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1574e8ad",
-                  "stale": 1
+                  "slot": "1577f7a6",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -1965,14 +1965,14 @@
                   "supplyPubkey": "5dNAJAxSjv9bYXHzZWuVm7MbobcygSk2Zo76S7mu8GcQ",
                   "pythOracle": "DBE3N8uNjhKPRHfANdwGvCZghWXyLPdqdSbEW2XFwBiX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "50e777a936f1",
-                  "borrowedAmountWads": "02cff027cb7ef3cbf796a98181",
-                  "cummlativeBorrowRateWads": "11e675d2c9f7b6e6",
-                  "marketPrice": "1998b147dc00"
+                  "availableAmount": "50f811c1cdb3",
+                  "borrowedAmountWads": "02d06584b4c4f8504045cc5532",
+                  "cummlativeBorrowRateWads": "11e960d8e91c4682",
+                  "marketPrice": "166963b23300"
                 },
                 "collateral": {
                   "mintPubkey": "Yu9jsghrGbrovYGpYqy25nmWW8jXphCkA8wv2d9YB1s",
-                  "mintTotalSupply": "51106985f0d7",
+                  "mintTotalSupply": "51210162de42",
                   "supplyPubkey": "2JhhLgRsfA6ZbREvPXfb1dqVAN4CyR4U3mr2aCRH7MCK"
                 },
                 "config": {
@@ -1996,8 +1996,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "96a2d020609dd9d9",
-                    "windowDuration": "910dda"
+                    "maxOutflow": "0b0a1dc883a4d0f7",
+                    "windowDuration": "a886d6"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -2029,11 +2029,11 @@
                   0,
                   0,
                   0,
-                  65,
-                  75,
-                  52,
-                  93,
-                  25,
+                  109,
+                  91,
+                  99,
+                  84,
+                  22,
                   0,
                   0,
                   0,
@@ -2055,8 +2055,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.0005004783010146694,
-              "borrowAPR": 0.20031231124656054
+              "supplyAPR": 0.000500395969720715,
+              "borrowAPR": 0.20031225994969454
             },
             "rewards": {
               "rewardTokens": []
@@ -2181,7 +2181,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15743a3d",
+                  "slot": "1577ecd9",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -2191,14 +2191,14 @@
                   "supplyPubkey": "GmHtoFrANDEcrRAEqBEKRSyPH3MTnBtAirxaTy4K4Jpb",
                   "pythOracle": "2d6huLjzdgpD3C2mLv2jUQPJvVLDj4aEpvhuhbvwLRgh",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "6760196d94a6",
-                  "borrowedAmountWads": "16d22428ea9db8ab7871ae8c7f",
-                  "cummlativeBorrowRateWads": "0f6008e8f532933c",
+                  "availableAmount": "65f821a24599",
+                  "borrowedAmountWads": "16d354601bafb68951961a715c",
+                  "cummlativeBorrowRateWads": "0f60d5dea015cc45",
                   "marketPrice": "091bd7fa20863000"
                 },
                 "collateral": {
                   "mintPubkey": "Bk8BLxF4xBh7PTqxmFuAQrHmhFd1MKY8U4mDShEEs9Wg",
-                  "mintTotalSupply": "631aa69c8533",
+                  "mintTotalSupply": "61c6f43b962e",
                   "supplyPubkey": "9UZVuizwtKUxPu6SUMuZhniwg2VaFXCiLuqcWG6y4K5s"
                 },
                 "config": {
@@ -2222,8 +2222,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "da862ce2fb8367ea",
-                    "windowDuration": "071e55cc"
+                    "maxOutflow": "77b8f2db35ff627c",
+                    "windowDuration": "075b2da3"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -2281,8 +2281,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.0008288786940957262,
-              "borrowAPR": 0.052935904408895534
+              "supplyAPR": 0.0008409373635322635,
+              "borrowAPR": 0.05297634278568769
             },
             "rewards": {
               "rewardTokens": []
@@ -2746,7 +2746,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1573f88f",
+                  "slot": "1577c1d4",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -2759,7 +2759,7 @@
                   "availableAmount": "0a4ce7714df5",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de25401cfcff443",
-                  "marketPrice": "0bdba78fa020374e00"
+                  "marketPrice": "0b4105bd0cf6189400"
                 },
                 "collateral": {
                   "mintPubkey": "AmxDR33CjjRoxexcX5uYx3jZ7iDa8Xy9UtrjG9CqNt25",
@@ -2820,13 +2820,13 @@
                   255,
                   255,
                   0,
-                  136,
-                  242,
-                  80,
-                  179,
-                  57,
-                  24,
-                  196,
+                  192,
+                  125,
+                  174,
+                  246,
+                  97,
+                  177,
+                  58,
                   11,
                   0,
                   0,
@@ -3085,7 +3085,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1574d40c",
+                  "slot": "15786661",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -3095,14 +3095,14 @@
                   "supplyPubkey": "DPyxMaBvMwSx5efZq2g3C2RLnAaKJddbj4ivAcU58bmc",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "079e397d7d06",
+                  "availableAmount": "079d94f95074",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0b3a1668a113848dc0"
+                  "marketPrice": "0a94d2d980af3adc40"
                 },
                 "collateral": {
                   "mintPubkey": "3Mr1NdFREcqzhmNC6S5VquZoHkaUjAnyCaFtAs76xEVC",
-                  "mintTotalSupply": "079e397d7d06",
+                  "mintTotalSupply": "079d94f95074",
                   "supplyPubkey": "DToAb5r3Mv3iW9KSkX8VQdpmCRL35FPREnkmLK5GmYzw"
                 },
                 "config": {
@@ -3159,14 +3159,14 @@
                   255,
                   255,
                   0,
+                  208,
+                  39,
+                  98,
+                  155,
+                  36,
                   141,
-                  80,
-                  185,
-                  202,
-                  93,
-                  33,
-                  5,
-                  11,
+                  153,
+                  10,
                   0,
                   0,
                   0,
@@ -3192,7 +3192,7 @@
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "ff3f4f06-1c52-4526-bfbf-3f4d46047e88",
+                    "id": "79c5d0ec-6d63-45b7-b18e-1d9d232a9e28",
                     "address": "sSo14endRuUbvQaJS3dq36Q829a3A6BEfoeeRGJywEh",
                     "type": "regular"
                   },
@@ -3427,7 +3427,7 @@
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "167e0cf8-b522-4427-98bb-0e1055e4c705",
+                    "id": "719ec63c-4ade-4179-9db4-333593d92136",
                     "address": "MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey",
                     "type": "regular"
                   },
@@ -3442,7 +3442,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157419d1",
+                  "slot": "157801a8",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -3452,14 +3452,14 @@
                   "supplyPubkey": "CsJmKcpgnkAib5fdUDfZWLakqQ9RxxQ9ZcTnQWRLXfUb",
                   "pythOracle": "27zzC5wXCeZeuJ3h9uAJzV5tGn6r5Tzo98S1ZceYKEb8",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "01e5d529c2dd",
-                  "borrowedAmountWads": "06361d2393165887ae3a159d44",
-                  "cummlativeBorrowRateWads": "107328a9391a2bd6",
-                  "marketPrice": "8834e3d6e1ec00"
+                  "availableAmount": "01e69f4117d7",
+                  "borrowedAmountWads": "06378f185358d5dcf57eb41d2b",
+                  "cummlativeBorrowRateWads": "1076fc6e015f9d65",
+                  "marketPrice": "78c9416a5fd000"
                 },
                 "collateral": {
                   "mintPubkey": "8eMSM5ajEoVAcJAwsJcbDuNyouSncsTm6YSQ8ftm5fN2",
-                  "mintTotalSupply": "0253b064cded",
+                  "mintTotalSupply": "02547e2b4152",
                   "supplyPubkey": "Fg1G8d7K1wYdrCntJPJBR2zxuzvMsEx5WRBzraXJXHAR"
                 },
                 "config": {
@@ -3483,7 +3483,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "0d4cc38ade827ac0",
+                    "maxOutflow": "0360f8aae7862de9",
                     "windowDuration": "00"
                   },
                   "previousQuantity": "00",
@@ -3516,12 +3516,12 @@
                   0,
                   0,
                   0,
-                  140,
-                  161,
-                  11,
-                  146,
-                  162,
-                  135,
+                  56,
+                  175,
+                  230,
+                  143,
+                  236,
+                  120,
                   0,
                   0,
                   0,
@@ -3542,8 +3542,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.04271927749699386,
-              "borrowAPR": 0.2238543890507084
+              "supplyAPR": 0.042691930521356884,
+              "borrowAPR": 0.2238405883188933
             },
             "rewards": {
               "rewardTokens": []
@@ -3668,8 +3668,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15753a67",
-                  "stale": 1
+                  "slot": "1578846e",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -3678,14 +3678,14 @@
                   "supplyPubkey": "3CdpSW5dxM7RTxBgxeyt8nnnjqoDbZe48tsBs9QUrmuN",
                   "pythOracle": "HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM",
                   "switchboardOracle": "ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9",
-                  "availableAmount": "01ac501ea07b",
-                  "borrowedAmountWads": "55800f092c299df19d975c6797",
-                  "cummlativeBorrowRateWads": "143872ff7d042d9e",
-                  "marketPrice": "0de251bf7698cc00"
+                  "availableAmount": "01af9625145f",
+                  "borrowedAmountWads": "557a1e757a4fa30b5c7376d105",
+                  "cummlativeBorrowRateWads": "1439a146948b9d79",
+                  "marketPrice": "0de2f6fc2275ac00"
                 },
                 "collateral": {
                   "mintPubkey": "BTsbZDV7aCMRJ3VNy9ygV4Q2UeEo9GpR8D6VvmMZzNr8",
-                  "mintTotalSupply": "061f62c3f055",
+                  "mintTotalSupply": "062162412da8",
                   "supplyPubkey": "CXDxj6cepVv9nWh4QYqWS2MpeoVKBLKJkMfo3c6Y1Lud"
                 },
                 "config": {
@@ -3709,121 +3709,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "15f5175679e6b5a6",
-                    "windowDuration": "011720"
-                  },
-                  "previousQuantity": "00",
-                  "windowStart": "00",
-                  "currentQuantity": "00"
-                },
-                "padding": [
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  124,
-                  249,
-                  13,
-                  101,
-                  64,
-                  226,
-                  13,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  93,
-                  94,
-                  1,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0
-                ]
-              },
-              "supplyAPR": 0.05254169327689517,
-              "borrowAPR": 0.06681019214855952
-            },
-            "rewards": {
-              "rewardTokens": []
-            }
-          },
-          {
-            "reserve": {
-              "address": "8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36",
-              "data": {
-                "version": 1,
-                "lastUpdate": {
-                  "slot": "15753a62",
-                  "stale": 1
-                },
-                "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
-                "liquidity": {
-                  "mintPubkey": "So11111111111111111111111111111111111111112",
-                  "mintDecimals": 9,
-                  "supplyPubkey": "8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv",
-                  "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
-                  "switchboardOracle": "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
-                  "availableAmount": "4601b2a92e53",
-                  "borrowedAmountWads": "0d53d6da8672f74199c35bbda297",
-                  "cummlativeBorrowRateWads": "1221a43ead2bdd84",
-                  "marketPrice": "0a3700a55fc957c000"
-                },
-                "collateral": {
-                  "mintPubkey": "5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV",
-                  "mintTotalSupply": "011005b1492f48",
-                  "supplyPubkey": "B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g"
-                },
-                "config": {
-                  "optimalUtilizationRate": 80,
-                  "loanToValueRatio": 65,
-                  "liquidationBonus": 3,
-                  "liquidationThreshold": 72,
-                  "minBorrowRate": 3,
-                  "optimalBorrowRate": 5,
-                  "maxBorrowRate": 15,
-                  "fees": {
-                    "borrowFeeWad": "038d7ea4c68000",
-                    "flashLoanFeeWad": "01c6bf52634000",
-                    "hostFeePercentage": 20
-                  },
-                  "depositLimit": "038d7ea4c68000",
-                  "borrowLimit": "02d79883d20000",
-                  "feeReceiver": "5wo1tFpi4HaVKnemqaXeQnBEpezrJXcXvuztYaPhvgC7",
-                  "protocolLiquidationFee": 19,
-                  "protocolTakeRate": 20
-                },
-                "rateLimiter": {
-                  "config": {
-                    "maxOutflow": "a3051cf7162a7ba8",
-                    "windowDuration": "200d5e"
+                    "maxOutflow": "37e57379d097ef13",
+                    "windowDuration": "0702d4"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -3856,12 +3743,125 @@
                   0,
                   0,
                   192,
+                  34,
                   60,
-                  194,
-                  227,
-                  40,
-                  28,
-                  234,
+                  162,
+                  213,
+                  226,
+                  13,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  93,
+                  94,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "supplyAPR": 0.052417485086857146,
+              "borrowAPR": 0.06676494112976226
+            },
+            "rewards": {
+              "rewardTokens": []
+            }
+          },
+          {
+            "reserve": {
+              "address": "8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36",
+              "data": {
+                "version": 1,
+                "lastUpdate": {
+                  "slot": "1578846e",
+                  "stale": 0
+                },
+                "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                "liquidity": {
+                  "mintPubkey": "So11111111111111111111111111111111111111112",
+                  "mintDecimals": 9,
+                  "supplyPubkey": "8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv",
+                  "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
+                  "switchboardOracle": "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
+                  "availableAmount": "468c4bd970e5",
+                  "borrowedAmountWads": "0d53a99aab8f74b294f94b10bb9e",
+                  "cummlativeBorrowRateWads": "12226d0c939937e2",
+                  "marketPrice": "0a819ceaae9af46800"
+                },
+                "collateral": {
+                  "mintPubkey": "5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV",
+                  "mintTotalSupply": "011072dfbc0c1a",
+                  "supplyPubkey": "B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g"
+                },
+                "config": {
+                  "optimalUtilizationRate": 80,
+                  "loanToValueRatio": 65,
+                  "liquidationBonus": 3,
+                  "liquidationThreshold": 72,
+                  "minBorrowRate": 3,
+                  "optimalBorrowRate": 5,
+                  "maxBorrowRate": 15,
+                  "fees": {
+                    "borrowFeeWad": "038d7ea4c68000",
+                    "flashLoanFeeWad": "01c6bf52634000",
+                    "hostFeePercentage": 20
+                  },
+                  "depositLimit": "038d7ea4c68000",
+                  "borrowLimit": "02d79883d20000",
+                  "feeReceiver": "5wo1tFpi4HaVKnemqaXeQnBEpezrJXcXvuztYaPhvgC7",
+                  "protocolLiquidationFee": 19,
+                  "protocolTakeRate": 20
+                },
+                "rateLimiter": {
+                  "config": {
+                    "maxOutflow": "1f3139484da44226",
+                    "windowDuration": "cf3d08"
+                  },
+                  "previousQuantity": "00",
+                  "windowStart": "00",
+                  "currentQuantity": "00"
+                },
+                "padding": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  80,
+                  135,
+                  209,
+                  193,
+                  54,
+                  108,
+                  141,
                   10,
                   0,
                   0,
@@ -3881,8 +3881,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.038496818711848034,
-              "borrowAPR": 0.04945896788640369
+              "supplyAPR": 0.03840445448953337,
+              "borrowAPR": 0.049425446434844304
             },
             "rewards": {
               "rewardTokens": []
@@ -3894,7 +3894,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1570516a",
+                  "slot": "157803c4",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -3904,14 +3904,14 @@
                   "supplyPubkey": "GwuwaztvKU7aGg2mCqXamiK54m42rHCeJBGXJTrAQ5Mu",
                   "pythOracle": "nu11111111111111111111111111111111111111111",
                   "switchboardOracle": "8o433d9u47rQ3F84pXSdCQDFU62KnP4tycHKZKMcnyQd",
-                  "availableAmount": "0f5cc256cb",
-                  "borrowedAmountWads": "09a68feff54abbd9dee4418f",
-                  "cummlativeBorrowRateWads": "127e54d81d733037",
+                  "availableAmount": "0799260af0",
+                  "borrowedAmountWads": "09aa9fc8007b6a0070cdcecd",
+                  "cummlativeBorrowRateWads": "12861d7e806c2055",
                   "marketPrice": "629375e12fd334"
                 },
                 "collateral": {
                   "mintPubkey": "43Gq19K8Xo9aE2YEdM8A9hYKVT6xcC6rvu7VJ3EE1Ffc",
-                  "mintTotalSupply": "0f3ce49b5f",
+                  "mintTotalSupply": "07dde025b6",
                   "supplyPubkey": "FLcP7xuTmVdYKZiGyDs77BgwSkXpfhyHsSbpETYdBPi3"
                 },
                 "config": {
@@ -3935,8 +3935,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "a7a351515191b75d",
-                    "windowDuration": "1e2c9e"
+                    "maxOutflow": "a9e040f2a1f3a069",
+                    "windowDuration": "1efc96"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -3994,8 +3994,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.008895690347472198,
-              "borrowAPR": 0.20541328803065592
+              "supplyAPR": 0.017676221880193584,
+              "borrowAPR": 0.21049673178435732
             },
             "rewards": {
               "rewardTokens": []
@@ -4007,7 +4007,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1570c98a",
+                  "slot": "157545d1",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -4017,14 +4017,14 @@
                   "supplyPubkey": "AEhzChpgbL27QpXebu7qmtmdNMM3eNmjTV5iqwQtCKJv",
                   "pythOracle": "nu11111111111111111111111111111111111111111",
                   "switchboardOracle": "22zLMmP5ar69eMeArhUQLbMDfFN5C25eiLyLZTDBeEbn",
-                  "availableAmount": "a46dceae0f",
-                  "borrowedAmountWads": "19d5b9a52273028855880e08",
-                  "cummlativeBorrowRateWads": "110ef53c13a79767",
+                  "availableAmount": "a503f58864",
+                  "borrowedAmountWads": "1112b69da2b6d17c947489e6",
+                  "cummlativeBorrowRateWads": "11130f145d50caf3",
                   "marketPrice": "1761820924776844"
                 },
                 "collateral": {
                   "mintPubkey": "51pgvViuaNPtQhqgmnHT6gjExYV6Lh2zYSGc4S5DeWdg",
-                  "mintTotalSupply": "a54d84ca66",
+                  "mintTotalSupply": "a541ab146e",
                   "supplyPubkey": "5YsCy2rtLEW7h8qAxyXczYSb5bDymHWFjPGwVw8rAnWR"
                 },
                 "config": {
@@ -4048,8 +4048,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "8b9d1af9980edc9e",
-                    "windowDuration": "1479bc"
+                    "maxOutflow": "dc8a974dab1813b9",
+                    "windowDuration": "15b71b"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -4107,8 +4107,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.002254636273199604,
-              "borrowAPR": 0.20139935667522724
+              "supplyAPR": 0.0014868792026647341,
+              "borrowAPR": 0.20092502118074138
             },
             "rewards": {
               "rewardTokens": []
@@ -4572,7 +4572,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15751a39",
+                  "slot": "15766d62",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -4585,7 +4585,7 @@
                   "availableAmount": "0558a329e2f0",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0b33015b5474240000"
+                  "marketPrice": "0a5870ead295ade000"
                 },
                 "collateral": {
                   "mintPubkey": "iD74HqqwPpukXqvSenY4jXR9mwUhkyZpVporUU8a8b8",
@@ -4646,14 +4646,14 @@
                   255,
                   255,
                   0,
-                  120,
-                  73,
-                  161,
-                  46,
-                  183,
-                  219,
-                  42,
-                  11,
+                  30,
+                  145,
+                  29,
+                  123,
+                  31,
+                  116,
+                  131,
+                  10,
                   0,
                   0,
                   0,
@@ -4685,7 +4685,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1574935d",
+                  "slot": "1577dc1a",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -4696,9 +4696,9 @@
                   "pythOracle": "CsG7wXoqZKNxx4UnFtvozfwXQ9RgpKe7zSJa4LWh5MT9",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
                   "availableAmount": "1372669ffd55",
-                  "borrowedAmountWads": "03031202d13c48b370993f52d6",
-                  "cummlativeBorrowRateWads": "11f5a043840b0885",
-                  "marketPrice": "2439aaf63d00"
+                  "borrowedAmountWads": "030399b4b8bbd00af3db9b8715",
+                  "cummlativeBorrowRateWads": "11f8c95da202f3d1",
+                  "marketPrice": "23b35f00b500"
                 },
                 "collateral": {
                   "mintPubkey": "B3akPwBteZA8MTSesRZbhxjxF1uuyDKsgfW9iCtkh3GW",
@@ -4726,8 +4726,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "39bba17e32308f78",
-                    "windowDuration": "0511b4"
+                    "maxOutflow": "ecd6b2fed90fcd1b",
+                    "windowDuration": "203548"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -4759,11 +4759,11 @@
                   0,
                   0,
                   0,
-                  102,
-                  113,
-                  46,
-                  238,
-                  36,
+                  107,
+                  70,
+                  192,
+                  86,
+                  35,
                   0,
                   0,
                   0,
@@ -4785,8 +4785,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.0022226926615458785,
-              "borrowAPR": 0.20137966552861197
+              "supplyAPR": 0.002224214094932808,
+              "borrowAPR": 0.20138060347949505
             },
             "rewards": {
               "rewardTokens": []
@@ -4911,7 +4911,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15750c9c",
+                  "slot": "1575cd8c",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -4924,7 +4924,7 @@
                   "availableAmount": "0654467a4f",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0b4b53a734ff89b400"
+                  "marketPrice": "0aad2a8c84c8b87480"
                 },
                 "collateral": {
                   "mintPubkey": "9j6iyYRPFCyzukfs1LhK9RQWkeW8a7nxzffkY1edwkPc",
@@ -4985,14 +4985,14 @@
                   255,
                   255,
                   0,
-                  8,
-                  103,
-                  43,
-                  253,
+                  230,
+                  55,
+                  94,
+                  15,
+                  166,
+                  13,
                   197,
-                  221,
-                  79,
-                  11,
+                  10,
                   0,
                   0,
                   0,
@@ -5024,8 +5024,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1574daed",
-                  "stale": 1
+                  "slot": "157882e7",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -5035,9 +5035,9 @@
                   "pythOracle": "Hhipna3EoWR7u8pDruUg8RxhP5F6XLh6SEHMVDmZhWi8",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
                   "availableAmount": "247d4f8908",
-                  "borrowedAmountWads": "03e380b3635d3ca21fc2e916",
-                  "cummlativeBorrowRateWads": "17027c6ecb905026",
-                  "marketPrice": "34ca1d2752ed0400"
+                  "borrowedAmountWads": "03e3b27f55109a0c042cbd9f",
+                  "cummlativeBorrowRateWads": "1703a3159d5eb43e",
+                  "marketPrice": "3354effc18822800"
                 },
                 "collateral": {
                   "mintPubkey": "2d95ZC8L5XP6xCnaKx8D5U5eX6rKbboBBAwuBLxaFmmJ",
@@ -5065,8 +5065,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "d23e79cfed68bb77",
-                    "windowDuration": "28"
+                    "maxOutflow": "68fbf2e51b177f92",
+                    "windowDuration": "0a1e"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -5098,13 +5098,13 @@
                   0,
                   0,
                   0,
-                  248,
-                  127,
-                  72,
-                  205,
-                  241,
-                  170,
-                  52,
+                  0,
+                  14,
+                  84,
+                  110,
+                  245,
+                  6,
+                  51,
                   0,
                   0,
                   0,
@@ -5124,8 +5124,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.00039192152619421476,
-              "borrowAPR": 0.051428872207519856
+              "supplyAPR": 0.0003919996346144218,
+              "borrowAPR": 0.05142914927670212
             },
             "rewards": {
               "rewardTokens": []
@@ -5250,8 +5250,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15717697",
-                  "stale": 1
+                  "slot": "157882e7",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -5260,14 +5260,14 @@
                   "supplyPubkey": "9nbeqZZnL21hqHKQRsqFK4A7hGHLrkNpiuanHK7c7KPD",
                   "pythOracle": "7ajR2zA4MGMMTqRAVjghTKqPPn4kbrj3pYkAVRVwTGzP",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "156de7a75ca0",
-                  "borrowedAmountWads": "2be0173ae387418180d741d4",
-                  "cummlativeBorrowRateWads": "0f784b7d068086b4",
-                  "marketPrice": "1be8b7de8735d000"
+                  "availableAmount": "14bf9ed02b60",
+                  "borrowedAmountWads": "2be4369a53501ee63f753e22",
+                  "cummlativeBorrowRateWads": "0f79bf9982571123",
+                  "marketPrice": "190297cb3978e800"
                 },
                 "collateral": {
                   "mintPubkey": "GjwVELMWeXkZ2nb9gXmYf2Ca3XdEHZcN1CigAcw6WESt",
-                  "mintTotalSupply": "15548cb8bdad",
+                  "mintTotalSupply": "14a72b973e3e",
                   "supplyPubkey": "GwgRTfxfZhdMEb8endnuyq4sG3zgrd177wWc4GFe74Fj"
                 },
                 "config": {
@@ -5291,8 +5291,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "1c1a9edee590dd02",
-                    "windowDuration": "278928"
+                    "maxOutflow": "3275fe597216dc43",
+                    "windowDuration": "285c3b"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -5324,13 +5324,13 @@
                   0,
                   0,
                   0,
-                  100,
-                  254,
-                  99,
-                  88,
-                  140,
-                  227,
-                  27,
+                  232,
+                  239,
+                  251,
+                  125,
+                  46,
+                  238,
+                  24,
                   0,
                   0,
                   0,
@@ -5350,8 +5350,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.000028860837619664386,
-              "borrowAPR": 0.050107994883177895
+              "supplyAPR": 0.000029820319686669517,
+              "borrowAPR": 0.050111577209352075
             },
             "rewards": {
               "rewardTokens": []
@@ -5589,8 +5589,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15751d0b",
-                  "stale": 1
+                  "slot": "1577f7a6",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -5599,14 +5599,14 @@
                   "supplyPubkey": "RwRnfrLihpJqua8sCim884Rkxe2NVyFWnJr3t2oomiZ",
                   "pythOracle": "8vjchtMuJNY4oFQdTi8yCe6mhCaNBFaUbktT482TpLPS",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "4a7355e186",
-                  "borrowedAmountWads": "017a22d6d1885bdb447f6607",
-                  "cummlativeBorrowRateWads": "0f5ccdbd123f7f1d",
-                  "marketPrice": "01e4ea6314d32000"
+                  "availableAmount": "4ae493d53e",
+                  "borrowedAmountWads": "017a31451101939b059b1f91",
+                  "cummlativeBorrowRateWads": "0f5d63d316fb3b30",
+                  "marketPrice": "01bb21aca0e0d000"
                 },
                 "collateral": {
                   "mintPubkey": "GBEAjbghsLhHK9CwWF5YQrjjShacXCnWs9fHXJqMHJxy",
-                  "mintTotalSupply": "4a3d383b5b",
+                  "mintTotalSupply": "4aadfaa050",
                   "supplyPubkey": "9iQhFzXeixhAi1NzgQs71WupsSjxTPyRq2FRVsUbhwu2"
                 },
                 "config": {
@@ -5630,8 +5630,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "13dc9b746a1d6117",
-                    "windowDuration": "3813"
+                    "maxOutflow": "ed5b40345d8952fd",
+                    "windowDuration": "3af5"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -5663,12 +5663,12 @@
                   0,
                   0,
                   0,
-                  204,
-                  125,
-                  180,
-                  68,
-                  182,
-                  225,
+                  96,
+                  244,
+                  24,
+                  254,
+                  207,
+                  184,
                   1,
                   0,
                   0,
@@ -5689,8 +5689,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.00007176099678509057,
-              "borrowAPR": 0.05026767078496165
+              "supplyAPR": 0.00007134617989131872,
+              "borrowAPR": 0.050266131653453054
             },
             "rewards": {
               "rewardTokens": []
@@ -5702,7 +5702,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15753963",
+                  "slot": "157871cb",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -5712,14 +5712,14 @@
                   "supplyPubkey": "GMzFQtWWUL7z4e2HGBx3Y5LbnH69WuENfH9mqnm6mG5h",
                   "pythOracle": "4cSM2e6rvbGQUFiJbqytoVMi5GgghSMr8LwVrT9VPSPo",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "017a944df0",
-                  "borrowedAmountWads": "4f7f9010eae7e9d790b90f",
-                  "cummlativeBorrowRateWads": "0e0c9b8dbbda9b07",
-                  "marketPrice": "194db4a1697141d59c00"
+                  "availableAmount": "017c3d78bd",
+                  "borrowedAmountWads": "4fd25ce8d848e70897f715",
+                  "cummlativeBorrowRateWads": "0e0cbe5fcfeb7dfb",
+                  "marketPrice": "19352ea656e0129a5800"
                 },
                 "collateral": {
                   "mintPubkey": "5unMtvRrfgu8ofLancHyYKWQrqsd7vZqVu8RquGceM6X",
-                  "mintTotalSupply": "01802a9234",
+                  "mintTotalSupply": "0181d9803e",
                   "supplyPubkey": "GBCwpu8ZaYZ7tuweED5GCNEbokr5xNhJt1Gk1gSkwJcy"
                 },
                 "config": {
@@ -5743,8 +5743,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "e134a5aa3f164cb3",
-                    "windowDuration": "01"
+                    "maxOutflow": "b4dd94657c42054b",
+                    "windowDuration": "03"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -5777,13 +5777,13 @@
                   0,
                   0,
                   0,
-                  176,
-                  45,
-                  162,
-                  180,
-                  86,
-                  55,
-                  151,
+                  81,
+                  127,
+                  192,
+                  255,
+                  165,
+                  0,
+                  50,
                   25,
                   0,
                   0,
@@ -5802,14 +5802,14 @@
                   0
                 ]
               },
-              "supplyAPR": 0.00016850034320936103,
-              "borrowAPR": 0.011304266811518932
+              "supplyAPR": 0.00016844164257728494,
+              "borrowAPR": 0.011303859430976585
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "e88d05b4-98b9-4fb0-a75b-2d9381c1abb0",
+                    "id": "db8210d7-bd20-4d31-be89-0d3370786df5",
                     "address": "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij",
                     "type": "regular"
                   },
@@ -5824,8 +5824,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15753333",
-                  "stale": 1
+                  "slot": "1577b833",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -5834,14 +5834,14 @@
                   "supplyPubkey": "9AhGbhV7L98mzkMurV8Zcz5WJvvJeRDSQhvH3Wem73QM",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "2d4dad4d6979",
+                  "availableAmount": "2d295b093c52",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0b4a71fcaba05b8a00"
+                  "marketPrice": "0af966e4a543a9d700"
                 },
                 "collateral": {
                   "mintPubkey": "Mkfee8Xp3njW8AJMXrdDgbJbtAZRCSPvEyKJhrQ9Kpn",
-                  "mintTotalSupply": "2d4dad4d6979",
+                  "mintTotalSupply": "2d295b093c52",
                   "supplyPubkey": "9F3T49yVWogKZxBM7X2DsUPiJYMQtiABNwSueztLhUZ9"
                 },
                 "config": {
@@ -5898,14 +5898,14 @@
                   255,
                   255,
                   0,
-                  9,
-                  144,
-                  128,
-                  182,
-                  171,
-                  232,
-                  73,
-                  11,
+                  127,
+                  67,
+                  102,
+                  231,
+                  208,
+                  202,
+                  233,
+                  10,
                   0,
                   0,
                   0,
@@ -6389,8 +6389,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15748dc6",
-                  "stale": 1
+                  "slot": "15777fae",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -6399,14 +6399,14 @@
                   "supplyPubkey": "2Khz77qDAL4yY1wG6mTLhLnKiN7sDjQCtrFDEEUFPpiB",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "571875a412f7",
+                  "availableAmount": "57217efdc212",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0c5dd91edec4b68a00"
+                  "marketPrice": "0bc8cf75937696d700"
                 },
                 "collateral": {
                   "mintPubkey": "6mFgUsvXQTEYrYgowc9pVzYi49XEJA5uHA9gVDURc2pM",
-                  "mintTotalSupply": "571875a412f7",
+                  "mintTotalSupply": "57217efdc212",
                   "supplyPubkey": "3GynM9cRtZsZ2s1SyoAuSgTDjx8ANcVZJXZayuWZbMpd"
                 },
                 "config": {
@@ -6463,14 +6463,14 @@
                   255,
                   255,
                   0,
-                  250,
-                  186,
-                  232,
-                  73,
-                  125,
-                  173,
-                  114,
-                  12,
+                  170,
+                  48,
+                  33,
+                  45,
+                  163,
+                  253,
+                  202,
+                  11,
                   0,
                   0,
                   0,
@@ -6615,8 +6615,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1575387d",
-                  "stale": 1
+                  "slot": "157884c2",
+                  "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -6625,14 +6625,14 @@
                   "supplyPubkey": "8SheGtsopRUDzdiD6v6BR9a6bqZ9QwywYQY99Fp5meNf",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "0ea241542a71",
-                  "borrowedAmountWads": "0182adbdabad992464b8227782e4",
-                  "cummlativeBorrowRateWads": "13bb464e24a33e13",
-                  "marketPrice": "0ddfd3898b43dc00"
+                  "availableAmount": "0ebd2a2a97e8",
+                  "borrowedAmountWads": "0184f8f18acab48cb26ef6cb34f9",
+                  "cummlativeBorrowRateWads": "13bc42f71a011c58",
+                  "marketPrice": "0de0158c64620400"
                 },
                 "collateral": {
                   "mintPubkey": "993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk",
-                  "mintTotalSupply": "21e0203087e0",
+                  "mintTotalSupply": "221668ffb45a",
                   "supplyPubkey": "UtRy8gcEu9fCkDuUrU8EmC7Uc6FZy5NCwttzG7i6nkw"
                 },
                 "config": {
@@ -6656,8 +6656,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "32d88b51fd3a3450",
-                    "windowDuration": "01e9dd"
+                    "maxOutflow": "530117064922b823",
+                    "windowDuration": "1bbfec"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -6689,12 +6689,12 @@
                   0,
                   0,
                   0,
-                  184,
-                  129,
-                  204,
-                  74,
-                  253,
-                  223,
+                  20,
+                  225,
+                  181,
+                  231,
+                  46,
+                  224,
                   13,
                   0,
                   0,
@@ -6715,14 +6715,14 @@
                   0
                 ]
               },
-              "supplyAPR": 0.03753785505216869,
-              "borrowAPR": 0.057252858891485875
+              "supplyAPR": 0.03751133397314081,
+              "borrowAPR": 0.05723691135043077
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "f1645202-ecd5-4545-b68c-549b62806769",
+                    "id": "becb9792-d2d8-443b-a0e1-5470b24383b4",
                     "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     "type": "regular"
                   },
@@ -6730,7 +6730,7 @@
                 },
                 {
                   "token": {
-                    "id": "3b0f2e5d-fd34-4d08-a30c-67cc70d56a1f",
+                    "id": "b18176a1-1e12-44b2-b4ef-5da621585499",
                     "address": "bobaM3u8QmqZhY1HwAtnvze9DLXvkgKYk3td3t8MLva",
                     "type": "regular"
                   },
@@ -6745,8 +6745,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1575387d",
-                  "stale": 0
+                  "slot": "15776b08",
+                  "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -6755,14 +6755,14 @@
                   "supplyPubkey": "GyoGoWFRKdaV2RXZmKaFRgt8T92MUyUQaFXEx5SsEuBs",
                   "pythOracle": "BEMsCSQEGi2kwPA4mKnGjxnreijhMki7L4eeb96ypzF9",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "1d45deb3b0",
-                  "borrowedAmountWads": "5014bf88700341ef02dfce",
-                  "cummlativeBorrowRateWads": "0f430ef3f4ee1a27",
+                  "availableAmount": "1db725cde8",
+                  "borrowedAmountWads": "50171873557d3a21183e7c",
+                  "cummlativeBorrowRateWads": "0f43817a014d16c3",
                   "marketPrice": "012438d2837ff400"
                 },
                 "collateral": {
                   "mintPubkey": "3wtk8ecgbd6f2LknYpqQ1y1wyf45jzP8gZkz8Yswd7DQ",
-                  "mintTotalSupply": "1d19223abc",
+                  "mintTotalSupply": "1d89a62dd5",
                   "supplyPubkey": "D2oecRyxST1RLz18LSvCzPrU9PvbdwpRifZTD6V3hFj8"
                 },
                 "config": {
@@ -6786,8 +6786,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "ff0ac0ed2dbe1dc2",
-                    "windowDuration": "861f"
+                    "maxOutflow": "2e0572eb9e28ca4b",
+                    "windowDuration": "8698"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -6845,8 +6845,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.000038582499664133505,
-              "borrowAPR": 0.05014426810800078
+              "supplyAPR": 0.00003801113829836246,
+              "borrowAPR": 0.05014213770606913
             },
             "rewards": {
               "rewardTokens": []
@@ -7084,7 +7084,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157536d0",
+                  "slot": "1578019f",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -7094,14 +7094,14 @@
                   "supplyPubkey": "8HAaZSiCbVqrLDQHxg3yey8JWuGbeyC2tNTEmzgmt4C4",
                   "pythOracle": "42amVS4KgzR9rA28tkVYqVXjq9Qa8dcZQMbH5EYFX6XC",
                   "switchboardOracle": "HNStfhaLnqwF2ZtJUizaA9uHDAVB976r2AgTUx9LrdEo",
-                  "availableAmount": "03e2e1edef",
-                  "borrowedAmountWads": "06df4ab15a3bfd0a4d236cfd",
-                  "cummlativeBorrowRateWads": "0f54c76f3caa4a0c",
-                  "marketPrice": "f7bc69fcdc0dde5800"
+                  "availableAmount": "03d7834418",
+                  "borrowedAmountWads": "06da14944a168acb8de97e6b",
+                  "cummlativeBorrowRateWads": "0f54e0276ca82d63",
+                  "marketPrice": "fbbb91a638a33ba800"
                 },
                 "collateral": {
                   "mintPubkey": "FbKvdbx5h6F86h1pZuEqv7FxwmsVhJ88cDuSqHvLm6Xf",
-                  "mintTotalSupply": "0438564e8e",
+                  "mintTotalSupply": "042d05a7df",
                   "supplyPubkey": "BtGoQiwEWUZQfNaxSxzBgRikfT1rx3hSkzjQEWvktEMe"
                 },
                 "config": {
@@ -7125,7 +7125,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "6b540224770715",
+                    "maxOutflow": "0512e2a4809d9440",
                     "windowDuration": "00"
                   },
                   "previousQuantity": "00",
@@ -7158,14 +7158,14 @@
                   0,
                   0,
                   0,
-                  0,
-                  121,
-                  219,
-                  198,
-                  146,
-                  58,
-                  9,
-                  254,
+                  128,
+                  78,
+                  182,
+                  147,
+                  227,
+                  244,
+                  238,
+                  251,
                   0,
                   0,
                   0,
@@ -7184,8 +7184,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.0009580310309456905,
-              "borrowAPR": 0.008476575211777854
+              "supplyAPR": 0.0009726265852037247,
+              "borrowAPR": 0.008540901234078248
             },
             "rewards": {
               "rewardTokens": []
@@ -7197,7 +7197,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "156a85ba",
+                  "slot": "15759c7c",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -7207,14 +7207,14 @@
                   "supplyPubkey": "5pHGhh9pjzHP6fWQF4wQ3CKWpZM3YaerRJYN6RLTtZ5m",
                   "pythOracle": "nu11111111111111111111111111111111111111111",
                   "switchboardOracle": "EEoQp9GwnwNyAmKPCLhCE6GPCZ6eRHHZd4cnWpvShgV1",
-                  "availableAmount": "ccabece83a",
-                  "borrowedAmountWads": "7f3be7d53ee6b4",
-                  "cummlativeBorrowRateWads": "3f23ecb21278fa14",
+                  "availableAmount": "cca626d835",
+                  "borrowedAmountWads": "7f6174f7ea64a7",
+                  "cummlativeBorrowRateWads": "3f368f3f983a4492",
                   "marketPrice": "038f675e87fccba1"
                 },
                 "collateral": {
                   "mintPubkey": "D3Cu5urZJhkKyNZQQq2ne6xSfzbXLU4RrywVErMA2vf8",
-                  "mintTotalSupply": "cb94023d3b",
+                  "mintTotalSupply": "cb8e4412a9",
                   "supplyPubkey": "Cc8DRe9wagmkVBeeeLsjgkAk7fkpyZt7XF8Ts3ddyYXd"
                 },
                 "config": {
@@ -7238,7 +7238,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "4138de2e55696641",
+                    "maxOutflow": "4138e5b0f5f2190b",
                     "windowDuration": "0291"
                   },
                   "previousQuantity": "00",
@@ -7297,8 +7297,8 @@
                   0
                 ]
               },
-              "supplyAPR": 4.074043000000664e-15,
-              "borrowAPR": 0.1000000000000163
+              "supplyAPR": 4.079189000000666e-15,
+              "borrowAPR": 0.10000000000001633
             },
             "rewards": {
               "rewardTokens": []
@@ -8327,7 +8327,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15746114",
+                  "slot": "1575a210",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -8337,10 +8337,10 @@
                   "supplyPubkey": "69khDpj7ZuLc5C3dG7x76ZnTa639HChEkoKKDMaqqv9x",
                   "pythOracle": "9vNb2tQoZ8bB4vzMbQLWViGwNaDJVtct13AGgno1wazp",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "010e731a5f",
-                  "borrowedAmountWads": "022eb6f7ba3d719d5eecd8e0",
-                  "cummlativeBorrowRateWads": "0f61b7ff11d207ab",
-                  "marketPrice": "87dcab9cd09fd800"
+                  "availableAmount": "010e726f71",
+                  "borrowedAmountWads": "022ee54c7da7e7d8c396b384",
+                  "cummlativeBorrowRateWads": "0f62fe878d3e97aa",
+                  "marketPrice": "7d87f3e4a861b800"
                 },
                 "collateral": {
                   "mintPubkey": "C9oYz88NkfFNeeKmepQnf28F5VnNeMVhxN5VooFgegG9",
@@ -8368,7 +8368,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "420dc5070dc521",
+                    "maxOutflow": "071a306fadd15741",
                     "windowDuration": "00"
                   },
                   "previousQuantity": "00",
@@ -8401,13 +8401,13 @@
                   0,
                   0,
                   0,
-                  160,
-                  183,
-                  50,
-                  191,
-                  125,
-                  226,
-                  135,
+                  32,
+                  235,
+                  174,
+                  204,
+                  155,
+                  94,
+                  126,
                   0,
                   0,
                   0,
@@ -8427,8 +8427,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.03221063862059887,
-              "borrowAPR": 0.24859000465281836
+              "supplyAPR": 0.03222181901629049,
+              "borrowAPR": 0.24860411209353844
             },
             "rewards": {
               "rewardTokens": []
@@ -8440,7 +8440,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "155c4d0f",
+                  "slot": "15767bb0",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -8450,14 +8450,14 @@
                   "supplyPubkey": "AQEydrKfS1DYMuDHHhYVqoZvqwXtnh8bcxhsC5nnMBs6",
                   "pythOracle": "GHKcxocPyzSjy7tWApQjKRkDNuVXd4Kk624zhuaR7xhC",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "1afa9259a842",
-                  "borrowedAmountWads": "356a61918b9d",
-                  "cummlativeBorrowRateWads": "0efb87bb218fe990",
+                  "availableAmount": "1af7d6e43671",
+                  "borrowedAmountWads": "357cfe8ddd94",
+                  "cummlativeBorrowRateWads": "0f00c0434a9c9950",
                   "marketPrice": "013ff12548503800"
                 },
                 "collateral": {
                   "mintPubkey": "DFF91idVR3626KTcYzAPU28vkH4chbPU3Hu81jwPqrhD",
-                  "mintTotalSupply": "1af7ddc733a7",
+                  "mintTotalSupply": "1af52297e5a0",
                   "supplyPubkey": "B3kJf9gQkevPwSpChxdujVcia9rM4NHj8KXcbRakhtRJ"
                 },
                 "config": {
@@ -8481,7 +8481,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "03198776373ef8c2",
+                    "maxOutflow": "03198779f03e3c59",
                     "windowDuration": "00"
                   },
                   "previousQuantity": "00",
@@ -8553,8 +8553,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15735395",
-                  "stale": 0
+                  "slot": "15776b74",
+                  "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -8563,14 +8563,14 @@
                   "supplyPubkey": "EFKeUUu744dJsGXX6mpdkbsmfHNk8XM7RyZkccekquY1",
                   "pythOracle": "FFv5yoCGhEgWv6mXhwv4KX8A2dYcVAzi88a6Yu8Tf3iB",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "0100c9d9b58b215d",
-                  "borrowedAmountWads": "f97b6876a6998cfe6e5751ee5195",
-                  "cummlativeBorrowRateWads": "0f433737d9167cf9",
-                  "marketPrice": "f9b1532d3800"
+                  "availableAmount": "0100fbef0663fde6",
+                  "borrowedAmountWads": "f98c53912f0400e92434b35134f3",
+                  "cummlativeBorrowRateWads": "0f44402e99d172d3",
+                  "marketPrice": "e666fca93400"
                 },
                 "collateral": {
                   "mintPubkey": "AEPYPxbmF7vkQkyN2ew9o7TCxBUCjSFLGRK3cCf5FD5d",
-                  "mintTotalSupply": "01129b4d872e55d1",
+                  "mintTotalSupply": "0112cdb65098899c",
                   "supplyPubkey": "GoH22mhnQYTsik1z6NTxouYbGm7YAp3KUNJuBAa8a42Y"
                 },
                 "config": {
@@ -8594,8 +8594,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "aa984c6f231941da",
-                    "windowDuration": "0326f22ca2"
+                    "maxOutflow": "aa0be399222f6f52",
+                    "windowDuration": "0197832e5e"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -8627,11 +8627,11 @@
                   0,
                   0,
                   0,
-                  236,
-                  38,
-                  56,
-                  226,
-                  249,
+                  40,
+                  104,
+                  31,
+                  40,
+                  230,
                   0,
                   0,
                   0,
@@ -8653,8 +8653,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.004073977424971943,
-              "borrowAPR": 0.06226755649599581
+              "supplyAPR": 0.0040717143080692365,
+              "borrowAPR": 0.062261862980304436
             },
             "rewards": {
               "rewardTokens": []
@@ -8779,8 +8779,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1573a2fd",
-                  "stale": 0
+                  "slot": "15769c55",
+                  "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 "liquidity": {
@@ -8789,10 +8789,10 @@
                   "supplyPubkey": "DcHZ6SSWDAJ5LMgbGdhy4daUfUBDRCSP64sQLEu33a4Y",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "07a06820ca",
-                  "borrowedAmountWads": "12f5d80889fe4bc14e65da5e",
-                  "cummlativeBorrowRateWads": "0f8ca248d304e7bd",
-                  "marketPrice": "0de00d8dcf8e2800"
+                  "availableAmount": "07a06426f5",
+                  "borrowedAmountWads": "12f6c3cc7f8c34d7b0555e29",
+                  "cummlativeBorrowRateWads": "0f8d63a2b420b65d",
+                  "marketPrice": "0de0375f5d1f4000"
                 },
                 "collateral": {
                   "mintPubkey": "Gv6kP9Zb5SbyVrR68oeDjXtYvoidyJPeRQSf4pgutKDt",
@@ -8820,8 +8820,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "18504313a3b3db61",
-                    "windowDuration": "0806"
+                    "maxOutflow": "07a4ed6e60495c22",
+                    "windowDuration": "00"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -8853,11 +8853,11 @@
                   0,
                   0,
                   0,
-                  168,
-                  7,
-                  191,
-                  97,
-                  35,
+                  64,
+                  157,
+                  39,
+                  229,
+                  44,
                   224,
                   13,
                   0,
@@ -8879,14 +8879,14 @@
                   0
                 ]
               },
-              "supplyAPR": 0.009327346385875955,
-              "borrowAPR": 0.061394381145180865
+              "supplyAPR": 0.00932920043252763,
+              "borrowAPR": 0.06139629146547176
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "576c84c2-d303-4ea7-9b65-bea3899934a2",
+                    "id": "93d29bd3-3106-42f7-a38c-2b5cc911489c",
                     "address": "FAJA9Qgn1CqLKtYi77CoWSGH7dyRrat394q9mpRFQzGs",
                     "type": "regular"
                   },
@@ -9353,7 +9353,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1573fbab",
+                  "slot": "1575405a",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -9363,14 +9363,14 @@
                   "supplyPubkey": "3jvjftVoiT96gpBBMWrQm5Yt9FUp7TBdQQnem6Ci79me",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "0c3a99ba8570",
+                  "availableAmount": "0c2cc0410cac",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "0bfbce8d5747769600"
+                  "marketPrice": "0ba7eefd96a2d59fc0"
                 },
                 "collateral": {
                   "mintPubkey": "8F9H3keaxVAq8hc3hrJQq1euY7gVcs2aaNVFFjf39vDy",
-                  "mintTotalSupply": "0c3a99ba8570",
+                  "mintTotalSupply": "0c2cc0410cac",
                   "supplyPubkey": "2Vx2SGz6qTTPzvviLXNR8NYiVfL7u4FnfVe8EKofPs7w"
                 },
                 "config": {
@@ -9427,13 +9427,13 @@
                   255,
                   255,
                   0,
-                  252,
-                  149,
-                  130,
-                  185,
-                  172,
-                  213,
-                  253,
+                  147,
+                  166,
+                  215,
+                  32,
+                  60,
+                  150,
+                  254,
                   11,
                   0,
                   0,
@@ -9466,7 +9466,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1575387d",
+                  "slot": "157882e7",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -9476,14 +9476,14 @@
                   "supplyPubkey": "3m5UiPrmtqzZsTxHdJ6DNfagXZVVqC3Eq6xugJN4wDWJ",
                   "pythOracle": "7dbob1psH1iZBS7qPsm3Kwbf5DzSXK8Jyg31CTgTnxH5",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "62fdc1e4f7",
-                  "borrowedAmountWads": "39be7f28d105bf6f338b6217",
-                  "cummlativeBorrowRateWads": "0faa2096bb1ed31d",
-                  "marketPrice": "070bb81fdcf73c00"
+                  "availableAmount": "630f2d269a",
+                  "borrowedAmountWads": "39c1680f578ab7af6062d48a",
+                  "cummlativeBorrowRateWads": "0faaeaa97596677c",
+                  "marketPrice": "07374443ce58b800"
                 },
                 "collateral": {
                   "mintPubkey": "A9h7EaytnsvcNNrwdkc71eBoYQ8VUiir3iNAkaP4rnvV",
-                  "mintTotalSupply": "660b0e054e",
+                  "mintTotalSupply": "661c516d2c",
                   "supplyPubkey": "CvG6hmwZA6gUF7CKFpuhaXZsX558NjQN1kSGLdRrrVGX"
                 },
                 "config": {
@@ -9507,8 +9507,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "d3cfa3f8437671ea",
-                    "windowDuration": "0699"
+                    "maxOutflow": "773fbb7bbdc8bbfe",
+                    "windowDuration": "29d2"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -9540,12 +9540,12 @@
                   0,
                   0,
                   0,
-                  44,
-                  64,
-                  63,
-                  221,
-                  208,
-                  83,
+                  212,
+                  132,
+                  119,
+                  144,
+                  128,
+                  53,
                   7,
                   0,
                   0,
@@ -9566,8 +9566,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.002321960979013695,
-              "borrowAPR": 0.05756328735808269
+              "supplyAPR": 0.002320725223719544,
+              "borrowAPR": 0.057559729412994434
             },
             "rewards": {
               "rewardTokens": []
@@ -9579,7 +9579,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15751a39",
+                  "slot": "1577f381",
                   "stale": 0
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -9589,14 +9589,14 @@
                   "supplyPubkey": "9RE9PLrtJwBM2UKHB6JZ6PCpv1M98xRPWyc8gb6ekWnD",
                   "pythOracle": "4cSM2e6rvbGQUFiJbqytoVMi5GgghSMr8LwVrT9VPSPo",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "01c0a13c",
+                  "availableAmount": "0183983c",
                   "borrowedAmountWads": "00",
-                  "cummlativeBorrowRateWads": "0defbffab6102f70",
-                  "marketPrice": "199ee4118cfcd38c9000"
+                  "cummlativeBorrowRateWads": "0defdb03e02c2de8",
+                  "marketPrice": "193f6ad318ca47795c00"
                 },
                 "collateral": {
                   "mintPubkey": "8GEsdDhVTnotJPNG25DZeRPkuUNmS9C1TM5HqLFrKcPV",
-                  "mintTotalSupply": "01c0a13c",
+                  "mintTotalSupply": "0183983c",
                   "supplyPubkey": "2NaavDgq47AMYotAzwCrtCCkUScmC7kMdLkPrBUPzYXr"
                 },
                 "config": {
@@ -9653,14 +9653,14 @@
                   0,
                   0,
                   0,
-                  128,
-                  66,
-                  105,
-                  246,
-                  145,
-                  163,
-                  2,
-                  165,
+                  0,
+                  176,
+                  91,
+                  58,
+                  154,
+                  61,
+                  146,
+                  54,
                   25,
                   0,
                   0,
@@ -9692,7 +9692,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157536d0",
+                  "slot": "15788285",
                   "stale": 1
                 },
                 "lendingMarket": "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
@@ -9702,14 +9702,14 @@
                   "supplyPubkey": "9uC55GXWnvc4XppM42CiLpyQ3KvVN3KtnLctvcH2HZCg",
                   "pythOracle": "DyYBBWEi9xZvgNAeMDCiFnmC1U9gqgVsJDXkL5WETpoX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "baa5626609",
-                  "borrowedAmountWads": "21d4a68eef2cd49c6536f88afa",
-                  "cummlativeBorrowRateWads": "0ebf9b4204bb2427",
-                  "marketPrice": "0ddff4864fbb2800"
+                  "availableAmount": "bad3781acd",
+                  "borrowedAmountWads": "21d5a5a8b8368078bb8da58cd3",
+                  "cummlativeBorrowRateWads": "0ec07684ba2eac92",
+                  "marketPrice": "0ddf045f61473400"
                 },
                 "collateral": {
                   "mintPubkey": "2vtVnToA4N1FaxzYiwYVyRHY8jJAiaHrtdSycKNLDPRg",
-                  "mintTotalSupply": "02e056e71ca3",
+                  "mintTotalSupply": "02e076adadcf",
                   "supplyPubkey": "5AFVxfJ4zD7vSwgVcoE9U7Um12F8R9iMoRCuWjLxZq8B"
                 },
                 "config": {
@@ -9733,8 +9733,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "046f9c05674e40bb",
-                    "windowDuration": "00"
+                    "maxOutflow": "8fb423cf63a27444",
+                    "windowDuration": "06d5e1"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -9766,11 +9766,11 @@
                   0,
                   0,
                   0,
-                  12,
-                  169,
-                  253,
-                  224,
-                  161,
+                  212,
+                  53,
+                  193,
+                  4,
+                  67,
                   223,
                   13,
                   0,
@@ -9792,22 +9792,22 @@
                   0
                 ]
               },
-              "supplyAPR": 0.05099169648349241,
-              "borrowAPR": 0.06624233222070411
+              "supplyAPR": 0.05097777914263323,
+              "borrowAPR": 0.0662372018444883
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "19aaee7e-3d10-4fe8-9c0b-a3b803de8dab",
+                    "id": "bdecea5b-a3ca-426b-8fdd-ec940c8c3d5e",
                     "address": "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA",
                     "type": "regular"
                   },
-                  "rewardPerShare": 2.761987632794091e+37
+                  "rewardPerShare": 2.761987632800883e+37
                 },
                 {
                   "token": {
-                    "id": "f877d774-38ca-40e5-925a-cfb785381ed8",
+                    "id": "b716fb2b-8baf-4c87-87e8-ced2d2539281",
                     "address": "SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp",
                     "type": "regular"
                   },
@@ -13288,7 +13288,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1571fe4d",
+                  "slot": "1578493d",
                   "stale": 1
                 },
                 "lendingMarket": "C3L8Ntcjj6zUbCoBxNUyLGrTTDzDt6DdYLLbVMd3gFJ7",
@@ -13298,14 +13298,14 @@
                   "supplyPubkey": "CX71Btg5FuNBh8DvncQvu5bWCcRzzJPtx5xgYSTYSy4D",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "087e8aee0e",
-                  "borrowedAmountWads": "11bba6b48187a4439e61cd80",
-                  "cummlativeBorrowRateWads": "0e44da979a702a2d",
-                  "marketPrice": "0de02e8ce8115800"
+                  "availableAmount": "084268fd6f",
+                  "borrowedAmountWads": "11c18a98c91bb4ec0f74bba4",
+                  "cummlativeBorrowRateWads": "0e4997ecd2c3c221",
+                  "marketPrice": "0de0289c85bcc400"
                 },
                 "collateral": {
                   "mintPubkey": "cm4gXPpKuMgaMXwRP6AD9vMaabn7ZsUPsPd9MnT3j1H",
-                  "mintTotalSupply": "099d713324",
+                  "mintTotalSupply": "09625e8639",
                   "supplyPubkey": "8c8yaUN4wneFe11E5JWLjbS6neqPUy5u6erUNKFrJn1"
                 },
                 "config": {
@@ -13329,8 +13329,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "3949ca676ff6b17d",
-                    "windowDuration": "055c"
+                    "maxOutflow": "073e4f84ca9dadea",
+                    "windowDuration": "00"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -13362,11 +13362,11 @@
                   0,
                   0,
                   0,
-                  92,
-                  222,
-                  178,
-                  123,
-                  38,
+                  156,
+                  58,
+                  29,
+                  199,
+                  46,
                   224,
                   13,
                   0,
@@ -13388,18 +13388,18 @@
                   0
                 ]
               },
-              "supplyAPR": 0.02593049350877045,
-              "borrowAPR": 0.19830636680836386
+              "supplyAPR": 0.026662289514682195,
+              "borrowAPR": 0.1987783091064368
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "781036bb-bcd6-436b-a4cb-7e10ace5804f",
+                    "id": "bcb008e5-7900-4a69-a821-1fa5eb0913c9",
                     "address": "NFTUkR4u7wKxy9QLaX2TGvd9oZSWoMo4jqSJqdMb7Nk",
                     "type": "regular"
                   },
-                  "rewardPerShare": 5.776928845747808e+29
+                  "rewardPerShare": 6.0060426928559e+29
                 }
               ]
             }
@@ -15510,7 +15510,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15753917",
+                  "slot": "157884b1",
                   "stale": 0
                 },
                 "lendingMarket": "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM",
@@ -15520,14 +15520,14 @@
                   "supplyPubkey": "5cSfC32xBUYqGfkURLGfANuK64naHmMp27jUT7LQSujY",
                   "pythOracle": "7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE",
                   "switchboardOracle": "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
-                  "availableAmount": "03ca03bb0499",
-                  "borrowedAmountWads": "32a6c58752271620030169d5ce",
-                  "cummlativeBorrowRateWads": "103532f9d14e9950",
-                  "marketPrice": "0a647dd4335a447c00"
+                  "availableAmount": "03bf441e05eb",
+                  "borrowedAmountWads": "32b09565262c40263875292fcb",
+                  "cummlativeBorrowRateWads": "1036133134d3c870",
+                  "marketPrice": "0a819ceaae9af46800"
                 },
                 "collateral": {
                   "mintPubkey": "AVxnqyCameKsKTCGVKeyJMA7vjHnxJit6afC8AM9MdMj",
-                  "mintTotalSupply": "07034105a5ef",
+                  "mintTotalSupply": "06f9a36484a1",
                   "supplyPubkey": "9QqRewoWbePkSH919xXn826h67ea1EFAVXhTdiJArDnx"
                 },
                 "config": {
@@ -15551,8 +15551,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "48f4aa4f51b7bf0b",
-                    "windowDuration": "5db4"
+                    "maxOutflow": "c5a3993e0d11b445",
+                    "windowDuration": "03e1d8"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -15584,13 +15584,13 @@
                   0,
                   0,
                   0,
-                  176,
-                  189,
-                  176,
-                  49,
-                  89,
-                  0,
-                  236,
+                  80,
+                  135,
+                  209,
+                  193,
+                  54,
+                  108,
+                  141,
                   10,
                   0,
                   0,
@@ -15610,8 +15610,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.03009061555247144,
-              "borrowAPR": 0.06132965794832815
+              "supplyAPR": 0.03045651078716914,
+              "borrowAPR": 0.06170140880398228
             },
             "rewards": {
               "rewardTokens": []
@@ -15623,7 +15623,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15753917",
+                  "slot": "157884b1",
                   "stale": 0
                 },
                 "lendingMarket": "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM",
@@ -15633,14 +15633,14 @@
                   "supplyPubkey": "49mYvAcRHFYnHt3guRPsxecFqBAY8frkGSFuXRL3cqfC",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "BjUgj6YCnFBZ49wF54ddBVA9qu8TeqkFtkbqmZcee8uW",
-                  "availableAmount": "8e0ea57649",
-                  "borrowedAmountWads": "082fc279b240eb39363c305fbd",
-                  "cummlativeBorrowRateWads": "14550996a233dd52",
-                  "marketPrice": "0ddfd466bbad7800"
+                  "availableAmount": "8d74abdec5",
+                  "borrowedAmountWads": "08386953cf89babdd8195810f1",
+                  "cummlativeBorrowRateWads": "1456307516942395",
+                  "marketPrice": "0de0158c64620400"
                 },
                 "collateral": {
                   "mintPubkey": "HKijBKC2zKcV2BXA9CuNemmWUhTuFkPLLgvQBP7zrQjL",
-                  "mintTotalSupply": "ed0a982c8a",
+                  "mintTotalSupply": "ed098dac4a",
                   "supplyPubkey": "8YGu5iFMKHau2XjVBwKiyPjY2rYpbaLMyxfVhM916jPd"
                 },
                 "config": {
@@ -15664,8 +15664,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "e5e2980a4fbe8dd5",
-                    "windowDuration": "0fe7"
+                    "maxOutflow": "3b6c457cbb087f3e",
+                    "windowDuration": "a8e9"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -15697,12 +15697,12 @@
                   0,
                   0,
                   0,
-                  92,
-                  214,
-                  220,
-                  146,
-                  252,
-                  223,
+                  20,
+                  225,
+                  181,
+                  231,
+                  46,
+                  224,
                   13,
                   0,
                   0,
@@ -15723,8 +15723,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.03318959977957496,
-              "borrowAPR": 0.06441040267260305
+              "supplyAPR": 0.03345917906293534,
+              "borrowAPR": 0.06467145725021911
             },
             "rewards": {
               "rewardTokens": []
@@ -15860,8 +15860,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15722920",
-                  "stale": 1
+                  "slot": "1575fe6d",
+                  "stale": 0
                 },
                 "lendingMarket": "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q",
                 "liquidity": {
@@ -15871,9 +15871,9 @@
                   "pythOracle": "HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM",
                   "switchboardOracle": "ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9",
                   "availableAmount": "02a35ed540",
-                  "borrowedAmountWads": "084525284c1f2ed5bf25319d",
-                  "cummlativeBorrowRateWads": "10e8c577e1cad52f",
-                  "marketPrice": "0de1478c431e1800"
+                  "borrowedAmountWads": "084560d398374aa2aab12292",
+                  "cummlativeBorrowRateWads": "10e93f782960de7c",
+                  "marketPrice": "0de2641ea46bdc00"
                 },
                 "collateral": {
                   "mintPubkey": "9wCxum1oB9JpgPUuVmsPTqDDvKeQqP3rnGFg3GEMrUGT",
@@ -15901,8 +15901,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "08f46f5344186827",
-                    "windowDuration": "00"
+                    "maxOutflow": "182c74e2a6679858",
+                    "windowDuration": "0bef"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -15934,12 +15934,12 @@
                   0,
                   0,
                   0,
-                  188,
-                  28,
+                  56,
                   197,
-                  212,
-                  248,
-                  224,
+                  112,
+                  203,
+                  43,
+                  226,
                   13,
                   0,
                   0,
@@ -15960,8 +15960,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.005092934956291614,
-              "borrowAPR": 0.02763946894286759
+              "supplyAPR": 0.005093849739145942,
+              "borrowAPR": 0.02764195110465054
             },
             "rewards": {
               "rewardTokens": []
@@ -16538,8 +16538,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15720d1d",
-                  "stale": 0
+                  "slot": "15760d8c",
+                  "stale": 1
                 },
                 "lendingMarket": "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q",
                 "liquidity": {
@@ -16548,10 +16548,10 @@
                   "supplyPubkey": "8wP3UPibc1uEUnHrXywysWxo1vPxLwrwdfwk9F8Tj9at",
                   "pythOracle": "HyBsZY1UiGttbQ3ppBmnFVss9rmDAEvEbtYxdfjNAqBZ",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "02d7d256d8",
-                  "borrowedAmountWads": "05335adb665e804a36dcc998",
-                  "cummlativeBorrowRateWads": "0e55960bd66bec1f",
-                  "marketPrice": "104129f73ff94000"
+                  "availableAmount": "02d91598fe",
+                  "borrowedAmountWads": "0521d8374365357978e3d56e",
+                  "cummlativeBorrowRateWads": "0e55da454a146878",
+                  "marketPrice": "1028e8e8be6acc00"
                 },
                 "collateral": {
                   "mintPubkey": "Cn7xAhu6Jpr27barUuvo3zqaSmrCEAyeUxQfexHexxX9",
@@ -16579,8 +16579,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "edabea8861ad3a27",
-                    "windowDuration": "1053"
+                    "maxOutflow": "0582996a39c36fb7",
+                    "windowDuration": "00"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -16612,12 +16612,12 @@
                   0,
                   0,
                   0,
-                  240,
-                  242,
-                  188,
-                  80,
-                  225,
-                  64,
+                  52,
+                  217,
+                  199,
+                  86,
+                  95,
+                  40,
                   16,
                   0,
                   0,
@@ -16638,8 +16638,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.0020344237549455957,
-              "borrowAPR": 0.017468931370917894
+              "supplyAPR": 0.0019812564614259207,
+              "borrowAPR": 0.01723915511891137
             },
             "rewards": {
               "rewardTokens": []
@@ -16764,7 +16764,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "156e1c91",
+                  "slot": "15760d8c",
                   "stale": 1
                 },
                 "lendingMarket": "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q",
@@ -16774,14 +16774,14 @@
                   "supplyPubkey": "z7yTesDCUkvheHnULMjS6dggiiVczpX5JjfTx5atRgQ",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "BjUgj6YCnFBZ49wF54ddBVA9qu8TeqkFtkbqmZcee8uW",
-                  "availableAmount": "0fbd4fa087",
-                  "borrowedAmountWads": "28c6fb788e2e6cf9ac7b2643",
-                  "cummlativeBorrowRateWads": "100947b42256b565",
-                  "marketPrice": "0de06bd75d144400"
+                  "availableAmount": "0fbbd90a2e",
+                  "borrowedAmountWads": "28c903e0543716dd0a3d7f86",
+                  "cummlativeBorrowRateWads": "100a145c4d1de303",
+                  "marketPrice": "0de0201de25aec00"
                 },
                 "collateral": {
                   "mintPubkey": "4JZ6PXqRDp8jQxXUYX9cbAzHi6uzZk856aoAqPGdV5Da",
-                  "mintTotalSupply": "11bae8e8f8",
+                  "mintTotalSupply": "11b98c74e8",
                   "supplyPubkey": "7JF8e93t52SGFUHzMt5cD7vte4b8gWZHY99GLziAUeiP"
                 },
                 "config": {
@@ -16805,7 +16805,7 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "020ad3c63ccbe81c",
+                    "maxOutflow": "01a434d780d8605b",
                     "windowDuration": "00"
                   },
                   "previousQuantity": "00",
@@ -16838,11 +16838,11 @@
                   0,
                   0,
                   0,
-                  92,
-                  6,
-                  232,
+                  84,
                   4,
-                  99,
+                  95,
+                  93,
+                  17,
                   224,
                   13,
                   0,
@@ -16864,8 +16864,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.003712233847145318,
-              "borrowAPR": 0.023597353179367335
+              "supplyAPR": 0.003715726006463741,
+              "borrowAPR": 0.023608449779042272
             },
             "rewards": {
               "rewardTokens": []
@@ -44802,7 +44802,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "15721f16",
+                  "slot": "1575dcba",
                   "stale": 1
                 },
                 "lendingMarket": "ErM46rCeAtGtEKjvZ3tuGrzL6L5nVq6pFuXukocbKqGX",
@@ -44812,9 +44812,9 @@
                   "supplyPubkey": "9ub85UDU4GP5bjSyR3K4FPwK3bngiKyeMkPrKdSJWvtb",
                   "pythOracle": "2TTGSRSezqFzeLUH8JwRUbtN66XLLaymfYsWRTMjfiMw",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "05975e630c",
-                  "borrowedAmountWads": "eba2d0618346564a198143",
-                  "cummlativeBorrowRateWads": "0de66ca1e88e5465",
+                  "availableAmount": "0597a332fa",
+                  "borrowedAmountWads": "e7e8665d8913c283197276",
+                  "cummlativeBorrowRateWads": "0de674ea85eefa02",
                   "marketPrice": "47dfde28072ff000"
                 },
                 "collateral": {
@@ -44843,8 +44843,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "826d6e6e98138aa4",
-                    "windowDuration": "7a"
+                    "maxOutflow": "88814f1a88debae0",
+                    "windowDuration": "96"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -44902,8 +44902,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.000027486970726323282,
-              "borrowAPR": 0.0023446522439936925
+              "supplyAPR": 0.00002662406038445387,
+              "borrowAPR": 0.002307555433113314
             },
             "rewards": {
               "rewardTokens": []
@@ -59226,7 +59226,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157524cd",
+                  "slot": "1576691b",
                   "stale": 1
                 },
                 "lendingMarket": "7XttJ7hp83u5euzT7ybC5zsjdgKA4WPbQHVS27CATAJH",
@@ -59239,7 +59239,7 @@
                   "availableAmount": "6260b08901",
                   "borrowedAmountWads": "00",
                   "cummlativeBorrowRateWads": "0de0b6b3a7640000",
-                  "marketPrice": "4b624765131a5000"
+                  "marketPrice": "495e66d0e756d800"
                 },
                 "collateral": {
                   "mintPubkey": "T1k32vS5fzX77eA7jLpbh19ThBNym8nxcbF7tXBhGX4",
@@ -59300,13 +59300,13 @@
                   255,
                   255,
                   0,
-                  184,
-                  48,
-                  54,
+                  96,
+                  51,
+                  73,
+                  138,
                   216,
-                  11,
-                  47,
-                  75,
+                  138,
+                  73,
                   0,
                   0,
                   0,
@@ -59339,8 +59339,8 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "157537af",
-                  "stale": 1
+                  "slot": "15787505",
+                  "stale": 0
                 },
                 "lendingMarket": "7XttJ7hp83u5euzT7ybC5zsjdgKA4WPbQHVS27CATAJH",
                 "liquidity": {
@@ -59349,14 +59349,14 @@
                   "supplyPubkey": "GoAXW8CadyTRf2Q4FcnVPRbJwMtHxdW3PkhUWuqiTT61",
                   "pythOracle": "Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "79129c16f6",
-                  "borrowedAmountWads": "097753dd00113cc96ded980d67",
-                  "cummlativeBorrowRateWads": "0f3090fc8d2569db",
-                  "marketPrice": "0ddfd4417aef3800"
+                  "availableAmount": "84774ec9e5",
+                  "borrowedAmountWads": "0977cf1081aa6fe0c4ece35a79",
+                  "cummlativeBorrowRateWads": "0f3156ae14055106",
+                  "marketPrice": "0de02b0c822f7400"
                 },
                 "collateral": {
                   "mintPubkey": "927hg5BZTEK2LdtrTu9e8RCMm3QBCfNrcdDDgvVykcCX",
-                  "mintTotalSupply": "01173a8e75ea",
+                  "mintTotalSupply": "0121fcfa9136",
                   "supplyPubkey": "5KTzzEXLDLNScJznRYTE9T5zZiNfakQSwE9XqSAmQM2H"
                 },
                 "config": {
@@ -59380,8 +59380,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "0a5d946d930b3bf2",
-                    "windowDuration": "00"
+                    "maxOutflow": "adeca3b52d83310a",
+                    "windowDuration": "50f8"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -59413,12 +59413,12 @@
                   0,
                   0,
                   0,
-                  12,
+                  244,
+                  171,
+                  3,
                   87,
-                  211,
-                  216,
-                  253,
-                  223,
+                  43,
+                  224,
                   13,
                   0,
                   0,
@@ -59439,8 +59439,8 @@
                   0
                 ]
               },
-              "supplyAPR": 0.03487153739962342,
-              "borrowAPR": 0.0590498182225431
+              "supplyAPR": 0.03317958431155791,
+              "borrowAPR": 0.05834461072094197
             },
             "rewards": {
               "rewardTokens": []
@@ -59452,7 +59452,7 @@
               "data": {
                 "version": 1,
                 "lastUpdate": {
-                  "slot": "1572dbb8",
+                  "slot": "1575e9f7",
                   "stale": 1
                 },
                 "lendingMarket": "7XttJ7hp83u5euzT7ybC5zsjdgKA4WPbQHVS27CATAJH",
@@ -59462,14 +59462,14 @@
                   "supplyPubkey": "CcFSQ6vKK9yfuukzpcMkumVToVgcbyXs4D2MWmxVbDH6",
                   "pythOracle": "DyYBBWEi9xZvgNAeMDCiFnmC1U9gqgVsJDXkL5WETpoX",
                   "switchboardOracle": "nu11111111111111111111111111111111111111111",
-                  "availableAmount": "5131fd92d0",
-                  "borrowedAmountWads": "08f0ad0444866dc42686d03f7f",
-                  "cummlativeBorrowRateWads": "0f1ccde33b0df2b5",
-                  "marketPrice": "0de0466a61f25800"
+                  "availableAmount": "4f5311a872",
+                  "borrowedAmountWads": "08f113234cf90c4bb436fd4af7",
+                  "cummlativeBorrowRateWads": "0f1d7a83b7ad05e6",
+                  "marketPrice": "0ddec7ccdbefa400"
                 },
                 "collateral": {
                   "mintPubkey": "3i47hfj4pHwxDL168yXDhQ4kF52vQwK43A3MracdvrZy",
-                  "mintTotalSupply": "e9aacb8f2f",
+                  "mintTotalSupply": "e7e47d657d",
                   "supplyPubkey": "CZiAVrQ4xwvWJ8KNK2k5Uc8Prfsbk2haTpRNDM7QtVea"
                 },
                 "config": {
@@ -59493,8 +59493,8 @@
                 },
                 "rateLimiter": {
                   "config": {
-                    "maxOutflow": "a4c2abb43cb2fd73",
-                    "windowDuration": "0146"
+                    "maxOutflow": "09073661ac0d3e05",
+                    "windowDuration": "00"
                   },
                   "previousQuantity": "00",
                   "windowStart": "00",
@@ -59526,12 +59526,12 @@
                   0,
                   0,
                   0,
-                  72,
+                  128,
+                  138,
+                  168,
+                  248,
                   62,
-                  186,
-                  45,
-                  28,
-                  224,
+                  223,
                   13,
                   0,
                   0,
@@ -59552,18 +59552,18 @@
                   0
                 ]
               },
-              "supplyAPR": 0.036781680394822075,
-              "borrowAPR": 0.05489083942011844
+              "supplyAPR": 0.03714310311138564,
+              "borrowAPR": 0.05500574654773306
             },
             "rewards": {
               "rewardTokens": [
                 {
                   "token": {
-                    "id": "ad588310-d6c0-4c9c-be42-d98e09b09345",
+                    "id": "91694df0-c343-4fa4-b78e-b7c55b1a6b4c",
                     "address": "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA",
                     "type": "regular"
                   },
-                  "rewardPerShare": 3.9464259475721967e+28
+                  "rewardPerShare": 3.979547424252733e+28
                 }
               ]
             }
@@ -69796,7 +69796,7 @@
         ]
       }
     ],
-    "currentIndex": 597
+    "currentIndex": 0
   },
-  "timeout": "2025-08-15T07:31:56.082Z"
+  "timeout": "2025-08-15T12:55:30.620Z"
 }

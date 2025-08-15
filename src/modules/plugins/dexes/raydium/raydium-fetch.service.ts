@@ -1,9 +1,10 @@
 import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common"
-import { ChainKey, Network, sleep } from "@/modules/common"
+import { ChainKey, Network, sleep, TokenType } from "@/modules/common"
 import {
     createProviderToken,
     RecordRpcProvider,
     tokenPairs,
+    tokens,
 } from "@/modules/blockchain"
 import { Connection } from "@solana/web3.js"
 import { Raydium, ApiV3PoolInfoItem } from "@raydium-io/raydium-sdk-v2"
@@ -11,13 +12,13 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { VolumeService } from "@/modules/volume"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { RaydiumIndexerService } from "./raydium-indexer.service"
-import { 
-    RaydiumInitService, 
+import { RaydiumInitService } from "./raydium-init.service"
+import {  
+    RaydiumIndexerService,
     PoolBatch, 
     PoolLine, 
     PoolLines 
-} from "./raydium-init.service"
+} from "./raydium-indexer.service"
 import { LockService } from "@/modules/misc"
 import { FOLDER_NAMES } from "./constants"
 
@@ -36,9 +37,9 @@ export class RaydiumFetchService implements OnModuleInit {
         private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
+        private readonly initService: RaydiumInitService,
         private readonly volumeService: VolumeService,
         private readonly indexerService: RaydiumIndexerService,
-        private readonly initService: RaydiumInitService,
         private readonly lockService: LockService,
     ) { }
 
@@ -58,7 +59,7 @@ export class RaydiumFetchService implements OnModuleInit {
         }
         
         // 2. Cache all on init
-        await this.initService.cacheAllOnInit(currentIndexes)
+        await this.initService.cacheAllOnInit()
         
         // 3. Load raydium
         const _raydiums: Partial<Record<Network, Raydium>> = {}
@@ -94,13 +95,36 @@ export class RaydiumFetchService implements OnModuleInit {
             const currentIndex = this.indexerService.getCurrentIndex(network)
             if (
                 typeof currentIndex === "undefined" ||
-                currentIndex >= tokenPairs[network][ChainKey.Solana].length
+                currentIndex >= tokenPairs[ChainKey.Solana][network].length
             ) {
                 this.indexerService.setCurrentIndex(network, 0)
             }
-            const [token1, token2] =
-                tokenPairs[network][ChainKey.Solana][currentIndex]
+            let [token1, token2] =
+                tokenPairs[ChainKey.Solana][network][currentIndex]
             if (!token1 || !token2) {
+                return
+            }
+            if (token1.type === TokenType.Native) {
+                const wrapper  = tokens[ChainKey.Solana][network].find(
+                    (token) => token.type === TokenType.Wrapper,
+                )
+                if (wrapper) {
+                    token1 = wrapper
+                }
+            }
+            if (token2.type === TokenType.Native) {
+                const wrapper = tokens[ChainKey.Solana][network].find(
+                    (token) => token.type === TokenType.Wrapper,
+                )
+                if (wrapper) {
+                    token2 = wrapper
+                }
+            }
+            if (!token1.tokenAddress || !token2.tokenAddress) {
+                throw new Error(`Token address is not found for ${token1.id} and ${token2.id}`)
+            }
+            if (token1.tokenAddress === token2.tokenAddress) {
+                // silently skip the same token pair
                 return
             }
             try {
@@ -113,9 +137,12 @@ export class RaydiumFetchService implements OnModuleInit {
                             const pools: Array<ApiV3PoolInfoItem> = []
                             let nextPageAvailable = true
                             while (nextPageAvailable) {
+                                if (!token1.tokenAddress || !token2.tokenAddress) {
+                                    throw new Error(`Token address is not found for ${token1.id} and ${token2.id}`)
+                                }
                                 const { data, hasNextPage } = await raydium.api.fetchPoolByMints({
-                                    mint1: token1.address,
-                                    mint2: token2.address,
+                                    mint1: token1.tokenAddress,
+                                    mint2: token2.tokenAddress,
                                 })
                                 pools.push(...data)
                                 nextPageAvailable = hasNextPage
