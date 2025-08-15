@@ -97,6 +97,10 @@ export class SolendLendingFetchService implements OnModuleInit {
         ], network, async () => {
             const currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
             const reserves = this.solendLendingIndexerService.getReserves(network)
+            if (!reserves?.length) {
+                this.logger.verbose(`No reserves to load for ${network}`)
+                return
+            }
             try {
                 if (network === Network.Testnet) return
                 if (!reserves?.length) {
@@ -117,7 +121,6 @@ export class SolendLendingFetchService implements OnModuleInit {
                 const reserve = reserves[currentIndex]
                 if (!reserve) {
                     this.logger.warn(`No reserve found at index ${currentIndex} for ${network}`)
-                    this.solendLendingIndexerService.nextIndex(network)
                     return
                 }
 
@@ -158,17 +161,6 @@ export class SolendLendingFetchService implements OnModuleInit {
                     this.solendLendingInitService.getReserveMetadataCacheKey(network, reserve.address),
                     metadata,
                 )
-                // update current index in vok
-                this.solendLendingIndexerService.nextIndex(network)
-                // update current index in volume
-                await this.volumeService.updateJsonFromDataVolume<PoolsData>({
-                    name: this.solendLendingInitService.getReserveMetadataVolumeKey(network, reserve.address),
-                    updateFn: (prevData) => {
-                        prevData.currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
-                        return prevData
-                    },
-                    folderNames: FOLDER_NAMES,
-                })  
                 this.logger.verbose(
                     `Loaded historical interest rates for ${network} reserve ${reserve.address}`,
                 )
@@ -178,8 +170,24 @@ export class SolendLendingFetchService implements OnModuleInit {
                     error.stack,
                 )
             } finally {
-            // plus to next index, regardless of success or failure
-                this.solendLendingIndexerService.nextIndex(network)
+                try {
+                // plus to next index, regardless of success or failure
+                    this.solendLendingIndexerService.nextIndex(network)
+                    // update current index in volume
+                    await this.volumeService.updateJsonFromDataVolume<PoolsData>({
+                        name: this.solendLendingInitService.getLendingPoolsVolumeKey(network),
+                        updateFn: (prevData) => {
+                            prevData.currentIndex = this.solendLendingIndexerService.getCurrentIndex(network)
+                            return prevData
+                        },
+                        folderNames: FOLDER_NAMES,
+                    })  
+                } catch (error) {
+                    this.logger.error(
+                        `Error updating current index for ${network}: ${error.message}`,
+                        error.stack,
+                    )
+                }
             }
         })
     }
@@ -226,7 +234,6 @@ export class SolendLendingFetchService implements OnModuleInit {
                                     },
                                 })),
                         }))
-                    
                         return {
                             pools: lendingPools,
                             currentIndex: 0,
@@ -234,13 +241,14 @@ export class SolendLendingFetchService implements OnModuleInit {
                     },
                     folderNames: FOLDER_NAMES,
                 })
-            
                 // Update indexer service with new data
                 this.solendLendingIndexerService.setCurrentIndex(network, lendingPoolsRaw.currentIndex)
-                this.solendLendingIndexerService.setReserves(network, lendingPoolsRaw.pools
-                    .map((pool) => pool.reserves)
-                    .flat()
-                    .map((reserve) => reserve.reserve))
+                this.solendLendingIndexerService.setReserves(
+                    network, 
+                    lendingPoolsRaw.pools
+                        .map((pool) => pool.reserves)
+                        .flat()
+                        .map((reserve) => reserve.reserve))
             
                 // Store in cache
                 await this.cacheManager.set(

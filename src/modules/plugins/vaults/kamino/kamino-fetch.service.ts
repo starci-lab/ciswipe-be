@@ -169,12 +169,12 @@ export class KaminoVaultFetchService implements OnModuleInit {
 
     private async loadVault(network: Network) {
         this.lockService.withLocks([LOCK_KEYS.VAULT], network, async () => {
+            if (network === Network.Testnet) return
             const currentIndex = this.indexerService.getCurrentIndex(network)
             const vaults = this.indexerService.getVaults(network)
             const vaultToLoad = vaults[currentIndex]
+            if (!vaults?.length) return
             try {
-                if (network === Network.Testnet) return
-                if (!vaults?.length) return
                 if (!this.kaminoVaultClients?.[network]) {
                     this.logger.warn(`KaminoVaultClient not initialized for ${network}`)
                     return
@@ -258,17 +258,6 @@ export class KaminoVaultFetchService implements OnModuleInit {
                         },
                     })
                 await this.cacheManager.set(vaultCacheKey, vault)
-                this.indexerService.nextIndex(network)
-                // update the vaults data
-                await this.volumeService.updateJsonFromDataVolume<VaultRawsData>({
-                    name: this.initService.getVaultsVolumeKey(network),
-                    folderNames: FOLDER_NAMES,
-                    updateFn: (prevData) => {
-                        prevData.currentIndex =
-                            this.indexerService.getCurrentIndex(network)
-                        return prevData
-                    },
-                })
                 this.logger.debug(
                     `Updated vault ${vaultToLoad.address} (${network}) from API`,
                 )
@@ -278,9 +267,24 @@ export class KaminoVaultFetchService implements OnModuleInit {
                     error,
                 )
             } finally {
-                // plus to next index, regardless of success or failure
-                // this will filter error vaults
-                this.indexerService.nextIndex(network)
+                try {
+                    this.indexerService.nextIndex(network)
+                    // update the vaults data
+                    await this.volumeService.updateJsonFromDataVolume<VaultRawsData>({
+                        name: this.initService.getVaultsVolumeKey(network),
+                        folderNames: FOLDER_NAMES,
+                        updateFn: (prevData) => {
+                            prevData.currentIndex =
+                            this.indexerService.getCurrentIndex(network)
+                            return prevData
+                        },
+                    })
+                }  catch (error) {
+                    this.logger.error(
+                        `Error updating current index for ${network}: ${error.message}`,
+                        error.stack,
+                    )
+                }
             }
         })
     }

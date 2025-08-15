@@ -43,24 +43,20 @@ export class RaydiumFetchService implements OnModuleInit {
         private readonly lockService: LockService,
     ) { }
 
+    private ensureTokensOrder(token1: string, token2: string) {
+        if (Buffer.byteLength(token1) > Buffer.byteLength(token2)) {
+            [token1, token2] = [token2, token1]
+        }
+        return [token1, token2]
+    }
 
 
     async onModuleInit() {
-        // 1. Load global data and cache all on init
-        const currentIndexes: Record<Network, number> = {
-            [Network.Mainnet]: 0,
-            [Network.Testnet]: 0,
-        }
-        
         for (const network of Object.values(Network)) {
-            const globalData = await this.initService.loadGlobalData(network)
-            this.indexerService.setCurrentIndex(network, globalData.currentIndex)
-            currentIndexes[network] = globalData.currentIndex
+            await this.initService.loadGlobalData(network)
         }
-        
         // 2. Cache all on init
         await this.initService.cacheAllOnInit()
-        
         // 3. Load raydium
         const _raydiums: Partial<Record<Network, Raydium>> = {}
         for (const network of Object.values(Network)) {
@@ -85,8 +81,6 @@ export class RaydiumFetchService implements OnModuleInit {
             await this.loadLines(network)
         }
     }
-
-
 
     public async loadPoolBatch(network: Network) {
         this.lockService.withLocks([LOCK_KEYS.POOL], network, async () => {
@@ -176,32 +170,6 @@ export class RaydiumFetchService implements OnModuleInit {
                 this.indexerService.nextIndex(network)
             }
         })
-    }
-
-    private findNextUnloadedLineIndex(network: Network): [number, number] | null {
-        const v3PoolBatches = this.indexerService.getV3PoolBatches(network)
-        if (!v3PoolBatches.length) {
-            this.logger.debug(`Batch is not loaded for ${network}`)
-            return null
-        }
-        for (
-            let batchIndex = 0;
-            batchIndex < v3PoolBatches.length;
-            batchIndex++
-        ) {
-            const lineIndex = this.indexerService.getCurrentLineIndex(network, batchIndex)
-            if (lineIndex < v3PoolBatches[batchIndex].length) {
-                if (!v3PoolBatches[batchIndex][lineIndex]) {
-                    throw new Error(
-                        `Pool is not loaded for ${network} at batch index ${batchIndex} and line index ${lineIndex}`,
-                    )
-                }
-                return [batchIndex, lineIndex]
-            }
-        }
-        // we will increase the index to the next batch
-        this.logger.debug(`All lines loaded for ${network}`)
-        return null
     }
 
     // return true if we have loaded all lines for the current index, otherwise not

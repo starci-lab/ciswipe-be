@@ -29,13 +29,11 @@ export class RaydiumIndexerService {
         [Network.Mainnet]: 0,
         [Network.Testnet]: 0,
     }
-    
     // current index for load lines index
     private currentLineIndex: Record<Network, Record<number, number>> = {
         [Network.Mainnet]: {},
         [Network.Testnet]: {},
     }
-
     private v3PoolBatches: Record<Network, Array<Array<ApiV3PoolInfoBaseItem>>> = {
         [Network.Mainnet]: [],
         [Network.Testnet]: [],
@@ -98,4 +96,30 @@ export class RaydiumIndexerService {
     getAllCurrentLineIndexes(network: Network) {
         return this.currentLineIndex[network] || {}
     }
+
+    // findNextUnloadedLineIndex(network: Network): [number, number] | null {
+    //     const v3PoolBatches = this.getV3PoolBatches(network)
+    //     if (!v3PoolBatches.length) {
+    //         this.logger.debug(`Batch is not loaded for ${network}`)
+    //         return null
+    //     }
+    //     for (
+    //         let batchIndex = 0;
+    //         batchIndex < v3PoolBatches.length;
+    //         batchIndex++
+    //     ) {
+    //         const lineIndex = this.indexerService.getCurrentLineIndex(network, batchIndex)
+    //         if (lineIndex < v3PoolBatches[batchIndex].length) {
+    //             if (!v3PoolBatches[batchIndex][lineIndex]) {
+    //                 throw new Error(
+    //                     `Pool is not loaded for ${network} at batch index ${batchIndex} and line index ${lineIndex}`,
+    //                 )
+    //             }
+    //             return [batchIndex, lineIndex]
+    //         }
+    //     }
+    //     // we will increase the index to the next batch
+    //     this.logger.debug(`All lines loaded for ${network}`)
+    //     return null
+    // }
 }
