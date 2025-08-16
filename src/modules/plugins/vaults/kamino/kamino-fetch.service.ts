@@ -280,7 +280,7 @@ export class KaminoVaultFetchService implements OnModuleInit {
                     )
                 } finally {
                     try {
-                        this.indexerService.nextIndex(network)
+                        this.indexerService.nextCurrentIndex(network)
                         // update the vaults data
                         await this.volumeService.updateJsonFromDataVolume<VaultRawsData>({
                             name: this.initService.getVaultsVolumeKey(network),

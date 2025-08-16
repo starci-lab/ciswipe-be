@@ -18,10 +18,14 @@ import GraphQLJSON from "graphql-type-json"
 import { ProbabilityStatisticsModule } from "@/modules/probability-statistics"
 import { CryptographyModule } from "@/modules/cryptography"
 import { MiscModule } from "@/modules/misc"
+import { DatabasesModule } from "@/modules/databases"
 
 @Module({
     imports: [
         EnvModule.forRoot({
+            isGlobal: true,
+        }),
+        DatabasesModule.register({
             isGlobal: true,
         }),
         MiscModule.register({

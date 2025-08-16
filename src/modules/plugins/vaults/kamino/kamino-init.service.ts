@@ -4,7 +4,7 @@ import { Cache } from "cache-manager"
 import { Network } from "@/modules/common"
 import { VolumeService } from "@/modules/volume"
 import { createCacheKey } from "@/modules/cache"
-import { VaultRawsData, Vault } from "./kamino-indexer.service"
+import { VaultRawsData, Vault, VaultRaw } from "./kamino-indexer.service"
 import { FOLDER_NAMES } from "./constants"
 
 @Injectable()
@@ -38,11 +38,19 @@ export class KaminoVaultInitService {
     }
 
     async cacheAllOnInit() {
-        for (const network of Object.values(Network)) {
-            if (network === Network.Testnet) continue
-            const vaults = await this.loadAndCacheVaultsFromVolume(network)
-            if (!vaults) continue
-            await this.loadAndCacheVaultData(network, vaults)
+        try {
+            for (const network of Object.values(Network)) {
+                if (network === Network.Testnet) continue
+                const vaults = await this.loadAndCacheVaultsFromVolume(network)
+                if (!vaults) continue
+                const promises: Array<Promise<void>> = []
+                for (const vault of vaults.vaults) {
+                    promises.push(this.loadAndCacheVaultData(network, vault))
+                }
+                await Promise.all(promises)
+            }
+        } catch (error) {
+            this.logger.error(`Cannot cache all on init, maybe some IO-reading failed, we try to reload everything, message: ${error.message}`)
         }
     }
 
@@ -69,27 +77,21 @@ export class KaminoVaultInitService {
     }
 
     // Load and cache vault data if exists
-    private async loadAndCacheVaultData(network: Network, vaults: VaultRawsData) {
+    private async loadAndCacheVaultData(network: Network, vault: VaultRaw) {
         if (network === Network.Testnet) return
-        try {
-            for (const vault of vaults.vaults) {
-                if (!vault.address) continue
-                const vaultExists = await this.volumeService.existsInDataVolume({
-                    name: this.getVaultVolumeKey(network, vault.address.toString()),
-                    folderNames: FOLDER_NAMES
-                })
-                if (!vaultExists) continue
-                const vaultData = await this.volumeService.readJsonFromDataVolume<Vault>({
-                    name: this.getVaultVolumeKey(network, vault.address.toString()),
-                    folderNames: FOLDER_NAMES
-                })
-                await this.cacheManager.set(
-                    this.getVaultCacheKey(network, vault.address.toString()),
-                    vaultData,
-                )
-            }
-        } catch (err) {
-            this.logger.error(`Error loading vault data for ${network}: ${err.message}`)
-        }
+        if (!vault.address) return
+        const vaultExists = await this.volumeService.existsInDataVolume({
+            name: this.getVaultVolumeKey(network, vault.address.toString()),
+            folderNames: FOLDER_NAMES
+        })
+        if (!vaultExists) return
+        const vaultData = await this.volumeService.readJsonFromDataVolume<Vault>({
+            name: this.getVaultVolumeKey(network, vault.address.toString()),
+            folderNames: FOLDER_NAMES
+        })
+        await this.cacheManager.set(
+            this.getVaultCacheKey(network, vault.address.toString()),
+            vaultData,
+        )
     }
 }

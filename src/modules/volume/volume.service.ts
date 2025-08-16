@@ -66,7 +66,7 @@ export class VolumeService implements OnModuleInit {
         name: string,
         data: T,
         folderNames: Array<string> = [],
-        timeout = 1000 * 60 * 15
+        timeout = 1000 * 60 * 60 * 24 * 365 // 1 year
     ) {
         const fileContent: FileContent<T> = {
             data,

@@ -23,7 +23,7 @@ export class SolendLendingIndexerService {
         this.currentIndex[network] = index
     }
 
-    nextIndex(network: Network) {
+    nextCurrentIndex(network: Network) {
         this.currentIndex[network]++
     }
 

@@ -21,7 +21,7 @@ import {
 import {
     PoolBatch,
     PoolLines,
-} from "./raydium-indexer.service"
+} from "./raydium-level.service"
 import { Decimal } from "decimal.js"
 
 @Injectable()
@@ -95,7 +95,7 @@ export class RaydiumPluginService extends DexPluginAbstract {
         }
         const results: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
-        for (const pool of poolBatch.pools) {
+        for (const pool of poolBatch.pools.map(pool => pool.pool)) {
             promises.push(
                 (async () => {
                     const poolLines = await this.cacheManager.get<PoolLines>(

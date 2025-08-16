@@ -1,12 +1,10 @@
 import { Injectable, Logger, Inject } from "@nestjs/common"
 import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
-import { Network, ChainKey } from "@/modules/common"
-import { VolumeService } from "@/modules/volume"
+import { ChainKey, Network } from "@/modules/common"
 import { createCacheKey } from "@/modules/cache"
-import { Token, tokenPairs } from "@/modules/blockchain"
-import { PoolBatch, PoolLines, GlobalData, RaydiumIndexerService } from "./raydium-indexer.service"
-import { FOLDER_NAMES } from "./constants"
+import { RaydiumIndexerService } from "./raydium-indexer.service"
+import { GlobalData, RaydiumLevelService } from "./raydium-level.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 
 @Injectable()
@@ -14,11 +12,11 @@ export class RaydiumInitService {
     private logger = new Logger(RaydiumInitService.name)
 
     constructor(
-        private readonly volumeService: VolumeService,
+        private readonly levelService: RaydiumLevelService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly indexerService: RaydiumIndexerService,
         private readonly tokenUtilsService: TokenUtilsService,
-    ) {}
+    ) { }
 
     public getPoolBatchCacheKey(network: Network, token1: string, token2: string) {
         [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(token1, token2)
@@ -35,6 +33,7 @@ export class RaydiumInitService {
             poolId,
         })
     }
+
     public getPoolBatchVolumeKey(network: Network, token1: string, token2: string) {
         [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(token1, token2)
         return `pool-batch-${network}-${token1}-${token2}.json`
@@ -48,90 +47,72 @@ export class RaydiumInitService {
         return `global-data-${network}.json`
     }
 
-    private async loadAndCachePoolBatchFromVolume(
+    private async loadAndCachePoolBatch(
         network: Network,
-        token1: Token, 
-        token2: Token,
-        currentIndex: number
+        currentBatchIndex: number,
     ) {
-        [token1, token2] = this.tokenUtilsService.ensureTokensOrder(token1, token2)
-        const poolBatchVolumeName = this.getPoolBatchVolumeKey(network, token1.id, token2.id)
-        if (!await this.volumeService.existsInDataVolume({
-            name: poolBatchVolumeName,
-            folderNames: FOLDER_NAMES,
-        })) return null
-        const poolBatch = await this.volumeService.readJsonFromDataVolume<PoolBatch>({
-            name: poolBatchVolumeName,
-            folderNames: FOLDER_NAMES,
-        })
+        const [token1, token2] = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[currentBatchIndex]
+        const poolBatch = await this.levelService.getPoolBatch(network, currentBatchIndex)
+        if (!poolBatch) return null
         await this.cacheManager.set(
             this.getPoolBatchCacheKey(network, token1.id, token2.id),
             poolBatch
         )
-        this.indexerService.setV3PoolBatch(network, currentIndex, poolBatch.pools)
+        // update the indexer
+        this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentBatchIndex, poolBatch)
         return poolBatch
     }
-    
-    private async loadAndCachePoolLinesFromVolume(network: Network, poolId: string) {
+
+    private async loadAndCachePoolLines(network: Network, poolId: string) {
         if (!poolId) return
-        const lineBatchVolumeName = this.getPoolLinesVolumeKey(network, poolId)
-        if (!await this.volumeService.existsInDataVolume({
-            name: lineBatchVolumeName,
-            folderNames: FOLDER_NAMES,
-        })) return
-    
-        const lines = await this.volumeService.readJsonFromDataVolume<PoolLines>({
-            name: lineBatchVolumeName,
-            folderNames: FOLDER_NAMES,
-        })
+        const poolLines = await this.levelService.getPoolLines(network, poolId)
+        if (!poolLines) return
         await this.cacheManager.set(
             this.getPoolLinesCacheKey(network, poolId),
-            lines
+            poolLines
         )
     }
-    
+
     async cacheAllOnInit() {
-        for (const network of Object.values(Network)) {
-            if (network === Network.Testnet) continue
-            const pairs = tokenPairs[ChainKey.Solana][network] || []
-            const promises: Array<Promise<void>> = []
-            for (let index = 0; index < this.indexerService.getCurrentIndex(network); index++) {
-                promises.push(
-                    (async () => {
-                        const [token1, token2] = pairs[index] || []
-                        if (!token1 || !token2) return
-                        const poolBatch = await this.loadAndCachePoolBatchFromVolume(network, token1, token2, index)
-                        if (!poolBatch?.pools) return
-                        const internalPromises: Array<Promise<void>> = []  
-                        for (const pool of poolBatch.pools) {   
-                            internalPromises.push(
-                                this.loadAndCachePoolLinesFromVolume(network, pool.id)
-                            )
-                        }
-                        await Promise.all(internalPromises)
-                    })()
-                )
+        try {
+            for (const network of Object.values(Network)) {
+                if (network === Network.Testnet) continue
+                const pairs = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)
+                const promises: Array<Promise<void>> = []
+                for (let currentBatchIndex = 0; currentBatchIndex < pairs.length; currentBatchIndex++) {
+                    promises.push(
+                        (async () => {
+                            const poolBatch = await this.loadAndCachePoolBatch(network, currentBatchIndex)
+                            if (!poolBatch?.pools) return
+                            const internalPromises: Array<Promise<void>> = []
+                            for (const pool of poolBatch.pools) {
+                                internalPromises.push(
+                                    this.loadAndCachePoolLines(network, pool.pool.id)
+                                )
+                            }
+                            await Promise.all(internalPromises)
+                        })()
+                    )
+                }
+                await Promise.all(promises)
+                this.logger.fatal(`Initialized batches for ${network}: ${this.indexerService.getInitializedBatches(network)}`)
             }
-            await Promise.all(promises)
-            this.logger.fatal(`Initialized batches for ${network}: ${this.indexerService.getInitializedBatches(network)}`)
+        } catch (error) {
+            this.logger.error(`Cannot cache all on init, maybe some IO-reading failed, we try to reload everything, message: ${error.message}`)
         }
     }
 
-    async loadGlobalData(network: Network) {
+    async loadGlobalData(network: Network,) {
+        const defaultGlobalData: GlobalData = {
+            currentIndex: 0,
+        }
         try {
-            const { currentIndex } = await this.volumeService.tryActionOrFallbackToVolume<GlobalData>({
-                name: this.getGlobalDataVolumeKey(network),
-                action: async () => {
-                    return {
-                        currentIndex: 0,
-                    }
-                },
-                folderNames: FOLDER_NAMES,
-            })
-            this.indexerService.setCurrentIndex(network, currentIndex)
+            const globalData = await this.levelService.getGlobalData(network)
+            if (!globalData) return defaultGlobalData
+            this.indexerService.setCurrentIndex(network, globalData.currentIndex)
         } catch (error) {
             this.logger.error(`Cannot load global data for ${network}, message: ${error.message}`)
-            return { currentIndex: 0 }
+            return defaultGlobalData
         }
     }
 }

@@ -7,21 +7,16 @@ import {
 } from "@/modules/blockchain"
 import { Connection } from "@solana/web3.js"
 import { Raydium, ApiV3PoolInfoItem } from "@raydium-io/raydium-sdk-v2"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
-import { VolumeService } from "@/modules/volume"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { RaydiumInitService } from "./raydium-init.service"
 import {
     RaydiumIndexerService,
-    PoolBatch,
-    PoolLines,
-    GlobalData,
 } from "./raydium-indexer.service"
 import { LockService } from "@/modules/misc"
-import { FOLDER_NAMES } from "./constants"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumApiService } from "./raydium-api.service"
+import { RaydiumLevelService } from "./raydium-level.service"
+import { RaydiumCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
     POOL_BATCH: "poolBatch",
@@ -34,24 +29,16 @@ export class RaydiumFetchService implements OnModuleInit {
     private raydiums: Record<Network, Raydium>
 
     constructor(
-    @Inject(createProviderToken(ChainKey.Solana))
-    private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
-    private readonly initService: RaydiumInitService,
-    private readonly volumeService: VolumeService,
-    private readonly indexerService: RaydiumIndexerService,
-    private readonly lockService: LockService,
-    private readonly tokenUtilsService: TokenUtilsService,
-    private readonly raydiumApiService: RaydiumApiService,
-    ) {}
-
-    private ensureTokensOrder(token1: string, token2: string) {
-        if (Buffer.byteLength(token1) > Buffer.byteLength(token2)) {
-            [token1, token2] = [token2, token1]
-        }
-        return [token1, token2]
-    }
+        @Inject(createProviderToken(ChainKey.Solana))
+        private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
+        private readonly initService: RaydiumInitService,
+        private readonly indexerService: RaydiumIndexerService,
+        private readonly lockService: LockService,
+        private readonly tokenUtilsService: TokenUtilsService,
+        private readonly raydiumApiService: RaydiumApiService,
+        private readonly raydiumLevelService: RaydiumLevelService,
+        private readonly raydiumCacheService: RaydiumCacheService,
+    ) { }
 
     async onModuleInit() {
         for (const network of Object.values(Network)) {
@@ -70,216 +57,216 @@ export class RaydiumFetchService implements OnModuleInit {
         this.raydiums = _raydiums as Record<Network, Raydium>
     }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+    @Cron(CronExpression.EVERY_10_SECONDS)
     async handleLoadPoolBatch() {
         for (const network of Object.values(Network)) {
             await this.loadPoolBatch(network)
         }
     }
 
-  @Cron("*/3 * * * * *")
-  async handleLoadLines() {
-      for (const network of Object.values(Network)) {
-          await this.loadLines(network)
-      }
-  }
+    @Cron("*/3 * * * * *")
+    async handleloadPoolLines() {
+        for (const network of Object.values(Network)) {
+            await this.loadPoolLines(network)
+        }
+    }
 
-  public async loadPoolBatch(network: Network) {
-      await this.lockService.withLocks({
-          blockedKeys: [LOCK_KEYS.POOL_BATCH],
-          acquiredKeys: [LOCK_KEYS.POOL_BATCH],
-          releaseKeys: [LOCK_KEYS.POOL_BATCH],
-          network,
-          callback: async () => {
-              if (network === Network.Testnet) {
-                  return
-              }
-              // if the first pair is not loaded, we will return
-              // if we load end the pairs, we will return to the start index
-              if (
-                  this.indexerService.getCurrentIndex(network) >=
-          tokenPairs[ChainKey.Solana][network].length
-              ) {
-                  this.indexerService.setCurrentIndex(network, 0)
-              }
-              // now we try to get the current index that was reseted
-              const currentIndex = this.indexerService.getCurrentIndex(network)
-              const [unsoredToken1, unsoredToken2] =
-          this.tokenUtilsService.tryGetWrappedTokens({
-              tokens: tokenPairs[ChainKey.Solana][network][currentIndex],
-              network,
-              chainKey: ChainKey.Solana,
-          })
-              if (!unsoredToken1.tokenAddress || !unsoredToken2.tokenAddress) {
-                  throw new Error(
-                      `Token address is not found for ${unsoredToken1.id} and ${unsoredToken2.id}`,
-                  )
-              }
-
-              const [token1, token2] = this.tokenUtilsService.ensureTokensOrder(
-                  unsoredToken1,
-                  unsoredToken2,
-              )
-              try {
-                  if (token1.tokenAddress === token2.tokenAddress) {
-                      this.logger.debug(
-                          `Skipping the same token pair ${token1.id} and ${token2.id}`,
-                      )
-                      return
-                  }
-                  // raydium only support Solana, so that we dont care about ChainKey
-                  const raydium = this.raydiums[network]
-                  const poolBatch =
-            await this.volumeService.tryActionOrFallbackToVolume<PoolBatch>({
-                name: this.initService.getPoolBatchVolumeKey(
-                    network,
-                    token1.id,
-                    token2.id,
-                ),
-                action: async () => {
-                    const pools: Array<ApiV3PoolInfoItem> = []
-                    let nextPageAvailable = true
-                    while (nextPageAvailable) {
-                        if (!token1.tokenAddress || !token2.tokenAddress) {
-                            throw new Error(
-                                `Token address is not found for ${token1.id} and ${token2.id}`,
-                            )
-                        }
-                        const { data, hasNextPage } =
-                    await raydium.api.fetchPoolByMints({
-                        mint1: token1.tokenAddress,
-                        mint2: token2.tokenAddress,
+    public async loadPoolBatch(network: Network) {
+        await this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.POOL_BATCH],
+            acquiredKeys: [LOCK_KEYS.POOL_BATCH],
+            releaseKeys: [LOCK_KEYS.POOL_BATCH],
+            network,
+            callback: async () => {
+                if (network === Network.Testnet) {
+                    return
+                }
+                // if the first pair is not loaded, we will return
+                // if we load end the pairs, we will return to the start index
+                this.indexerService.tryResetCurrentIndex(network)
+                // now we try to get the current index that was reseted
+                const currentIndex = this.indexerService.getCurrentIndex(network)
+                const [token1, token2] =
+                    this.tokenUtilsService.tryGetWrappedTokens({
+                        tokens: this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[currentIndex],
+                        network,
+                        chainKey: ChainKey.Solana,
                     })
-                        pools.push(...data)
-                        nextPageAvailable = hasNextPage
-                        if (hasNextPage) {
-                            this.logger.debug(
-                                `We found more pools for ${token1.id} and ${token2.id}, so we will sleep for 1 second to avoid rate limit`,
-                            )
-                            await sleep(1000)
-                        }
+                try {
+                    // raydium only support Solana, so that we dont care about ChainKey
+                    const raydium = this.raydiums[network]
+                    const poolBatch = await this.raydiumLevelService.getPoolBatch(
+                        network,
+                        this.indexerService.getCurrentIndex(network),
+                        async () => {
+                            const pools: Array<ApiV3PoolInfoItem> = []
+                            try {
+                                let nextPageAvailable = true
+                                while (nextPageAvailable) {
+                                    if (!token1.tokenAddress || !token2.tokenAddress) {
+                                        throw new Error(
+                                            `Token address is not found for ${token1.id} and ${token2.id}`,
+                                        )
+                                    }
+                                    const { data, hasNextPage } =
+                                        await raydium.api.fetchPoolByMints({
+                                            mint1: token1.tokenAddress,
+                                            mint2: token2.tokenAddress,
+                                        })
+                                    pools.push(...data)
+                                    nextPageAvailable = hasNextPage
+                                    if (hasNextPage) {
+                                        this.logger.debug(
+                                            `We found more pools for ${token1.id} and ${token2.id}, so we will sleep for 1 second to avoid rate limit`,
+                                        )
+                                        await sleep(1000)
+                                    }
+                                }
+                                return {
+                                    pools: pools.map(pool => ({
+                                        pool,
+                                    })),
+                                    currentLineIndex: 0,
+                                }
+                            } catch (error) {
+                                this.logger.error(
+                                    `Cannot load pool batch for ${token1.id} and ${token2.id}, message: ${error.message}`,
+                                )
+                                return null
+                            }
+                        },
+                    )
+                    if (!poolBatch) {
+                        this.logger.error(
+                            `Cannot load pool batch for ${token1.id} and ${token2.id}, message: Pool batch is not found`,
+                        )
+                        return
                     }
-                    return {
-                        pools,
-                        currentLineIndex: 0,
-                    }
-                },
-                folderNames: FOLDER_NAMES,
-            })
-                  this.indexerService.setV3PoolBatch(
-                      network,
-                      currentIndex,
-                      poolBatch.pools,
-                  )
-                  this.indexerService.setCurrentLineIndex(
-                      network,
-                      currentIndex,
-                      poolBatch.currentLineIndex,
-                  )
-                  // cache the pool batch
-                  await this.cacheManager.set(
-                      this.initService.getPoolBatchCacheKey(
-                          network,
-                          token1.id,
-                          token2.id,
-                      ),
-                      poolBatch,
-                  )
-                  // update the indexer
-                  this.indexerService.setV3PoolBatch(
-                      network,
-                      currentIndex,
-                      poolBatch.pools,
-                  )
-                  // load the batch
-                  this.logger.debug(
-                      `Loaded pool batch for ${token1.id} and ${token2.id}, index: ${currentIndex}, total: ${poolBatch.pools.length - 1}`,
-                  )
-              } catch (error) {
-                  this.logger.error(
-                      `Cannot load pool batch for ${token1.id} and ${token2.id}, message: ${error.message}`,
-                  )
-              } finally {
-                  // we will increase the index to the next pair
-                  this.indexerService.nextIndex(network)
-                  // update the volume
-                  await this.volumeService.updateJsonFromDataVolume<GlobalData>({
-                      name: this.initService.getGlobalDataVolumeKey(network),
-                      updateFn: (prevData) => {
-                          prevData.currentIndex =
-                this.indexerService.getCurrentIndex(network)
-                          return prevData
-                      },
-                      folderNames: FOLDER_NAMES,
-                  })
-              }
-          },
-      })
-  }
+                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
+                    this.indexerService.setV3PoolBatch(
+                        network,
+                        currentIndex,
+                        poolBatch?.pools.map(pool => pool.pool) || [],
+                    )
+                    this.indexerService.setCurrentLineIndex(
+                        network,
+                        currentIndex,
 
-  // return true if we have loaded all lines for the current index, otherwise not
-  public async loadLines(network: Network) {
-      await this.lockService.withLocks({
-          blockedKeys: [LOCK_KEYS.POOL_LINES, LOCK_KEYS.POOL_BATCH],
-          acquiredKeys: [LOCK_KEYS.POOL_LINES],
-          // no authorized to release batch
-          releaseKeys: [LOCK_KEYS.POOL_LINES],
-          network,
-          callback: async () => {
-              const pair = this.indexerService.findNextUnloadedLineIndex(network)
-              if (!pair) {
-                  // we already loaded all lines for the current index
-                  return
-              }
-              const [batchIndex, lineIndex] = pair
-              const pool = this.indexerService.getV3PoolBatch(network, batchIndex)[
-                  lineIndex
-              ]
-              try {
-                  const poolLines =
-            await this.volumeService.tryActionOrFallbackToVolume<PoolLines>({
-                name: this.initService.getPoolLinesVolumeKey(network, pool.id),
-                action: async () => {
-                    const liquidityLines =
-                  await this.raydiumApiService.fetchPoolLines(pool.id)
-                    // sleep 1000s to avoid rate limit
-                    await sleep(1000)
-                    const positionLines =
-                  await this.raydiumApiService.fetchPoolPositions(pool.id)
-                    return {
-                        poolId: pool.id,
-                        liquidityLines,
-                        positionLines,
+                    )
+                    // cache the pool batch
+                    await this.raydiumCacheService.cachePoolBatch(network, token1.id, token2.id, poolBatch)
+                    // update the indexer
+                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
+                    // log the pool batch
+                    this.logger.debug(
+                        `Loaded pool batch for 
+                      ${token1.id} 
+                      and 
+                      ${token2.id}, 
+                      index: ${currentIndex}, 
+                      total pools: ${poolBatch.pools.length},
+                      total pairs: ${tokenPairs[ChainKey.Solana][network].length},
+                      current line index: ${this.indexerService.getCurrentLineIndex(network, currentIndex)},
+                      total v3 pool batches: ${this.indexerService.getV3PoolBatches(network)[currentIndex]?.length}
+                      `,
+                    )
+                } catch (error) {
+                    this.logger.error(
+                        `Cannot load pool batch for ${token1.id} and ${token2.id}, message: ${error.message}`,
+                    )
+                } finally {
+                    try {
+                        // we will increase the index to the next pair
+                        this.indexerService.nextCurrentIndex(network)
+                        // update the global data
+                        await this.initService.loadGlobalData(network)
+                    } catch (error) {
+                        this.logger.error(
+                            `Cannot increase index for ${network}, message: ${error.message}`,
+                        )
                     }
-                },
-                folderNames: FOLDER_NAMES,
-            })
+                }
+            },
+        })
+    }
 
-                  await this.cacheManager.set(
-                      this.initService.getPoolLinesCacheKey(network, pool.id),
-                      poolLines,
-                  )
-                  this.logger.verbose(
-                      `Loaded pool lines for ${pool.id}, pair: ${tokenPairs[ChainKey.Solana][network][this.indexerService.getCurrentIndex(network)][0].id} ${tokenPairs[ChainKey.Solana][network][this.indexerService.getCurrentIndex(network)][1].id}, index: ${lineIndex + 1}, total: ${this.indexerService.getV3PoolBatch(network, batchIndex).length}`,
-                  )
-              } catch (error) {
-                  this.logger.error(
-                      `Cannot load pool lines for ${pool.id}, message: ${error.message}`,
-                  )
-              } finally {
-                  this.indexerService.nextLineIndex(network, batchIndex)
-                  // update the volume
-                  await this.volumeService.updateJsonFromDataVolume<GlobalData>({
-                      name: this.initService.getGlobalDataVolumeKey(network),
-                      updateFn: (prevData) => {
-                          prevData.currentIndex =
-                this.indexerService.getCurrentIndex(network)
-                          return prevData
-                      },
-                      folderNames: FOLDER_NAMES,
-                  })
-              }
-          },
-      })
-  }
+    // return true if we have loaded all lines for the current index, otherwise not
+    public async loadPoolLines(network: Network) {
+        await this.lockService.withLocks({
+            blockedKeys: [LOCK_KEYS.POOL_LINES, LOCK_KEYS.POOL_BATCH],
+            acquiredKeys: [LOCK_KEYS.POOL_LINES],
+            // no authorized to release batch
+            releaseKeys: [LOCK_KEYS.POOL_LINES],
+            network,
+            callback: async () => {
+                if (network === Network.Testnet) {
+                    return
+                }
+                const pair = this.indexerService.findNextUnloadedLineIndex(network)
+                if (!pair) {
+                    // we already loaded all lines for the current index, or some errors happened
+                    return
+                }
+                const [batchIndex, lineIndex] = pair
+                const pool = this.indexerService.getV3PoolBatch(network, batchIndex)[
+                    lineIndex
+                ]
+                try {
+                    const poolLines =
+                        await this.raydiumLevelService.getPoolLines(
+                            network,
+                            pool.id,
+                            async () => {
+                                const liquidityLines =
+                                    await this.raydiumApiService.fetchPoolLines(pool.id)
+                                // sleep 1000s to avoid rate limit
+                                await sleep(1000)
+                                const positionLines =
+                                    await this.raydiumApiService.fetchPoolPositions(pool.id)
+                                return {
+                                    poolId: pool.id,
+                                    liquidityLines,
+                                    positionLines,
+                                }
+                            },
+                        )
+                    if (!poolLines) {
+                        this.logger.error(
+                            `Cannot load pool lines for ${pool.id}, message: Pool lines is not found`,
+                        )
+                        return
+                    }
+                    // update the indexer
+                    await this.raydiumCacheService.cachePoolLines(network, pool.id, poolLines)
+                    // log the pool lines
+                    this.logger.warn(
+                        `Loaded pool lines for 
+                      ${pool.id}, 
+                      pair: ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][0].id} and ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][1].id}, 
+                      batch index: ${batchIndex},
+                      line index: ${lineIndex}, 
+                      total lines: ${this.indexerService.getV3PoolBatch(network, batchIndex).length},
+                      total pairs: ${tokenPairs[ChainKey.Solana][network].length}
+                      `,
+                    )
+                } catch (error) {
+                    this.logger.error(
+                        `Cannot load pool lines for ${pool.id}, message: ${error.message}`,
+                    )
+                } finally {
+                    try {
+                        this.indexerService.nextCurrentLineIndex(network, batchIndex)
+                        // update the the current line index
+                        await this.raydiumLevelService.increaseLineIndex(network, batchIndex)
+                    } catch (error) {
+                        // if cannot log, it will keep this re-run again in 3s, 100% IO problems, not my code
+                        this.logger.error(
+                            `Cannot increase line index for ${pool.id}, message: ${error.message}`,
+                        )
+                    }
+                }
+            },
+        })
+    }
+
 }

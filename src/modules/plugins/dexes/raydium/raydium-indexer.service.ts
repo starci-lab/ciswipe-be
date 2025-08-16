@@ -1,71 +1,56 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { Network } from "@/modules/common"
+import { ChainKey, Network } from "@/modules/common"
+import { tokenPairs } from "@/modules/blockchain"
 import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
-import { LiquidityLine, PositionLine } from "./raydium-api.service"
-
-export interface PoolBatch {
-    pools: Array<ApiV3PoolInfoBaseItem>;
-    currentLineIndex: number;
-}
-
-
-export interface PoolLines {
-    poolId: string;
-    positionLines: Array<PositionLine>;
-    liquidityLines: Array<LiquidityLine>;
-}
-
-export interface GlobalData {
-    currentIndex: number
-}
+import { PoolBatch } from "./raydium-level.service"
 
 @Injectable()
 export class RaydiumIndexerService {
     private logger = new Logger(RaydiumIndexerService.name)
-    // current index for load pools
+    // current index for load lines index
+    // if null, the index is not initialized
+    private currentLineIndex: Record<
+    Network,
+    Record<number, number | undefined>
+  > = {
+            [Network.Mainnet]: {},
+            [Network.Testnet]: {},
+        }
+
     private currentIndex: Record<Network, number> = {
         [Network.Mainnet]: 0,
         [Network.Testnet]: 0,
     }
-    // current index for load lines index
-    private currentLineIndex: Record<Network, Record<number, number>> = {
-        [Network.Mainnet]: {},
-        [Network.Testnet]: {},
-    }
-    private v3PoolBatches: Record<Network, Array<Array<ApiV3PoolInfoBaseItem>>> = {
-        [Network.Mainnet]: [],
-        [Network.Testnet]: [],
-    }
+
+    private v3PoolBatches: Record<Network, Array<Array<ApiV3PoolInfoBaseItem>>> =
+        {
+            [Network.Mainnet]: [],
+            [Network.Testnet]: [],
+        }
 
     getCurrentIndex(network: Network) {
         return this.currentIndex[network] || 0
     }
 
-    setCurrentIndex(network: Network, index: number) {
-        this.currentIndex[network] = index
+    setCurrentIndex(network: Network, batchIndex: number) {
+        this.currentIndex[network] = batchIndex
     }
-
-    nextIndex(network: Network) {
+    nextCurrentIndex(network: Network) {
         if (typeof this.currentIndex[network] === "undefined") {
             this.currentIndex[network] = 0
         }
-        this.currentIndex[network]++
+        const currentIndex = this.getCurrentIndex(network)
+        this.setCurrentIndex(network, currentIndex + 1)
     }
 
-    getCurrentLineIndex(
-        network: Network, 
-        batchIndex: number
-    ) {
-        if (typeof this.currentLineIndex[network][batchIndex] === "undefined") {
-            this.currentLineIndex[network][batchIndex] = 0
-        }
-        return this.currentLineIndex[network][batchIndex]
+    getCurrentLineIndex(network: Network, batchIndex: number) {
+        return this.currentLineIndex[network]?.[batchIndex] || 0
     }
 
     setCurrentLineIndex(
-        network: Network, 
-        batchIndex: number, 
-        lineIndex: number
+        network: Network,
+        batchIndex: number,
+        lineIndex?: number,
     ) {
         if (!this.currentLineIndex[network]) {
             this.currentLineIndex[network] = {}
@@ -73,17 +58,29 @@ export class RaydiumIndexerService {
         this.currentLineIndex[network][batchIndex] = lineIndex
     }
 
-    nextLineIndex(
-        network: Network, 
-        batchIndex: number
+    setV3PoolBatchAndCurrentLineIndex(
+        network: Network,
+        batchIndex: number,
+        poolBatch: PoolBatch,
     ) {
+        this.setV3PoolBatch(
+            network,
+            batchIndex,
+            poolBatch.pools.map((pool) => pool.pool),
+        )
+        this.setCurrentLineIndex(network, batchIndex, poolBatch.currentLineIndex)
+    }
+
+    resetCurrentLineIndex(network: Network, batchIndex: number) {
         if (!this.currentLineIndex[network]) {
             this.currentLineIndex[network] = {}
         }
-        if (typeof this.currentLineIndex[network][batchIndex] === "undefined") {
-            this.currentLineIndex[network][batchIndex] = 0
-        }
-        this.currentLineIndex[network][batchIndex]++
+        this.currentLineIndex[network][batchIndex] = undefined
+    }
+
+    nextCurrentLineIndex(network: Network, batchIndex: number) {
+        const currentLineIndex = this.getCurrentLineIndex(network, batchIndex)
+        this.setCurrentLineIndex(network, batchIndex, currentLineIndex + 1)
     }
 
     getV3PoolBatches(network: Network) {
@@ -91,9 +88,9 @@ export class RaydiumIndexerService {
     }
 
     setV3PoolBatch(
-        network: Network, 
-        batchIndex: number, 
-        pools: Array<ApiV3PoolInfoBaseItem>
+        network: Network,
+        batchIndex: number,
+        pools: Array<ApiV3PoolInfoBaseItem>,
     ) {
         if (!this.v3PoolBatches[network]) {
             this.v3PoolBatches[network] = []
@@ -101,15 +98,14 @@ export class RaydiumIndexerService {
         this.v3PoolBatches[network][batchIndex] = pools
     }
 
-    getV3PoolBatch(
-        network: Network, 
-        batchIndex: number
-    ) {
+    getV3PoolBatch(network: Network, batchIndex: number) {
         return this.v3PoolBatches[network]?.[batchIndex] || []
     }
 
     getAllCurrentLineIndexes(network: Network) {
-        return this.currentLineIndex[network] || {}
+        return Object.values(this.currentLineIndex[network] || {}).map(
+            (index) => index,
+        )
     }
 
     getInitializedBatches(network: Network) {
@@ -122,16 +118,15 @@ export class RaydiumIndexerService {
             this.logger.debug(`Batch is not loaded for ${network}`)
             return null
         }
-        for (
-            let batchIndex = 0;
-            batchIndex < v3PoolBatches.length;
-            batchIndex++
-        ) {
+        for (let batchIndex = 0; batchIndex < v3PoolBatches.length; batchIndex++) {
             if (!v3PoolBatches[batchIndex]?.length) {
-                this.logger.debug(`Batch is not loaded for ${network} at batch index ${batchIndex}, maybe same keys, skip...`)
+                this.logger.debug(
+                    `Batch is not loaded for ${network} at batch index ${batchIndex}, maybe same keys, skip...`,
+                )
                 continue
             }
             const lineIndex = this.getCurrentLineIndex(network, batchIndex)
+            console.log(lineIndex)
             if (lineIndex < v3PoolBatches[batchIndex].length) {
                 if (!v3PoolBatches[batchIndex][lineIndex]) {
                     throw new Error(
@@ -146,7 +141,22 @@ export class RaydiumIndexerService {
         return null
     }
 
-    resetCurrentLineIndex(network: Network) {
-        this.currentLineIndex[network] = {}
+    resetCurrentLineIndexes(network: Network) {
+    // when reset, we will change all line index to undefined
+        for (const batchIndex of Object.keys(this.currentIndex[network] || {})) {
+            this.resetCurrentLineIndex(network, Number.parseInt(batchIndex))
+        }
+    }
+
+    tryResetCurrentIndex(network: Network) {
+        const currentIndex = this.getCurrentIndex(network)
+        const pairs = tokenPairs[ChainKey.Solana][network]
+        if (!pairs.length) {
+            throw new Error(`Pairs is not loaded for ${network}`)
+        }
+        if (currentIndex >= pairs.length) {
+            this.resetCurrentLineIndexes(network)
+            this.setCurrentIndex(network, 0)
+        }
     }
 }

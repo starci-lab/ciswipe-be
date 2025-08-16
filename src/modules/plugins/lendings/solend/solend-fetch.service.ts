@@ -175,7 +175,7 @@ export class SolendLendingFetchService implements OnModuleInit {
                 } finally {
                     try {
                         // plus to next index, regardless of success or failure
-                        this.solendLendingIndexerService.nextIndex(network)
+                        this.solendLendingIndexerService.nextCurrentIndex(network)
                         // update current index in volume
                         await this.volumeService.updateJsonFromDataVolume<PoolsData>({
                             name: this.solendLendingInitService.getLendingPoolsVolumeKey(network),

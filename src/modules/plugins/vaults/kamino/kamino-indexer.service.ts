@@ -49,7 +49,7 @@ export class KaminoVaultIndexerService {
         this.currentIndex[network] = index
     }
 
-    nextIndex(network: Network) {
+    nextCurrentIndex(network: Network) {
         if (typeof this.currentIndex[network] === "undefined") {
             this.currentIndex[network] = 0
         }
