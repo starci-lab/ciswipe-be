@@ -226,16 +226,16 @@ export class RaydiumFetchService implements OnModuleInit {
                     const poolLines =
                         await this.raydiumLevelService.getPoolLines(
                             network,
-                            pool.id,
+                            pool.poolId,
                             async () => {
                                 const liquidityLines =
-                                    await this.raydiumApiService.fetchPoolLines(pool.id)
+                                    await this.raydiumApiService.fetchPoolLines(pool.poolId)
                                 // sleep 1000s to avoid rate limit
                                 await sleep(1000)
                                 const positionLines =
-                                    await this.raydiumApiService.fetchPoolPositions(pool.id)
+                                    await this.raydiumApiService.fetchPoolPositions(pool.poolId)
                                 return {
-                                    poolId: pool.id,
+                                    poolId: pool.poolId,
                                     liquidityLines,
                                     positionLines,
                                 }
@@ -243,7 +243,7 @@ export class RaydiumFetchService implements OnModuleInit {
                         )
                     if (!poolLines) {
                         this.logger.error(
-                            `Cannot load pool lines for ${pool.id}, message: Pool lines is not found`,
+                            `Cannot load pool lines for ${pool.poolId}, message: Pool lines is not found`,
                         )
                         return
                     }
@@ -251,7 +251,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     // log the pool lines
                     this.logger.warn(
                         `Loaded pool lines for 
-                      ${pool.id}, 
+                      ${pool.poolId}, 
                       pair: ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][0].id} and ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][1].id}, 
                       batch index: ${batchIndex},
                       line index: ${lineIndex}, 
@@ -261,7 +261,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     )
                 } catch (error) {
                     this.logger.error(
-                        `Cannot load pool lines for ${pool.id}, message: ${error.message}`,
+                        `Cannot load pool lines for ${pool.poolId}, message: ${error.message}`,
                     )
                 } finally {
                     try {
@@ -271,7 +271,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     } catch (error) {
                         // if cannot log, it will keep this re-run again in 3s, 100% IO problems, not my code
                         this.logger.error(
-                            `Cannot increase line index for ${pool.id}, message: ${error.message}`,
+                            `Cannot increase line index for ${pool.poolId}, message: ${error.message}`,
                         )
                     }
                 }

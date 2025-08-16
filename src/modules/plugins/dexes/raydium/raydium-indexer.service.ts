@@ -4,6 +4,10 @@ import { tokenPairs } from "@/modules/blockchain"
 import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
 import { PoolBatch } from "./raydium-level.service"
 
+export interface V3PoolIndexData {
+    poolId: string
+}
+
 @Injectable()
 export class RaydiumIndexerService {
     private logger = new Logger(RaydiumIndexerService.name)
@@ -22,7 +26,7 @@ export class RaydiumIndexerService {
         [Network.Testnet]: 0,
     }
 
-    private v3PoolBatches: Record<Network, Array<Array<ApiV3PoolInfoBaseItem>>> =
+    private v3PoolBatches: Record<Network, Array<Array<V3PoolIndexData>>> =
         {
             [Network.Mainnet]: [],
             [Network.Testnet]: [],
@@ -95,7 +99,9 @@ export class RaydiumIndexerService {
         if (!this.v3PoolBatches[network]) {
             this.v3PoolBatches[network] = []
         }
-        this.v3PoolBatches[network][batchIndex] = pools
+        this.v3PoolBatches[network][batchIndex] = pools.map(pool => ({
+            poolId: pool.id,
+        }))
     }
 
     getV3PoolBatch(network: Network, batchIndex: number) {
