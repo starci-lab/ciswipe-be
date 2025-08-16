@@ -54,6 +54,7 @@
     "js-combinatorics": "^2.1.2",
     "jsbi": "^4.3.2",
     "level": "^10.0.0",
+    "p-retry": "^6.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "simple-statistics": "^7.8.8"

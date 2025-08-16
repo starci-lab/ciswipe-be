@@ -93,6 +93,7 @@ export class RaydiumPluginService extends DexPluginAbstract {
         if (!poolBatch) {
             throw new Error("Raydium pool batch not found")
         }
+
         const results: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
         for (const pool of poolBatch.pools.map(pool => pool.pool)) {
@@ -153,7 +154,7 @@ export class RaydiumPluginService extends DexPluginAbstract {
         }
         await Promise.all(promises)
         return results
-    }
+    }   
 
     // method to add liquidity to a pool
     protected async v3Execute({

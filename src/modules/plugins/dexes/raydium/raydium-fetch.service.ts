@@ -12,7 +12,7 @@ import { RaydiumInitService } from "./raydium-init.service"
 import {
     RaydiumIndexerService,
 } from "./raydium-indexer.service"
-import { LockService } from "@/modules/misc"
+import { LockService, RetryService } from "@/modules/misc"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumApiService } from "./raydium-api.service"
 import { RaydiumLevelService } from "./raydium-level.service"
@@ -38,39 +38,53 @@ export class RaydiumFetchService implements OnModuleInit {
         private readonly raydiumApiService: RaydiumApiService,
         private readonly raydiumLevelService: RaydiumLevelService,
         private readonly raydiumCacheService: RaydiumCacheService,
+        private readonly retryService: RetryService,
     ) { }
 
     async onModuleInit() {
-        for (const network of Object.values(Network)) {
-            await this.initService.loadGlobalData(network)
-        }
-        // 2. Cache all on init
-        await this.initService.cacheAllOnInit()
-        // 3. Load raydium
-        const _raydiums: Partial<Record<Network, Raydium>> = {}
-        for (const network of Object.values(Network)) {
-            _raydiums[network] = await Raydium.load({
-                connection: this.solanaRpcProvider[network],
-            })
-        }
-        // we have to cast type to Record<Network, Raydium> to avoid compilation error
-        this.raydiums = _raydiums as Record<Network, Raydium>
+        await this.retryService.retry({
+            action: async () => {
+                for (const network of Object.values(Network)) {
+                    await this.initService.loadGlobalData(network)
+                }
+                // 2. Cache all on init
+                await this.initService.cacheAllOnInit()
+                // 3. Load raydium
+                const _raydiums: Partial<Record<Network, Raydium>> = {}
+                for (const network of Object.values(Network)) {
+                    _raydiums[network] = await Raydium.load({
+                        connection: this.solanaRpcProvider[network],
+                    })
+                }
+                // we have to cast type to Record<Network, Raydium> to avoid compilation error
+                this.raydiums = _raydiums as Record<Network, Raydium>
+            }
+        })
     }
 
     @Cron(CronExpression.EVERY_10_SECONDS)
     async handleLoadPoolBatch() {
-        for (const network of Object.values(Network)) {
-            await this.loadPoolBatch(network)
-        }
+        await this.retryService.retry({
+            action: async () => {
+                for (const network of Object.values(Network)) {
+                    await this.loadPoolBatch(network)
+                }
+            }
+        })
     }
 
     @Cron("*/3 * * * * *")
     async handleloadPoolLines() {
-        for (const network of Object.values(Network)) {
-            await this.loadPoolLines(network)
-        }
+        await this.retryService.retry({
+            action: async () => {
+                for (const network of Object.values(Network)) {
+                    await this.loadPoolLines(network)
+                }
+            }
+        })
     }
 
+    // load pool batch
     public async loadPoolBatch(network: Network) {
         await this.lockService.withLocks({
             blockedKeys: [LOCK_KEYS.POOL_BATCH],
@@ -191,7 +205,9 @@ export class RaydiumFetchService implements OnModuleInit {
     }
 
     // return true if we have loaded all lines for the current index, otherwise not
-    public async loadPoolLines(network: Network) {
+    public async loadPoolLines(
+        network: Network
+    ) {
         await this.lockService.withLocks({
             blockedKeys: [LOCK_KEYS.POOL_LINES, LOCK_KEYS.POOL_BATCH],
             acquiredKeys: [LOCK_KEYS.POOL_LINES],
