@@ -16,6 +16,7 @@ import { LockService, RetryService } from "@/modules/misc"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumApiService } from "./raydium-api.service"
 import { RaydiumLevelService } from "./raydium-level.service"
+import { RaydiumCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
     POOL_BATCH: "poolBatch",
@@ -37,6 +38,7 @@ export class RaydiumFetchService implements OnModuleInit {
         private readonly raydiumApiService: RaydiumApiService,
         private readonly raydiumLevelService: RaydiumLevelService,
         private readonly retryService: RetryService,
+        private readonly raydiumCacheService: RaydiumCacheService,
     ) { }
 
     async onModuleInit() {
@@ -46,7 +48,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     await this.initService.loadGlobalData(network)
                 }
                 // 2. Load all on init
-                await this.initService.loadAllOnInit()
+                await this.initService.loadAndCacheAllOnInit()
                 // 3. Load raydium
                 const _raydiums: Partial<Record<Network, Raydium>> = {}
                 for (const network of Object.values(Network)) {
@@ -98,7 +100,7 @@ export class RaydiumFetchService implements OnModuleInit {
                 this.indexerService.tryResetCurrentIndex(network)
                 // now we try to get the current index that was reseted
                 const currentIndex = this.indexerService.getCurrentIndex(network)
-                const [token1, token2] =
+                const [token0, token1] =
                     this.tokenUtilsService.tryGetWrappedTokens({
                         tokens: this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[currentIndex],
                         network,
@@ -115,25 +117,33 @@ export class RaydiumFetchService implements OnModuleInit {
                             try {
                                 let nextPageAvailable = true
                                 while (nextPageAvailable) {
-                                    if (!token1.tokenAddress || !token2.tokenAddress) {
+                                    if (!token0.tokenAddress || !token1.tokenAddress) {
                                         throw new Error(
-                                            `Token address is not found for ${token1.id} and ${token2.id}`,
+                                            `Token address is not found for ${token0.id} and ${token1.id}`,
                                         )
                                     }
                                     const { data, hasNextPage } =
                                         await raydium.api.fetchPoolByMints({
-                                            mint1: token1.tokenAddress,
-                                            mint2: token2.tokenAddress,
+                                            mint1: token0.tokenAddress,
+                                            mint2: token1.tokenAddress,
                                         })
                                     pools.push(...data)
                                     nextPageAvailable = hasNextPage
                                     if (hasNextPage) {
                                         this.logger.debug(
-                                            `We found more pools for ${token1.id} and ${token2.id}, so we will sleep for 1 second to avoid rate limit`,
+                                            `We found more pools for ${token0.id} and ${token1.id}, so we will sleep for 1 second to avoid rate limit`,
                                         )
                                         await sleep(1000)
                                     }
                                 }
+                                if (!poolBatch) {
+                                    return null
+                                }
+                                await this.raydiumCacheService.cachePoolBatch(
+                                    network,
+                                    currentIndex,
+                                    poolBatch
+                                )
                                 return {
                                     pools: pools.map(pool => ({
                                         pool,
@@ -142,7 +152,7 @@ export class RaydiumFetchService implements OnModuleInit {
                                 }
                             } catch (error) {
                                 this.logger.error(
-                                    `Cannot load pool batch for ${token1.id} and ${token2.id}, message: ${error.message}`,
+                                    `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
                                 )
                                 return null
                             }
@@ -150,7 +160,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     )
                     if (!poolBatch) {
                         this.logger.error(
-                            `Cannot load pool batch for ${token1.id} and ${token2.id}, message: Pool batch is not found`,
+                            `Cannot load pool batch for ${token0.id} and ${token1.id}, message: Pool batch is not found`,
                         )
                         return
                     }
@@ -166,12 +176,18 @@ export class RaydiumFetchService implements OnModuleInit {
                     )
                     // update the indexer
                     this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
+                    // cache the pool batch
+                    await this.raydiumCacheService.cachePoolBatch(
+                        network,
+                        currentIndex,
+                        poolBatch
+                    )
                     // log the pool batch
                     this.logger.debug(
                         `Loaded pool batch for 
-                      ${token1.id} 
+                      ${token0.id} 
                       and 
-                      ${token2.id}, 
+                      ${token1.id}, 
                       index: ${currentIndex}, 
                       total pools: ${poolBatch.pools.length},
                       total pairs: ${tokenPairs[ChainKey.Solana][network].length},
@@ -181,7 +197,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     )
                 } catch (error) {
                     this.logger.error(
-                        `Cannot load pool batch for ${token1.id} and ${token2.id}, message: ${error.message}`,
+                        `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
                     )
                 } finally {
                     try {
@@ -247,7 +263,12 @@ export class RaydiumFetchService implements OnModuleInit {
                         )
                         return
                     }
-                    // update the indexer
+                    // cache the pool lines
+                    await this.raydiumCacheService.cachePoolLines(
+                        network,
+                        pool.poolId,
+                        poolLines
+                    )
                     // log the pool lines
                     this.logger.warn(
                         `Loaded pool lines for 

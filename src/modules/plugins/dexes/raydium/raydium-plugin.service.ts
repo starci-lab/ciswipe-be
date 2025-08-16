@@ -16,8 +16,8 @@ import {
 } from "@/modules/common"
 import { tokens } from "@/modules/blockchain"
 import { Decimal } from "decimal.js"
-import { RaydiumLevelService } from "./raydium-level.service"
 import { RaydiumInitService } from "./raydium-init.service"
+import { RaydiumCacheService } from "./raydium-cache.service"
 
 @Injectable()
 export class RaydiumPluginService
@@ -25,7 +25,7 @@ export class RaydiumPluginService
     implements OnModuleInit
 {
     constructor(
-    private readonly raydiumLevelService: RaydiumLevelService,
+    private readonly raydiumCacheService: RaydiumCacheService,
     private readonly interestRateConverterService: InterestRateConverterService,
     private readonly raydiumInitService: RaydiumInitService,
     private readonly tokenUtilsService: TokenUtilsService,
@@ -41,7 +41,7 @@ export class RaydiumPluginService
     }
 
     async onModuleInit() {
-        await this.raydiumInitService.loadAllOnInit()
+        await this.raydiumInitService.loadAndCacheAllOnInit()
     }
 
     private async v3ExecuteSingle({
@@ -91,7 +91,7 @@ export class RaydiumPluginService
             chainKey,
             network,
         })
-        const poolBatch = await this.raydiumLevelService.getPoolBatch(
+        const poolBatch = await this.raydiumCacheService.getPoolBatch(
             network,
             index,
         )
@@ -104,7 +104,7 @@ export class RaydiumPluginService
         for (const pool of poolBatch.pools.map((pool) => pool.pool)) {
             promises.push(
                 (async () => {
-                    const poolLines = await this.raydiumLevelService.getPoolLines(
+                    const poolLines = await this.raydiumCacheService.getPoolLines(
                         network,
                         pool.id,
                     )
