@@ -16,7 +16,6 @@ import { LockService, RetryService } from "@/modules/misc"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumApiService } from "./raydium-api.service"
 import { RaydiumLevelService } from "./raydium-level.service"
-import { RaydiumCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
     POOL_BATCH: "poolBatch",
@@ -37,7 +36,6 @@ export class RaydiumFetchService implements OnModuleInit {
         private readonly tokenUtilsService: TokenUtilsService,
         private readonly raydiumApiService: RaydiumApiService,
         private readonly raydiumLevelService: RaydiumLevelService,
-        private readonly raydiumCacheService: RaydiumCacheService,
         private readonly retryService: RetryService,
     ) { }
 
@@ -47,8 +45,8 @@ export class RaydiumFetchService implements OnModuleInit {
                 for (const network of Object.values(Network)) {
                     await this.initService.loadGlobalData(network)
                 }
-                // 2. Cache all on init
-                await this.initService.cacheAllOnInit()
+                // 2. Load all on init
+                await this.initService.loadAllOnInit()
                 // 3. Load raydium
                 const _raydiums: Partial<Record<Network, Raydium>> = {}
                 for (const network of Object.values(Network)) {
@@ -165,10 +163,7 @@ export class RaydiumFetchService implements OnModuleInit {
                     this.indexerService.setCurrentLineIndex(
                         network,
                         currentIndex,
-
                     )
-                    // cache the pool batch
-                    await this.raydiumCacheService.cachePoolBatch(network, token1.id, token2.id, poolBatch)
                     // update the indexer
                     this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
                     // log the pool batch
@@ -253,7 +248,6 @@ export class RaydiumFetchService implements OnModuleInit {
                         return
                     }
                     // update the indexer
-                    await this.raydiumCacheService.cachePoolLines(network, pool.id, poolLines)
                     // log the pool lines
                     this.logger.warn(
                         `Loaded pool lines for 

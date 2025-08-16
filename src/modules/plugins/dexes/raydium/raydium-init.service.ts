@@ -1,8 +1,5 @@
-import { Injectable, Logger, Inject } from "@nestjs/common"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
+import { Injectable, Logger } from "@nestjs/common"
 import { ChainKey, Network } from "@/modules/common"
-import { createCacheKey } from "@/modules/cache"
 import { RaydiumIndexerService } from "./raydium-indexer.service"
 import { GlobalData, RaydiumLevelService } from "./raydium-level.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
@@ -13,71 +10,19 @@ export class RaydiumInitService {
 
     constructor(
     private readonly levelService: RaydiumLevelService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly indexerService: RaydiumIndexerService,
     private readonly tokenUtilsService: TokenUtilsService,
     ) {}
 
-    public getPoolBatchCacheKey(
-        network: Network,
-        token1: string,
-        token2: string,
-    ) {
-        [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(
-            token1,
-            token2,
-        )
-        return createCacheKey("pool-batch", {
-            network,
-            token1,
-            token2,
-        })
-    }
-
-    public getPoolLinesCacheKey(network: Network, poolId: string) {
-        return createCacheKey("pool-lines", {
-            network,
-            poolId,
-        })
-    }
-
-    public getPoolBatchVolumeKey(
-        network: Network,
-        token1: string,
-        token2: string,
-    ) {
-        [token1, token2] = this.tokenUtilsService.ensureTokensOrderById(
-            token1,
-            token2,
-        )
-        return `pool-batch-${network}-${token1}-${token2}.json`
-    }
-
-    public getPoolLinesVolumeKey(network: Network, poolId: string) {
-        return `pool-lines-${network}-${poolId}.json`
-    }
-
-    public getGlobalDataVolumeKey(network: Network) {
-        return `global-data-${network}.json`
-    }
-
-    private async loadAndCachePoolBatch(
+    private async loadPoolBatch(
         network: Network,
         currentBatchIndex: number,
     ) {
-        const [token1, token2] = this.tokenUtilsService.getPairsWithoutNativeToken(
-            ChainKey.Solana,
-            network,
-        )[currentBatchIndex]
         const poolBatch = await this.levelService.getPoolBatch(
             network,
             currentBatchIndex,
         )
         if (!poolBatch) return null
-        await this.cacheManager.set(
-            this.getPoolBatchCacheKey(network, token1.id, token2.id),
-            poolBatch,
-        )
         // update the indexer
         this.indexerService.setV3PoolBatchAndCurrentLineIndex(
             network,
@@ -87,17 +32,13 @@ export class RaydiumInitService {
         return poolBatch
     }
 
-    private async loadAndCachePoolLines(network: Network, poolId: string) {
+    private async loadPoolLines(network: Network, poolId: string) {
         if (!poolId) return
         const poolLines = await this.levelService.getPoolLines(network, poolId)
         if (!poolLines) return
-        await this.cacheManager.set(
-            this.getPoolLinesCacheKey(network, poolId),
-            poolLines,
-        )
     }
 
-    async cacheAllOnInit() {
+    async loadAllOnInit() {
         try {
             for (const network of Object.values(Network)) {
                 if (network === Network.Testnet) continue
@@ -113,7 +54,7 @@ export class RaydiumInitService {
                 ) {
                     promises.push(
                         (async () => {
-                            const poolBatch = await this.loadAndCachePoolBatch(
+                            const poolBatch = await this.loadPoolBatch(
                                 network,
                                 currentBatchIndex,
                             )
@@ -121,7 +62,7 @@ export class RaydiumInitService {
                             const internalPromises: Array<Promise<void>> = []
                             for (const pool of poolBatch.pools) {
                                 internalPromises.push(
-                                    this.loadAndCachePoolLines(network, pool.pool.id),
+                                    this.loadPoolLines(network, pool.pool.id),
                                 )
                             }
                             await Promise.all(internalPromises)

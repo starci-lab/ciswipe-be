@@ -1,13 +1,13 @@
 import {
     InterestRateConverterService,
+    TokenUtilsService,
 } from "@/modules/blockchain"
 import {
     DexPluginAbstract,
     V3ExecuteParams,
     V3ExecuteSingleParams,
 } from "../abstract"
-import { Inject, Injectable } from "@nestjs/common"
-import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
+import { Injectable, OnModuleInit } from "@nestjs/common"
 import {
     ChainKey,
     combinations,
@@ -15,22 +15,20 @@ import {
     TokenType,
 } from "@/modules/common"
 import { tokens } from "@/modules/blockchain"
-import {
-    RaydiumInitService,
-} from "./raydium-init.service"
-import {
-    PoolBatch,
-    PoolLines,
-} from "./raydium-level.service"
 import { Decimal } from "decimal.js"
+import { RaydiumLevelService } from "./raydium-level.service"
+import { RaydiumInitService } from "./raydium-init.service"
 
 @Injectable()
-export class RaydiumPluginService extends DexPluginAbstract {
+export class RaydiumPluginService
+    extends DexPluginAbstract
+    implements OnModuleInit
+{
     constructor(
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
+    private readonly raydiumLevelService: RaydiumLevelService,
     private readonly interestRateConverterService: InterestRateConverterService,
     private readonly raydiumInitService: RaydiumInitService,
+    private readonly tokenUtilsService: TokenUtilsService,
     ) {
         super({
             name: "Raydium",
@@ -40,6 +38,10 @@ export class RaydiumPluginService extends DexPluginAbstract {
             tags: ["dex"],
             chainKeys: [ChainKey.Solana],
         })
+    }
+
+    async onModuleInit() {
+        await this.raydiumInitService.loadAllOnInit()
     }
 
     private async v3ExecuteSingle({
@@ -83,12 +85,15 @@ export class RaydiumPluginService extends DexPluginAbstract {
                 throw new Error("Raydium wrapper token not found")
             }
         }
-        const poolBatch = await this.cacheManager.get<PoolBatch>(
-            this.raydiumInitService.getPoolBatchCacheKey(
-                network,
-                token1Entity.id,
-                token2Entity.id,
-            ),
+        const index = this.tokenUtilsService.getIndexByPair({
+            token0: token1Entity.id,
+            token1: token2Entity.id,
+            chainKey,
+            network,
+        })
+        const poolBatch = await this.raydiumLevelService.getPoolBatch(
+            network,
+            index,
         )
         if (!poolBatch) {
             throw new Error("Raydium pool batch not found")
@@ -96,11 +101,12 @@ export class RaydiumPluginService extends DexPluginAbstract {
 
         const results: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
-        for (const pool of poolBatch.pools.map(pool => pool.pool)) {
+        for (const pool of poolBatch.pools.map((pool) => pool.pool)) {
             promises.push(
                 (async () => {
-                    const poolLines = await this.cacheManager.get<PoolLines>(
-                        this.raydiumInitService.getPoolLinesCacheKey(network, pool.id),
+                    const poolLines = await this.raydiumLevelService.getPoolLines(
+                        network,
+                        pool.id,
                     )
                     if (!poolLines) {
                         return
@@ -154,7 +160,7 @@ export class RaydiumPluginService extends DexPluginAbstract {
         }
         await Promise.all(promises)
         return results
-    }   
+    }
 
     // method to add liquidity to a pool
     protected async v3Execute({

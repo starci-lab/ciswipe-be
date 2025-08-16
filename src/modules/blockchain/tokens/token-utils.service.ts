@@ -1,14 +1,21 @@
 import { Injectable } from "@nestjs/common"
-import { Token, tokenPairs, tokens } from "./data"
+import { Token, TokenId, tokenPairs, tokens } from "./data"
 import { ChainKey, Network, TokenType } from "@/modules/common"
 @Injectable()
 export class TokenUtilsService {
-    
     getPairsWithoutNativeToken(chainKey: ChainKey, network: Network) {
-        return tokenPairs[chainKey][network].filter(
-            ([token0, token1]) =>
-                token0.type !== TokenType.Native && token1.type !== TokenType.Native,
-        ).map(([token0, token1]) => this.ensureTokensOrder(token0, token1))
+        return tokenPairs[chainKey][network]
+            .filter(
+                ([token0, token1]) =>
+                    token0.type !== TokenType.Native && token1.type !== TokenType.Native,
+            )
+            .map(([token0, token1]) => this.ensureTokensOrder(token0, token1))
+    }
+
+    getPairs(chainKey: ChainKey, network: Network) {
+        return tokenPairs[chainKey][network].map(([token0, token1]) =>
+            this.ensureTokensOrder(token0, token1),
+        )
     }
 
     ensureTokensOrder(token1: Token, token2: Token) {
@@ -23,7 +30,10 @@ export class TokenUtilsService {
         return args.join("::")
     }
 
-    ensureTokensOrderById(token1Id: string, token2Id: string) {
+    ensureTokensOrderById(
+        token1Id: TokenId, 
+        token2Id: TokenId
+    ) {
         if (Buffer.byteLength(token1Id) > Buffer.byteLength(token2Id)) {
             [token1Id, token2Id] = [token2Id, token1Id]
         }
@@ -51,6 +61,35 @@ export class TokenUtilsService {
             this.tryGetWrappedToken({ token, network, chainKey }),
         )
     }
+
+    getIndexByPair({
+        token0,
+        token1,
+        withoutNative,
+        chainKey,
+        network,
+    }: GetIndexByPairParams) {
+        [token0, token1] = this.ensureTokensOrderById(token0, token1)
+        const pairs = withoutNative
+            ? this.getPairsWithoutNativeToken(chainKey, network)
+            : this.getPairs(chainKey, network)
+        const index = pairs.findIndex(
+            ([token0Instance, token1Instance]) =>
+                token0Instance.id === token0 && token1Instance.id === token1,
+        )
+        if (index === -1) {
+            throw new Error(`Pair ${token0} ${token1} not found`)
+        }
+        return index
+    }
+}
+
+export interface GetIndexByPairParams {
+  token0: TokenId;
+  token1: TokenId;
+  withoutNative?: boolean;
+  chainKey: ChainKey;
+  network: Network;
 }
 
 export interface TryGetWrappedTokenParams {

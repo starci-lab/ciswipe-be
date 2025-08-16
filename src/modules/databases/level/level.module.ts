@@ -5,6 +5,7 @@ import {
 } from "./level.module-definition"
 import { getLevelProvider } from "./level.providers"
 import { LevelHelpersService } from "./level-helpers.provider"
+import { LevelSubscriptionService } from "./level-subscription.service"
 
 @Module({})
 export class LevelModule extends ConfigurableModuleClass {
@@ -13,11 +14,13 @@ export class LevelModule extends ConfigurableModuleClass {
     ): DynamicModule {
         const dynamicModule = super.register(options)
         const levelProvider = getLevelProvider()
+
         return {
             ...dynamicModule,
             providers: [
                 levelProvider,
                 LevelHelpersService,
+                LevelSubscriptionService,
             ],
             exports: [
                 levelProvider,
