@@ -204,7 +204,7 @@ export class RaydiumFetchService implements OnModuleInit {
                         // we will increase the index to the next pair
                         this.indexerService.nextCurrentIndex(network)
                         // update the global data
-                        await this.initService.loadGlobalData(network)
+                        await this.raydiumLevelService.increaseGlobalDataIndex(network)
                     } catch (error) {
                         this.logger.error(
                             `Cannot increase index for ${network}, message: ${error.message}`,
