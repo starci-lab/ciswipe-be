@@ -8,26 +8,27 @@ import { LiquidityLine, PositionLine } from "./raydium-api.service"
 
 // we track pool batch for each pool
 export interface PoolBatch {
-  pools: Array<PoolData>;
-  // we track current line index for each pool to continue loading lines
-  currentLineIndex: number;
+    pools: Array<PoolData>;
+    // we track current line index for each pool to continue loading lines
+    currentLineIndex: number;
 }
 
 // we track pool data for each pool
 export interface PoolData {
-  pool: ApiV3PoolInfoBaseItem;
+    pool: ApiV3PoolInfoBaseItem;
 }
+
 // we track position and liquidity lines for each pool
 export interface PoolLines {
-  poolId: string;
-  positionLines: Array<PositionLine>;
-  liquidityLines: Array<LiquidityLine>;
+    poolId: string;
+    positionLines: Array<PositionLine>;
+    liquidityLines: Array<LiquidityLine>;
 }
 
 // we track global data for all pools
 export interface GlobalData {
-  // we track current index to continue loading pools
-  currentIndex: number;
+    // we track current index to continue loading pools
+    currentIndex: number;
 }
 
 const GLOBAL_DATA_KEY = "global-data"
@@ -37,9 +38,9 @@ const POOL_LINES_KEY = "pool-lines"
 @Injectable()
 export class RaydiumLevelService {
     constructor(
-    private readonly levelHelpersService: LevelHelpersService,
-    private readonly tokenUtilsService: TokenUtilsService,
-    ) {}
+        private readonly levelHelpersService: LevelHelpersService,
+        private readonly tokenUtilsService: TokenUtilsService,
+    ) { }
 
     // get pool batch from level db
     public async getPoolBatch(
@@ -47,7 +48,11 @@ export class RaydiumLevelService {
         batchIndex: number,
         action?: () => Promise<PoolBatch | null>,
     ): Promise<PoolBatch | null> {
-        const [token0, token1] = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex] || []
+        const [token0, token1] =
+            this.tokenUtilsService.getPairsWithoutNativeToken(
+                ChainKey.Solana,
+                network,
+            )[batchIndex] || []
         const key = this.tokenUtilsService.createKey(
             POOL_BATCH_KEY,
             token0.id,
@@ -92,7 +97,10 @@ export class RaydiumLevelService {
         batchIndex: number,
         poolBatch: PoolBatch,
     ) {
-        const [token0, token1] = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex]
+        const [token0, token1] = this.tokenUtilsService.getPairsWithoutNativeToken(
+            ChainKey.Solana,
+            network,
+        )[batchIndex]
         const key = this.tokenUtilsService.createKey(
             POOL_BATCH_KEY,
             token0.id,

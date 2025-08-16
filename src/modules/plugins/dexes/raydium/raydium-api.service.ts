@@ -17,9 +17,9 @@ interface PoolLineResponse {
 }
 
 export interface PositionLine {
-    price: number; // giá token tại tick
-    liquidity: string; // liquidity ở mức giá đó
-    tick: number; // tick index trong AMM
+    price: number; // Price at tick
+    liquidity: string; // Liquidity at price
+    tick: number; // Tick index in AMM
 }
 
 interface PoolPositionResponse {
