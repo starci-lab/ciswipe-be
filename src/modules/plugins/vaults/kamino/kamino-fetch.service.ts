@@ -2,7 +2,7 @@ import {
     getMedianSlotDurationInMsFromLastEpochs,
     KaminoVaultClient,
 } from "@kamino-finance/klend-sdk"
-import { Inject, Injectable, OnModuleInit } from "@nestjs/common"
+import { Inject, Injectable, OnApplicationBootstrap, OnModuleInit } from "@nestjs/common"
 import { ChainKey, Network } from "@/modules/common"
 import {
     createDefaultRpcTransport,
@@ -22,8 +22,7 @@ import dayjs from "dayjs"
 import { Logger } from "@nestjs/common"
 import { RegressionService, Point } from "@/modules/probability-statistics"
 import { VaultsData } from "./kamino-level.service"
-import { KaminoVaultInitService } from "./kamino-init.service"
-import { LockService } from "@/modules/misc"
+import { LockService, RetryService } from "@/modules/misc"
 import { KaminoVaultIndexerService } from "./kamino-indexer.service"
 import { KaminoVaultCacheService } from "./kamino-cache.service"
 import { KaminoVaultLevelService } from "./kamino-level.service"
@@ -35,7 +34,7 @@ const LOCK_KEYS = {
 }
 
 @Injectable()
-export class KaminoVaultFetchService implements OnModuleInit {
+export class KaminoVaultFetchService implements OnApplicationBootstrap, OnModuleInit {
     private kaminoVaultClients: Record<Network, KaminoVaultClient>
     private logger = new Logger(KaminoVaultFetchService.name)
 
@@ -48,11 +47,10 @@ export class KaminoVaultFetchService implements OnModuleInit {
         private readonly regressionService: RegressionService,
         private readonly indexerService: KaminoVaultIndexerService,
         private readonly lockService: LockService,
-        private readonly kaminoVaultInitService: KaminoVaultInitService,
+        private readonly retryService: RetryService,
     ) { }
 
     async onModuleInit() {
-        await this.kaminoVaultInitService.loadAndCacheAllOnInit()
         // init kamino vault clients
         const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
         for (const network of Object.values(Network)) {
@@ -79,6 +77,9 @@ export class KaminoVaultFetchService implements OnModuleInit {
             Network,
             KaminoVaultClient
         >
+    }
+
+    onApplicationBootstrap() { 
         this.handleLoadVaultsData()
     }
 
@@ -98,56 +99,61 @@ export class KaminoVaultFetchService implements OnModuleInit {
     }
 
     private async loadVaultsData(network: Network) {
-        this.lockService.withLocks({
-            blockedKeys: [LOCK_KEYS.VAULT_METADATA],
-            acquiredKeys: [LOCK_KEYS.VAULTS_DATA],
-            releaseKeys: [LOCK_KEYS.VAULTS_DATA],
-            network,
-            callback: async () => {
-                try {
-                    if (network === Network.Testnet) return
+        await this.retryService.retry({
+            action: async () => {
+                this.lockService.withLocks({
+                    blockedKeys: [LOCK_KEYS.VAULT_METADATA],
+                    acquiredKeys: [LOCK_KEYS.VAULTS_DATA],
+                    releaseKeys: [LOCK_KEYS.VAULTS_DATA],
+                    network,
+                    callback: async () => {
+                        try {
+                            if (network === Network.Testnet) return
 
-                    if (!this.kaminoVaultClients?.[network]) {
-                        this.logger.warn(
-                            `KaminoVaultClient not initialized for ${network}`,
-                        )
-                        return
-                    }
-                    const vaultsData = await this.kaminoVaultLevelService.getVaultsData(
-                        network,
-                        async () => {
-                            const vaultsRaw =
-                                await this.kaminoVaultClients[network].getVaults()
-                            const vaultsMapped: VaultsData = {
-                                vaults: vaultsRaw.map((vaultRaw) => ({
-                                    state: vaultRaw?.state?.toJSON(),
-                                    address: vaultRaw?.address,
-                                })),
-                                currentIndex: 0,
+                            if (!this.kaminoVaultClients?.[network]) {
+                                this.logger.warn(
+                                    `KaminoVaultClient not initialized for ${network}`,
+                                )
+                                return
                             }
-                            return vaultsMapped
-                        },
-                    )
-                    if (!vaultsData) {
-                        this.logger.warn(`No vaults found for ${network}`)
-                        return
-                    }
-                    this.indexerService.setVaultsAndCurrentIndex(
-                        network,
-                        vaultsData.vaults.map((vault) => ({
-                            vaultId: vault.address?.toString() || "",
-                        })),
-                        vaultsData.currentIndex,
-                    )
-                    this.logger.verbose(
-                        `Loaded ${vaultsData.vaults.length} vaults for ${network} from API.`,
-                    )
-                } catch (error) {
-                    this.logger.error(
-                        `Error loading vaults for ${network}: ${error.message}`,
-                    )
-                }
-            },
+                            const vaultsData = await this.kaminoVaultLevelService.getVaultsData(
+                                network,
+                                async () => {
+                                    const vaultsRaw =
+                                await this.kaminoVaultClients[network].getVaults()
+                                    const vaultsMapped: VaultsData = {
+                                        vaults: vaultsRaw.map((vaultRaw) => ({
+                                            state: vaultRaw?.state?.toJSON(),
+                                            address: vaultRaw?.address,
+                                        })),
+                                        currentIndex: 0,
+                                    }
+                                    return vaultsMapped
+                                },
+                            )
+                            if (!vaultsData) {
+                                this.logger.warn(`No vaults found for ${network}`)
+                                return
+                            }
+                            this.indexerService.setVaultsAndCurrentIndex(
+                                network,
+                                vaultsData.vaults.map((vault) => ({
+                                    vaultId: vault.address?.toString() || "",
+                                })),
+                                vaultsData.currentIndex,
+                            )
+                            this.logger.verbose(
+                                `Loaded ${vaultsData.vaults.length} vaults for ${network} from API.`,
+                            )
+                        } catch (error) {
+                            this.logger.error(
+                                `Error loading vaults for ${network}: ${error.message}`,
+                            )
+                        }
+                    },
+                })
+                   
+            }
         })
     }
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
+import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common"
 import {
     Network,
     StrategyRewardToken,
@@ -14,7 +14,6 @@ import {
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { SolendLendingRpcService } from "./solend-rpc.service"
 import { randomUUID } from "crypto"
-import { SolendLendingInitService } from "./solend-init.service"
 import { SolendLendingIndexerService } from "./solend-indexer.service"
 import { LockService, RetryService } from "@/modules/misc"
 import { SolendLendingCacheService } from "./solend-cache.service"
@@ -27,14 +26,13 @@ const LOCK_KEYS = {
 }
 
 @Injectable()
-export class SolendLendingFetchService implements OnModuleInit {
+export class SolendLendingFetchService implements OnApplicationBootstrap {
     private logger = new Logger(SolendLendingFetchService.name)
     
     constructor(
         private readonly solendLendingApiService: SolendLendingApiService,
         private readonly solendLendingRpcService: SolendLendingRpcService,
         private readonly regressionService: RegressionService,
-        private readonly solendLendingInitService: SolendLendingInitService,
         private readonly solendLendingIndexerService: SolendLendingIndexerService,
         private readonly lockService: LockService,
         private readonly solendLendingLevelService: SolendLendingLevelService,
@@ -42,15 +40,13 @@ export class SolendLendingFetchService implements OnModuleInit {
         private readonly retryService: RetryService,
     ) { }
 
-    // we trigger fetch on init to ensure we have all the data in cache
-    async onModuleInit() {
-        await this.solendLendingInitService.loadAndCacheAllOnInit()
-        await this.handleLoadLendingPools()
+    onApplicationBootstrap() {
+        this.handleLoadLendingPoolsData()
     }
 
     // Load lending pools each week
     @Cron(CronExpression.EVERY_WEEK)
-    async handleLoadLendingPools() {
+    async handleLoadLendingPoolsData() {
         for (const network of Object.values(Network)) {
             await this.loadLendingPoolsData(network)
         }

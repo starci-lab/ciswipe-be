@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common"
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { Network } from "@/modules/common"
 import { SolendLendingIndexerService } from "./solend-indexer.service"
 import { SolendLendingLevelService } from "./solend-level.service"
@@ -6,7 +6,7 @@ import { SolendLendingCacheService } from "./solend-cache.service"
 import { RetryService } from "@/modules/misc"
 
 @Injectable()
-export class SolendLendingInitService {
+export class SolendLendingInitService implements OnModuleInit {
     private logger = new Logger(SolendLendingInitService.name)
 
     constructor(
@@ -15,6 +15,10 @@ export class SolendLendingInitService {
         private readonly solendLendingIndexerService: SolendLendingIndexerService,
         private readonly solendLendingCacheService: SolendLendingCacheService,
     ) {}
+
+    async onModuleInit() {
+        await this.loadAndCacheAllOnInit()
+    }
 
     private async loadAndCacheLendingPoolsData(network: Network) {
         const lendingPoolsData = await this.solendLendingLevelService.getLendingPoolsData(network)

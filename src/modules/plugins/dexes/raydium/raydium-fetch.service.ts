@@ -40,11 +40,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
-        for (const network of Object.values(Network)) {
-            await this.initService.loadGlobalData(network)
-        }
-        // 2. Load all on init
-        await this.initService.loadAndCacheAllOnInit()
         await this.retryService.retry({
             action: async () => {
                 // 3. Load raydium

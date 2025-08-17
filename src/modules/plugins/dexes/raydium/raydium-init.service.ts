@@ -1,5 +1,4 @@
-
-import { Injectable, Logger } from "@nestjs/common"
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { ChainKey, Network } from "@/modules/common"
 import { RaydiumDexIndexerService } from "./raydium-indexer.service"
 import { GlobalData, RaydiumDexLevelService } from "./raydium-level.service"
@@ -8,7 +7,7 @@ import { RaydiumDexCacheService } from "./raydium-cache.service"
 import { RetryService } from "@/modules/misc"
 
 @Injectable()
-export class RaydiumDexInitService {
+export class RaydiumDexInitService implements OnModuleInit {
     private logger = new Logger(RaydiumDexInitService.name)
 
     constructor(
@@ -18,6 +17,13 @@ export class RaydiumDexInitService {
         private readonly raydiumDexCacheService: RaydiumDexCacheService,
         private readonly retryService: RetryService,
     ) { }
+
+    async onModuleInit() {
+        for (const network of Object.values(Network)) {
+            await this.loadGlobalData(network)
+        }
+        await this.loadAndCacheAllOnInit()
+    }
 
     private async loadAndCachePoolBatch(
         network: Network,

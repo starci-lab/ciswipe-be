@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common"
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { Network } from "@/modules/common"
 import { KaminoVaultIndexerService } from "./kamino-indexer.service"
 import { VaultsData } from "./kamino-level.service"
@@ -7,7 +7,7 @@ import { KaminoVaultLevelService } from "./kamino-level.service"
 import { RetryService } from "@/modules/misc"
 
 @Injectable()
-export class KaminoVaultInitService {
+export class KaminoVaultInitService implements OnModuleInit {
     private logger = new Logger(KaminoVaultInitService.name)
 
     constructor(
@@ -16,6 +16,10 @@ export class KaminoVaultInitService {
     private readonly kaminoVaultIndexerService: KaminoVaultIndexerService,
     private readonly retryService: RetryService,
     ) {}
+
+    async onModuleInit() {
+        await this.loadAndCacheAllOnInit()
+    }
 
     async loadAndCacheAllOnInit() {
         await this.retryService.retry(
