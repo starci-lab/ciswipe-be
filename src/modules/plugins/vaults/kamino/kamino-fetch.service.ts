@@ -1,43 +1,43 @@
 import {
     getMedianSlotDurationInMsFromLastEpochs,
     KaminoVaultClient,
-} from '@kamino-finance/klend-sdk';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ChainKey, Network } from '@/modules/common';
+} from "@kamino-finance/klend-sdk"
+import { Inject, Injectable, OnModuleInit } from "@nestjs/common"
+import { ChainKey, Network } from "@/modules/common"
 import {
     createDefaultRpcTransport,
     createRpc,
     createSolanaRpcApi,
     DEFAULT_RPC_CONFIG,
     SolanaRpcApi,
-} from '@solana/kit';
-import { Connection } from '@solana/web3.js';
-import { createProviderToken, RecordRpcProvider } from '@/modules/blockchain';
+} from "@solana/kit"
+import { Connection } from "@solana/web3.js"
+import { createProviderToken, RecordRpcProvider } from "@/modules/blockchain"
 import {
     KaminoVaultApiService,
     VaultMetricsHistoryItem,
-} from './kamino-api.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import dayjs from 'dayjs';
-import { Logger } from '@nestjs/common';
-import { RegressionService, Point } from '@/modules/probability-statistics';
-import { VaultsData, Vault } from './kamino-level.service';
-import { KaminoVaultInitService } from './kamino-init.service';
-import { LockService } from '@/modules/misc';
-import { KaminoVaultIndexerService } from './kamino-indexer.service';
-import { KaminoVaultCacheService } from './kamino-cache.service';
-import { KaminoVaultLevelService } from './kamino-level.service';
+} from "./kamino-api.service"
+import { Cron, CronExpression } from "@nestjs/schedule"
+import dayjs from "dayjs"
+import { Logger } from "@nestjs/common"
+import { RegressionService, Point } from "@/modules/probability-statistics"
+import { VaultsData } from "./kamino-level.service"
+import { KaminoVaultInitService } from "./kamino-init.service"
+import { LockService } from "@/modules/misc"
+import { KaminoVaultIndexerService } from "./kamino-indexer.service"
+import { KaminoVaultCacheService } from "./kamino-cache.service"
+import { KaminoVaultLevelService } from "./kamino-level.service"
 
-const DAY = 60 * 60 * 24;
+const DAY = 60 * 60 * 24
 const LOCK_KEYS = {
-    VAULTS_DATA: 'vaultsData',
-    VAULT_METADATA: 'vaultMetadata',
-};
+    VAULTS_DATA: "vaultsData",
+    VAULT_METADATA: "vaultMetadata",
+}
 
 @Injectable()
 export class KaminoVaultFetchService implements OnModuleInit {
-    private kaminoVaultClients: Record<Network, KaminoVaultClient>;
-    private logger = new Logger(KaminoVaultFetchService.name);
+    private kaminoVaultClients: Record<Network, KaminoVaultClient>
+    private logger = new Logger(KaminoVaultFetchService.name)
 
     constructor(
         private readonly kaminoVaultLevelService: KaminoVaultLevelService,
@@ -52,19 +52,19 @@ export class KaminoVaultFetchService implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
-        await this.kaminoVaultInitService.loadAndCacheAllOnInit();
+        await this.kaminoVaultInitService.loadAndCacheAllOnInit()
         // init kamino vault clients
-        const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {};
+        const _kaminoVaultClients: Partial<Record<Network, KaminoVaultClient>> = {}
         for (const network of Object.values(Network)) {
             if (network === Network.Testnet) {
                 // do nothing for testnet
-                continue;
+                continue
             }
-            const slotDuration = await getMedianSlotDurationInMsFromLastEpochs();
+            const slotDuration = await getMedianSlotDurationInMsFromLastEpochs()
             const api = createSolanaRpcApi<SolanaRpcApi>({
                 ...DEFAULT_RPC_CONFIG,
-                defaultCommitment: 'confirmed',
-            });
+                defaultCommitment: "confirmed",
+            })
             _kaminoVaultClients[network] = new KaminoVaultClient(
                 createRpc({
                     api,
@@ -73,27 +73,27 @@ export class KaminoVaultFetchService implements OnModuleInit {
                     }),
                 }),
                 slotDuration,
-            );
+            )
         }
         this.kaminoVaultClients = _kaminoVaultClients as Record<
             Network,
             KaminoVaultClient
-        >;
-        this.handleLoadVaultsData();
+        >
+        this.handleLoadVaultsData()
     }
 
     // fetch api each 1s to ensure the api call not bri
     @Cron(CronExpression.EVERY_SECOND)
     async handleLoadVaultMetadata() {
         for (const network of Object.values(Network)) {
-            await this.loadVaultMetadata(network);
+            await this.loadVaultMetadata(network)
         }
     }
 
     @Cron(CronExpression.EVERY_10_HOURS)
     async handleLoadVaultsData() {
         for (const network of Object.values(Network)) {
-            await this.loadVaultsData(network);
+            await this.loadVaultsData(network)
         }
     }
 
@@ -105,50 +105,50 @@ export class KaminoVaultFetchService implements OnModuleInit {
             network,
             callback: async () => {
                 try {
-                    if (network === Network.Testnet) return;
+                    if (network === Network.Testnet) return
 
                     if (!this.kaminoVaultClients?.[network]) {
                         this.logger.warn(
                             `KaminoVaultClient not initialized for ${network}`,
-                        );
-                        return;
+                        )
+                        return
                     }
                     const vaultsData = await this.kaminoVaultLevelService.getVaultsData(
                         network,
                         async () => {
                             const vaultsRaw =
-                                await this.kaminoVaultClients[network].getVaults();
+                                await this.kaminoVaultClients[network].getVaults()
                             const vaultsMapped: VaultsData = {
                                 vaults: vaultsRaw.map((vaultRaw) => ({
                                     state: vaultRaw?.state?.toJSON(),
                                     address: vaultRaw?.address,
                                 })),
                                 currentIndex: 0,
-                            };
-                            return vaultsMapped;
+                            }
+                            return vaultsMapped
                         },
-                    );
+                    )
                     if (!vaultsData) {
-                        this.logger.warn(`No vaults found for ${network}`);
-                        return;
+                        this.logger.warn(`No vaults found for ${network}`)
+                        return
                     }
                     this.indexerService.setVaultsAndCurrentIndex(
                         network,
                         vaultsData.vaults.map((vault) => ({
-                            vaultId: vault.address?.toString() || '',
+                            vaultId: vault.address?.toString() || "",
                         })),
                         vaultsData.currentIndex,
-                    );
+                    )
                     this.logger.verbose(
                         `Loaded ${vaultsData.vaults.length} vaults for ${network} from API.`,
-                    );
+                    )
                 } catch (error) {
                     this.logger.error(
                         `Error loading vaults for ${network}: ${error.message}`,
-                    );
+                    )
                 }
             },
-        });
+        })
     }
 
     private async computeRegression(
@@ -157,24 +157,24 @@ export class KaminoVaultFetchService implements OnModuleInit {
         const apySamples: Array<Point> = metricsHistory.map((metric) => ({
             x: dayjs(metric.timestamp).unix(),
             y: Number(metric.apy),
-        }));
+        }))
         const sharePriceSamples: Array<Point> = metricsHistory.map((metric) => ({
             x: dayjs(metric.timestamp).unix(),
             y: Number(metric.sharePrice),
-        }));
+        }))
         const tvlSamples: Array<Point> = metricsHistory.map((metric) => ({
             x: dayjs(metric.timestamp).unix(),
             y: Number(metric.tvl),
-        }));
-        const apyRegression = this.regressionService.computeRegression(apySamples);
+        }))
+        const apyRegression = this.regressionService.computeRegression(apySamples)
         const sharePriceRegression =
-            this.regressionService.computeRegression(sharePriceSamples);
-        const tvlRegression = this.regressionService.computeRegression(tvlSamples);
+            this.regressionService.computeRegression(sharePriceSamples)
+        const tvlRegression = this.regressionService.computeRegression(tvlSamples)
         return {
             apyRegression,
             sharePriceRegression,
             tvlRegression,
-        };
+        }
     }
 
     private async loadVaultMetadata(network: Network) {
@@ -185,30 +185,30 @@ export class KaminoVaultFetchService implements OnModuleInit {
             releaseKeys: [LOCK_KEYS.VAULT_METADATA],
             network,
             callback: async () => {
-                if (network === Network.Testnet) return;
-                const currentIndex = this.indexerService.getCurrentIndex(network);
-                const vaults = this.indexerService.getVaults(network);
-                const vaultToLoad = vaults[currentIndex];
-                if (!vaults?.length) return;
+                if (network === Network.Testnet) return
+                const currentIndex = this.indexerService.getCurrentIndex(network)
+                const vaults = this.indexerService.getVaults(network)
+                const vaultToLoad = vaults[currentIndex]
+                if (!vaults?.length) return
                 try {
                     if (!this.kaminoVaultClients?.[network]) {
                         this.logger.warn(
                             `KaminoVaultClient not initialized for ${network}`,
-                        );
-                        return;
+                        )
+                        return
                     }
                     // if current index is greater than the length of the vaults, return
                     if (currentIndex >= vaults.length) {
                         this.logger.debug(
                             `Reached end of vault list for ${network}, stopping fetch.`,
-                        );
-                        return;
+                        )
+                        return
                     }
                     if (!vaultToLoad?.vaultId) {
                         this.logger.error(
                             `Vault address missing for index ${currentIndex} (${network})`,
-                        );
-                        return;
+                        )
+                        return
                     }
                     const storedVaultsData = await this.kaminoVaultCacheService.getVaultsData(network)
                     const vaultMetadata = await this.kaminoVaultLevelService.getVaultMetadata(
@@ -218,17 +218,17 @@ export class KaminoVaultFetchService implements OnModuleInit {
                             // Fetch metrics from API
                             const metrics = await this.kaminoVaultApiService.getVaultMetrics({
                                 vaultPubkey: vaultToLoad.vaultId,
-                            });
+                            })
                             // Fetch metrics history from API (1 year)
                             const metricsHistory =
                                 await this.kaminoVaultApiService.getVaultMetricsHistory({
                                     vaultPubkey: vaultToLoad.vaultId,
-                                    startDate: dayjs().subtract(1, 'year').toISOString(),
+                                    startDate: dayjs().subtract(1, "year").toISOString(),
                                     endDate: dayjs().toISOString(),
-                                });
+                                })
                             // Compute regression for apy, sharePrice, tvl
                             const { apyRegression, sharePriceRegression, tvlRegression } =
-                                await this.computeRegression(metricsHistory);
+                                await this.computeRegression(metricsHistory)
                             // Onchain shareMint token spl metadata
                             return {
                                 address: vaultToLoad.vaultId,
@@ -261,40 +261,40 @@ export class KaminoVaultFetchService implements OnModuleInit {
                                         intercept: tvlRegression.intercept,
                                     },
                                 },
-                            };
+                            }
                         },
-                    );
+                    )
                     if (!vaultMetadata) {
                         this.logger.debug(
                             `Vault not found for ${network}`,
-                        );
-                        return;
+                        )
+                        return
                     }
                     await this.kaminoVaultCacheService.cacheVault(
                         network,
                         vaultToLoad.vaultId,
                         vaultMetadata,
-                    );
+                    )
                     this.logger.debug(
                         `Updated vault ${vaultToLoad.vaultId} (${network}) from API`,
-                    );
+                    )
                 } catch (error) {
                     this.logger.error(
                         `Error loading vault ${vaultToLoad?.vaultId} (${network}): ${error.message}`,
                         error,
-                    );
+                    )
                 } finally {
                     try {
-                        this.indexerService.nextCurrentIndex(network);
+                        this.indexerService.nextCurrentIndex(network)
                         // update the vaults data
                     } catch (error) {
                         this.logger.error(
                             `Error updating current index for ${network}: ${error.message}`,
                             error.stack,
-                        );
+                        )
                     }
                 }
             },
-        });
+        })
     }
 }
