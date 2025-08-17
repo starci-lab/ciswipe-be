@@ -1,34 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { Network, StrategyAnalysis, StrategyAIInsights } from "@/modules/common"
-import { VaultStateJSON } from "@kamino-finance/klend-sdk/dist/lib"
-import { VaultMetrics, VaultMetricsHistoryItem } from "./kamino-api.service"
-import { Address } from "@solana/kit"
+import { Network } from "@/modules/common"
 
-export interface VaultRaw {
-    state: VaultStateJSON | undefined;
-    address: Address | undefined;
-  }
-  
-export interface VaultRawsData {
-    vaults: Array<VaultRaw>;
-    currentIndex: number;
+export interface VaultData {
+    vaultId: string
 }
-  
-export interface Vault {
-    // address of the vault
-    address: string;
-    // metrics of the vault, about the apr, etc
-    metrics: VaultMetrics;
-    // state of the vault, about the vault address, etc
-    state: VaultStateJSON | undefined;
-    // metrics history of the vault, about the apr, etc
-    metricsHistory: Array<VaultMetricsHistoryItem>;
-    // strategy analysis
-    strategyAnalysis: StrategyAnalysis;
-    // ai insights
-    aiInsights?: StrategyAIInsights;
-}     
-
 @Injectable()
 export class KaminoVaultIndexerService {
     private currentIndex: Record<Network, number> = {
@@ -36,7 +11,7 @@ export class KaminoVaultIndexerService {
         [Network.Testnet]: 0,
     }
 
-    private vaults: Record<Network, Array<VaultRaw>> = {
+    private vaults: Record<Network, Array<VaultData>> = {
         [Network.Mainnet]: [],
         [Network.Testnet]: [],
     }
@@ -60,7 +35,12 @@ export class KaminoVaultIndexerService {
         return this.vaults[network]
     }
 
-    setVaults(network: Network, vaults: Array<VaultRaw>) {
+    setVaults(network: Network, vaults: Array<VaultData>) {
         this.vaults[network] = vaults
+    }
+
+    setVaultsAndCurrentIndex(network: Network, vaults: Array<VaultData>, currentIndex: number) {
+        this.vaults[network] = vaults
+        this.currentIndex[network] = currentIndex
     }
 }

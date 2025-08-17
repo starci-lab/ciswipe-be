@@ -1,94 +1,64 @@
-import { Injectable, Logger, Inject } from "@nestjs/common"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
+import { Injectable, Logger } from "@nestjs/common"
 import { Network } from "@/modules/common"
-import { VolumeService } from "@/modules/volume"
-import { FOLDER_NAMES } from "./constants"
-import { createCacheKey } from "@/modules/cache"
-import { LendingPool, LendingReserveMetadata, PoolsData } from "./solend-fetch.service"
+import { SolendLendingIndexerService } from "./solend-indexer.service"
+import { SolendLendingLevelService } from "./solend-level.service"
+import { SolendLendingCacheService } from "./solend-cache.service"
+import { RetryService } from "@/modules/misc"
 
 @Injectable()
 export class SolendLendingInitService {
     private logger = new Logger(SolendLendingInitService.name)
 
     constructor(
-    private readonly volumeService: VolumeService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+        private readonly retryService: RetryService,
+        private readonly solendLendingLevelService: SolendLendingLevelService,
+        private readonly solendLendingIndexerService: SolendLendingIndexerService,
+        private readonly solendLendingCacheService: SolendLendingCacheService,
     ) {}
 
-    public getLendingPoolsCacheKey(network: Network) {
-        return createCacheKey("lending-pools", {
+    private async loadAndCacheLendingPoolsData(network: Network) {
+        const lendingPoolsData = await this.solendLendingLevelService.getLendingPoolsData(network)
+        if (!lendingPoolsData) return null
+        await this.solendLendingCacheService.cacheLendingPoolsData(network, lendingPoolsData)
+        this.solendLendingIndexerService.setReserveAndCurrentIndex(
             network,
-        })
+            lendingPoolsData.pools.flatMap((pool) => pool.reserves.map((reserve) => ({
+                reserveId: reserve.reserve.address,
+            }))),
+            lendingPoolsData.currentIndex,
+        )
+        return lendingPoolsData
     }
 
-    public getReserveMetadataCacheKey(network: Network, reserveId: string) {
-        return createCacheKey("reserve-metadata", {
-            network,
-            reserveId,
-        })
+    private async loadAndCacheReserveMetadata(network: Network, reserveAddress: string) {
+        if (!reserveAddress) return
+        const reserveMetadata = await this.solendLendingLevelService.getLendingReserveMetadata(network, reserveAddress)
+        if (!reserveMetadata) return
+        await this.solendLendingCacheService.cacheLendingReserveMetadata(network, reserveAddress, reserveMetadata)
     }
 
-    public getLendingPoolsVolumeKey(network: Network) {
-        return `lending-pools-${network}.json`
-    }
-
-    public getReserveMetadataVolumeKey(network: Network, reserveId: string) {
-        return `reserve-metadata-${network}-${reserveId}.json`
-    }
-
-    async cacheAllOnInit() {
-        try {
-            for (const network of Object.values(Network)) {
-                if (network === Network.Testnet) continue
-                const lendingPools = await this.loadAndCacheLendingPoolsFromVolume(network)
-                if (!lendingPools) continue
-                const promises: Array<Promise<void>> = []
-                for (const pool of lendingPools.pools) {
-                    promises.push(this.loadAndCacheReserveMetadata(network, pool))
+    async loadAndCacheAllOnInit() {
+        await this.retryService.retry(
+            {
+                action: async () => {
+                    for (const network of Object.values(Network)) {
+                        if (network === Network.Testnet) continue
+                        const lendingPoolsData = await this.loadAndCacheLendingPoolsData(network)
+                        if (!lendingPoolsData?.pools) return
+                        const promises: Array<Promise<void>> = []
+                        const allReserves = lendingPoolsData.pools
+                            .map((pool) => pool.reserves)
+                            .flat()
+                        for (const reserve of allReserves) {
+                            promises.push(
+                                this.loadAndCacheReserveMetadata(network, reserve.reserve.address)
+                            )
+                        }
+                        await Promise.all(promises)
+                        this.logger.fatal(`Initialized lending pool batch for ${network}: ${lendingPoolsData.pools.length} pools`)
+                    }
                 }
-                await Promise.all(promises)
-            }
-        } catch (error) {
-            this.logger.error(`Cannot cache all on init, maybe some IO-reading failed, we try to reload everything, message: ${error.message}`)
-        }
-    }
-
-    // Load lending pools from volume if exists
-    private async loadAndCacheLendingPoolsFromVolume(network: Network): Promise<PoolsData | null> {
-        if (network === Network.Testnet) return null
-        const exists = await this.volumeService.existsInDataVolume({
-            name: this.getLendingPoolsVolumeKey(network),
-            folderNames: FOLDER_NAMES
-        })
-        if (!exists) return null
-
-        const lendingPools = await this.volumeService.readJsonFromDataVolume<PoolsData>({
-            name: this.getLendingPoolsVolumeKey(network),
-            folderNames: FOLDER_NAMES
-        })
-        // require await
-        await this.cacheManager.set(this.getLendingPoolsCacheKey(network), lendingPools)
-        return lendingPools
-    }
-
-    // Load and cache reserve metadata if exists
-    private async loadAndCacheReserveMetadata(network: Network, pool: LendingPool) {
-        if (network === Network.Testnet) return
-        for (const reserve of pool.reserves) {
-            const reserveExists = await this.volumeService.existsInDataVolume({
-                name: this.getReserveMetadataVolumeKey(network, reserve.reserve.address),
-                folderNames: FOLDER_NAMES
-            })
-            if (!reserveExists) continue
-            const metadata = await this.volumeService.readJsonFromDataVolume<LendingReserveMetadata>({
-                name: this.getReserveMetadataVolumeKey(network, reserve.reserve.address),
-                folderNames: FOLDER_NAMES
-            })
-            await this.cacheManager.set(
-                this.getReserveMetadataCacheKey(network, reserve.reserve.address),
-                metadata,
-            )
-        }
+            },
+        )
     }
 }

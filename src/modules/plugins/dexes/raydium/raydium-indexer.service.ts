@@ -9,8 +9,8 @@ export interface V3PoolIndexData {
 }
 
 @Injectable()
-export class RaydiumIndexerService {
-    private logger = new Logger(RaydiumIndexerService.name)
+export class RaydiumDexIndexerService {
+    private logger = new Logger(RaydiumDexIndexerService.name)
     // current index for load lines index
     // if null, the index is not initialized
     private currentLineIndex: Record<

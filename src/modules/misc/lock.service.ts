@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { Network } from "@/modules/common"
+import { Network, sleep } from "@/modules/common"
 
 @Injectable()
 export class LockService {
@@ -30,13 +30,12 @@ export class LockService {
         releaseKeys,
         network,
         callback,
+        releaseTimeMs = 1000,
     }: WithLockParams): Promise<void> {
-        // if blocked keys is not empty, we will block all keys
+    // if blocked keys is not empty, we will block all keys
         for (const blockKey of blockedKeys) {
             if (this.isLocked(blockKey, network)) {
-                this.logger.debug(
-                    `This execution is blocked with ${blockKey}`,
-                )
+                this.logger.debug(`This execution is blocked with ${blockKey}`)
                 return
             }
         }
@@ -48,7 +47,19 @@ export class LockService {
             await callback()
         } finally {
             // release all keys
-            for (const releaseKey of releaseKeys) this.release(releaseKey, network)
+            const promises: Array<Promise<void>> = []
+            // we try to put a small sleep time to avoid lock contention
+            for (const releaseKey of releaseKeys) {
+                promises.push(
+                    (
+                        async () => {
+                            await sleep(releaseTimeMs)
+                            this.release(releaseKey, network)
+                        }
+                    )()
+                )
+            }
+            await Promise.all(promises)
         }
     }
 
@@ -67,4 +78,6 @@ export interface WithLockParams {
   releaseKeys: Array<string>;
   network: Network;
   callback: () => Promise<void> | void;
+  // after a key is release, it need a sleep time to avoid lock contention
+  releaseTimeMs?: number;
 }

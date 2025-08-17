@@ -4,14 +4,12 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { Network } from "@/modules/common"
 import { createCacheKey } from "@/modules/cache"
-import { TokenUtilsService } from "@/modules/blockchain"
 import { PoolBatch, PoolLines } from "./raydium-level.service"
 
 @Injectable()
-export class RaydiumCacheService {
+export class RaydiumDexCacheService {
     constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-    private readonly tokenUtilsService: TokenUtilsService,
     ) {}
 
     private getPoolBatchCacheKey(

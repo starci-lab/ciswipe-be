@@ -25,11 +25,6 @@ export class TokenUtilsService {
         return [token1, token2]
     }
 
-    // create key like sui
-    createKey(...args: Array<string>) {
-        return args.join("::")
-    }
-
     ensureTokensOrderById(
         token1Id: TokenId, 
         token2Id: TokenId

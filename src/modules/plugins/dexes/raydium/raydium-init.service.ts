@@ -1,68 +1,74 @@
 
 import { Injectable, Logger } from "@nestjs/common"
 import { ChainKey, Network } from "@/modules/common"
-import { RaydiumIndexerService } from "./raydium-indexer.service"
-import { GlobalData, RaydiumLevelService } from "./raydium-level.service"
+import { RaydiumDexIndexerService } from "./raydium-indexer.service"
+import { GlobalData, RaydiumDexLevelService } from "./raydium-level.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
-import { RaydiumCacheService } from "./raydium-cache.service"
+import { RaydiumDexCacheService } from "./raydium-cache.service"
+import { RetryService } from "@/modules/misc"
 
 @Injectable()
-export class RaydiumInitService {
-    private logger = new Logger(RaydiumInitService.name)
+export class RaydiumDexInitService {
+    private logger = new Logger(RaydiumDexInitService.name)
 
     constructor(
-        private readonly levelService: RaydiumLevelService,
-        private readonly indexerService: RaydiumIndexerService,
+        private readonly raydiumDexLevelService: RaydiumDexLevelService,
+        private readonly raydiumDexIndexerService: RaydiumDexIndexerService,
         private readonly tokenUtilsService: TokenUtilsService,
-        private readonly raydiumCacheService: RaydiumCacheService,
+        private readonly raydiumDexCacheService: RaydiumDexCacheService,
+        private readonly retryService: RetryService,
     ) { }
 
     private async loadAndCachePoolBatch(
         network: Network,
         currentBatchIndex: number,
     ) {
-        const poolBatch = await this.levelService.getPoolBatch(network, currentBatchIndex)
+        const poolBatch = await this.raydiumDexLevelService.getPoolBatch(network, currentBatchIndex)
         if (!poolBatch) return null
-        await this.raydiumCacheService.cachePoolBatch(network, currentBatchIndex, poolBatch)
+        await this.raydiumDexCacheService.cachePoolBatch(network, currentBatchIndex, poolBatch)
         // update the indexer
-        this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentBatchIndex, poolBatch)
+        this.raydiumDexIndexerService.setV3PoolBatchAndCurrentLineIndex(network, currentBatchIndex, poolBatch)
         return poolBatch
     }
 
     private async loadAndCachePoolLines(network: Network, poolId: string) {
         if (!poolId) return
-        const poolLines = await this.levelService.getPoolLines(network, poolId)
+        const poolLines = await this.raydiumDexLevelService.getPoolLines(network, poolId)
         if (!poolLines) return
-        await this.raydiumCacheService.cachePoolLines(network, poolId, poolLines)
+        await this.raydiumDexCacheService.cachePoolLines(network, poolId, poolLines)
     }
 
     async loadAndCacheAllOnInit() {
-        try {
-            for (const network of Object.values(Network)) {
-                if (network === Network.Testnet) continue
-                const pairs = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)
-                const promises: Array<Promise<void>> = []
-                for (let currentBatchIndex = 0; currentBatchIndex < pairs.length; currentBatchIndex++) {
-                    promises.push(
-                        (async () => {
-                            const poolBatch = await this.loadAndCachePoolBatch(network, currentBatchIndex)
-                            if (!poolBatch?.pools) return
-                            const internalPromises: Array<Promise<void>> = []
-                            for (const pool of poolBatch.pools) {
-                                internalPromises.push(
-                                    this.loadAndCachePoolLines(network, pool.pool.id)
-                                )
-                            }
-                            await Promise.all(internalPromises)
-                        })()
-                    )
+        await this.retryService.retry(
+            {
+                action:     
+            async () => {
+                for (const network of Object.values(Network)) {
+                    if (network === Network.Testnet) continue
+                    const pairs = this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)
+                    const promises: Array<Promise<void>> = []
+                    for (let currentBatchIndex = 0; currentBatchIndex < pairs.length; currentBatchIndex++) {
+                        promises.push(
+                            (async () => {
+                                const poolBatch = await this.loadAndCachePoolBatch(network, currentBatchIndex)
+                                if (!poolBatch?.pools) return
+                                const internalPromises: Array<Promise<void>> = []
+                                for (const pool of poolBatch.pools) {
+                                    internalPromises.push(
+                                        this.loadAndCachePoolLines(network, pool.pool.id)
+                                    )
+                                }
+                                await Promise.all(internalPromises)
+                            })()
+                        )
+                    }
+                    await Promise.all(promises)
+                    this.logger.fatal(`Initialized batches for ${network}: ${this.raydiumDexIndexerService.getInitializedBatches(network)}`)
                 }
-                await Promise.all(promises)
-                this.logger.fatal(`Initialized batches for ${network}: ${this.indexerService.getInitializedBatches(network)}`)
+            },
             }
-        } catch (error) {
-            this.logger.error(`Cannot cache all on init, maybe some IO-reading failed, we try to reload everything, message: ${error.message}`)
-        }
+        )
+
     }
 
     async loadGlobalData(network: Network,) {
@@ -70,9 +76,9 @@ export class RaydiumInitService {
             currentIndex: 0,
         }
         try {
-            const globalData = await this.levelService.getGlobalData(network)
+            const globalData = await this.raydiumDexLevelService.getGlobalData(network)
             if (!globalData) return defaultGlobalData
-            this.indexerService.setCurrentIndex(network, globalData.currentIndex)
+            this.raydiumDexIndexerService.setCurrentIndex(network, globalData.currentIndex)
         } catch (error) {
             this.logger.error(`Cannot load global data for ${network}, message: ${error.message}`)
             return defaultGlobalData

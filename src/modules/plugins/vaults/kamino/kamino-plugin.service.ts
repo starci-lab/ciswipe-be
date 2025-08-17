@@ -1,5 +1,5 @@
 import { VaultPluginAbstract } from "../abstract"
-import { Inject, Injectable } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
 import {
     InterestRateConverterService,
@@ -7,23 +7,16 @@ import {
     TokenId,
     tokens,
 } from "@/modules/blockchain"
-import {
-    Vault,
-    VaultRawsData,
-} from "./kamino-indexer.service"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
 import { randomUUID } from "crypto"
 import { Decimal } from "decimal.js"
-import { KaminoVaultInitService } from "./kamino-init.service"
+import { KaminoVaultCacheService } from "./kamino-cache.service"
+
 @Injectable()
 export class KaminoVaultPluginService extends VaultPluginAbstract {
     constructor(
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
     private readonly interestRateConverterService: InterestRateConverterService,
-    private readonly kaminoVaultInitService: KaminoVaultInitService,
+    private readonly kaminoVaultCacheService: KaminoVaultCacheService,
     ) {
         super({
             name: "Kamino",
@@ -67,27 +60,20 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
         if (!token.tokenAddress) {
             throw new Error("Token address not found")
         }
-        const vaultRaws = await this.cacheManager.get<VaultRawsData>(
-            this.kaminoVaultInitService.getVaultsCacheKey(params.network),
-        )
-        if (!vaultRaws) {
+        const vaultsData = await this.kaminoVaultCacheService.getVaultsData(params.network)
+        if (!vaultsData) {
             return []
         }
         const results: Array<StrategyResult> = []
         const promises: Array<Promise<void>> = []
-        for (const vaultRaw of vaultRaws.vaults) {
+        for (const vault of vaultsData.vaults) {
             promises.push(
                 (async () => {
-                    if (!vaultRaw.address) {
+                    if (!vault.address) {
                         return
                     }
-                    const vault = await this.cacheManager.get<Vault>(
-                        this.kaminoVaultInitService.getVaultCacheKey(
-                            params.network,
-                            vaultRaw.address,
-                        ),
-                    )
-                    if (!vault) {
+                    const vaultMetadata = await this.kaminoVaultCacheService.getVaultMetadata(params.network, vault.address)
+                    if (!vaultMetadata) {
                         return
                     }
                     results.push({
@@ -95,8 +81,8 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                             tokens: [
                                 {
                                     id: randomUUID(),
-                                    address: vault.address,
-                                    priceInUSD: Number(vault.metrics.sharePrice),
+                                    address: vaultMetadata.address,
+                                    priceInUSD: Number(vaultMetadata.metrics.sharePrice),
                                 },
                             ],
                         },
@@ -104,58 +90,58 @@ export class KaminoVaultPluginService extends VaultPluginAbstract {
                             aprs: {
                                 base: this.interestRateConverterService
                                     .toAPR(
-                                        new Decimal(vault.metrics.apy),
+                                        new Decimal(vaultMetadata.metrics.apy),
                                         params.chainKey,
                                         params.network,
                                     )
                                     .toNumber(),
                                 day: this.interestRateConverterService
                                     .toAPR(
-                                        new Decimal(vault.metrics.apy24h),
+                                        new Decimal(vaultMetadata.metrics.apy24h),
                                         params.chainKey,
                                         params.network,
                                     )
                                     .toNumber(),
                                 week: this.interestRateConverterService
                                     .toAPR(
-                                        new Decimal(vault.metrics.apy7d),
+                                        new Decimal(vaultMetadata.metrics.apy7d),
                                         params.chainKey,
                                         params.network,
                                     )
                                     .toNumber(),
                                 month: this.interestRateConverterService
                                     .toAPR(
-                                        new Decimal(vault.metrics.apy30d),
+                                        new Decimal(vaultMetadata.metrics.apy30d),
                                         params.chainKey,
                                         params.network,
                                     )
                                     .toNumber(),
                                 year: this.interestRateConverterService
                                     .toAPR(
-                                        new Decimal(vault.metrics.apy365d),
+                                        new Decimal(vaultMetadata.metrics.apy365d),
                                         params.chainKey,
                                         params.network,
                                     )
                                     .toNumber(),
                             },
                             apys: {
-                                base: Number(vault.metrics.apy),
-                                day: Number(vault.metrics.apy24h),
-                                week: Number(vault.metrics.apy7d),
-                                month: Number(vault.metrics.apy30d),
-                                year: Number(vault.metrics.apy365d),
+                                base: Number(vaultMetadata.metrics.apy),
+                                day: Number(vaultMetadata.metrics.apy24h),
+                                week: Number(vaultMetadata.metrics.apy7d),
+                                month: Number(vaultMetadata.metrics.apy30d),
+                                year: Number(vaultMetadata.metrics.apy365d),
                             },
-                            tvl: vault.metricsHistory[vault.metricsHistory.length - 1]?.tvl
+                            tvl: vaultMetadata.metricsHistory?.[-1]?.tvl
                                 ? Number(
-                                    vault.metricsHistory[vault.metricsHistory.length - 1].tvl,
+                                    vaultMetadata.metricsHistory?.[-1].tvl,
                                 )
                                 : undefined,
                         },
                         metadata: {
-                            vaultId: vault.address,
-                            url: `https://app.kamino.finance/earn/lend/${vault.address}`,
+                            vaultId: vaultMetadata.address,
+                            url: `https://app.kamino.finance/earn/lend/${vaultMetadata.address}`,
                         },
-                        strategyAnalysis: vault.strategyAnalysis,
+                        strategyAnalysis: vaultMetadata.strategyAnalysis,
                     })
                 })(),
             )

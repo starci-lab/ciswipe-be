@@ -8,15 +8,13 @@ import {
 import { Connection } from "@solana/web3.js"
 import { Raydium, ApiV3PoolInfoItem } from "@raydium-io/raydium-sdk-v2"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { RaydiumInitService } from "./raydium-init.service"
-import {
-    RaydiumIndexerService,
-} from "./raydium-indexer.service"
+import { RaydiumDexInitService } from "./raydium-init.service"
+import { RaydiumDexIndexerService } from "./raydium-indexer.service"
 import { LockService, RetryService } from "@/modules/misc"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
-import { RaydiumApiService } from "./raydium-api.service"
-import { RaydiumLevelService } from "./raydium-level.service"
-import { RaydiumCacheService } from "./raydium-cache.service"
+import { RaydiumDexApiService } from "./raydium-api.service"
+import { RaydiumDexLevelService } from "./raydium-level.service"
+import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
     POOL_BATCH: "poolBatch",
@@ -24,31 +22,31 @@ const LOCK_KEYS = {
 }
 
 @Injectable()
-export class RaydiumFetchService implements OnModuleInit {
-    private logger = new Logger(RaydiumFetchService.name)
+export class RaydiumDexFetchService implements OnModuleInit {
+    private logger = new Logger(RaydiumDexFetchService.name)
     private raydiums: Record<Network, Raydium>
 
     constructor(
         @Inject(createProviderToken(ChainKey.Solana))
         private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-        private readonly initService: RaydiumInitService,
-        private readonly indexerService: RaydiumIndexerService,
+        private readonly initService: RaydiumDexInitService,
+        private readonly indexerService: RaydiumDexIndexerService,
         private readonly lockService: LockService,
         private readonly tokenUtilsService: TokenUtilsService,
-        private readonly raydiumApiService: RaydiumApiService,
-        private readonly raydiumLevelService: RaydiumLevelService,
+        private readonly raydiumDexApiService: RaydiumDexApiService,
+        private readonly raydiumDexLevelService: RaydiumDexLevelService,
         private readonly retryService: RetryService,
-        private readonly raydiumCacheService: RaydiumCacheService,
+        private readonly raydiumDexCacheService: RaydiumDexCacheService,
     ) { }
 
     async onModuleInit() {
+        for (const network of Object.values(Network)) {
+            await this.initService.loadGlobalData(network)
+        }
+        // 2. Load all on init
+        await this.initService.loadAndCacheAllOnInit()
         await this.retryService.retry({
             action: async () => {
-                for (const network of Object.values(Network)) {
-                    await this.initService.loadGlobalData(network)
-                }
-                // 2. Load all on init
-                await this.initService.loadAndCacheAllOnInit()
                 // 3. Load raydium
                 const _raydiums: Partial<Record<Network, Raydium>> = {}
                 for (const network of Object.values(Network)) {
@@ -58,7 +56,7 @@ export class RaydiumFetchService implements OnModuleInit {
                 }
                 // we have to cast type to Record<Network, Raydium> to avoid compilation error
                 this.raydiums = _raydiums as Record<Network, Raydium>
-            }
+            },
         })
     }
 
@@ -69,7 +67,7 @@ export class RaydiumFetchService implements OnModuleInit {
                 for (const network of Object.values(Network)) {
                     await this.loadPoolBatch(network)
                 }
-            }
+            },
         })
     }
 
@@ -80,7 +78,7 @@ export class RaydiumFetchService implements OnModuleInit {
                 for (const network of Object.values(Network)) {
                     await this.loadPoolLines(network)
                 }
-            }
+            },
         })
     }
 
@@ -101,15 +99,14 @@ export class RaydiumFetchService implements OnModuleInit {
                 // now we try to get the current index that was reseted
                 const currentIndex = this.indexerService.getCurrentIndex(network)
                 const [token0, token1] =
-                    this.tokenUtilsService.tryGetWrappedTokens({
-                        tokens: this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[currentIndex],
+                    this.tokenUtilsService.getPairsWithoutNativeToken(
+                        ChainKey.Solana,
                         network,
-                        chainKey: ChainKey.Solana,
-                    })
+                    )[currentIndex]
                 try {
                     // raydium only support Solana, so that we dont care about ChainKey
                     const raydium = this.raydiums[network]
-                    const poolBatch = await this.raydiumLevelService.getPoolBatch(
+                    const poolBatch = await this.raydiumDexLevelService.getPoolBatch(
                         network,
                         this.indexerService.getCurrentIndex(network),
                         async () => {
@@ -139,13 +136,13 @@ export class RaydiumFetchService implements OnModuleInit {
                                 if (!poolBatch) {
                                     return null
                                 }
-                                await this.raydiumCacheService.cachePoolBatch(
+                                await this.raydiumDexCacheService.cachePoolBatch(
                                     network,
                                     currentIndex,
-                                    poolBatch
+                                    poolBatch,
                                 )
                                 return {
-                                    pools: pools.map(pool => ({
+                                    pools: pools.map((pool) => ({
                                         pool,
                                     })),
                                     currentLineIndex: 0,
@@ -164,23 +161,17 @@ export class RaydiumFetchService implements OnModuleInit {
                         )
                         return
                     }
-                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
-                    this.indexerService.setV3PoolBatch(
-                        network,
-                        currentIndex,
-                        poolBatch?.pools.map(pool => pool.pool) || [],
-                    )
-                    this.indexerService.setCurrentLineIndex(
-                        network,
-                        currentIndex,
-                    )
                     // update the indexer
-                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(network, currentIndex, poolBatch)
-                    // cache the pool batch
-                    await this.raydiumCacheService.cachePoolBatch(
+                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(
                         network,
                         currentIndex,
-                        poolBatch
+                        poolBatch,
+                    )
+                    // cache the pool batch
+                    await this.raydiumDexCacheService.cachePoolBatch(
+                        network,
+                        currentIndex,
+                        poolBatch,
                     )
                     // log the pool batch
                     this.logger.debug(
@@ -200,25 +191,21 @@ export class RaydiumFetchService implements OnModuleInit {
                         `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
                     )
                 } finally {
-                    try {
+                    await this.retryService.retry({
+                        action: async () => {
                         // we will increase the index to the next pair
-                        this.indexerService.nextCurrentIndex(network)
-                        // update the global data
-                        await this.raydiumLevelService.increaseGlobalDataIndex(network)
-                    } catch (error) {
-                        this.logger.error(
-                            `Cannot increase index for ${network}, message: ${error.message}`,
-                        )
-                    }
+                            this.indexerService.nextCurrentIndex(network)
+                            // update the global data
+                            await this.raydiumDexLevelService.increaseCurrentIndex(network)
+                        }
+                    })
                 }
             },
         })
     }
 
     // return true if we have loaded all lines for the current index, otherwise not
-    public async loadPoolLines(
-        network: Network
-    ) {
+    public async loadPoolLines(network: Network) {
         await this.lockService.withLocks({
             blockedKeys: [LOCK_KEYS.POOL_LINES, LOCK_KEYS.POOL_BATCH],
             acquiredKeys: [LOCK_KEYS.POOL_LINES],
@@ -239,24 +226,23 @@ export class RaydiumFetchService implements OnModuleInit {
                     lineIndex
                 ]
                 try {
-                    const poolLines =
-                        await this.raydiumLevelService.getPoolLines(
-                            network,
-                            pool.poolId,
-                            async () => {
-                                const liquidityLines =
-                                    await this.raydiumApiService.fetchPoolLines(pool.poolId)
-                                // sleep 1000s to avoid rate limit
-                                await sleep(1000)
-                                const positionLines =
-                                    await this.raydiumApiService.fetchPoolPositions(pool.poolId)
-                                return {
-                                    poolId: pool.poolId,
-                                    liquidityLines,
-                                    positionLines,
-                                }
-                            },
-                        )
+                    const poolLines = await this.raydiumDexLevelService.getPoolLines(
+                        network,
+                        pool.poolId,
+                        async () => {
+                            const liquidityLines =
+                                await this.raydiumDexApiService.fetchPoolLines(pool.poolId)
+                            // sleep 1000s to avoid rate limit
+                            await sleep(1000)
+                            const positionLines =
+                                await this.raydiumDexApiService.fetchPoolPositions(pool.poolId)
+                            return {
+                                poolId: pool.poolId,
+                                liquidityLines,
+                                positionLines,
+                            }
+                        },
+                    )
                     if (!poolLines) {
                         this.logger.error(
                             `Cannot load pool lines for ${pool.poolId}, message: Pool lines is not found`,
@@ -264,10 +250,10 @@ export class RaydiumFetchService implements OnModuleInit {
                         return
                     }
                     // cache the pool lines
-                    await this.raydiumCacheService.cachePoolLines(
+                    await this.raydiumDexCacheService.cachePoolLines(
                         network,
                         pool.poolId,
-                        poolLines
+                        poolLines,
                     )
                     // log the pool lines
                     this.logger.warn(
@@ -285,19 +271,18 @@ export class RaydiumFetchService implements OnModuleInit {
                         `Cannot load pool lines for ${pool.poolId}, message: ${error.message}`,
                     )
                 } finally {
-                    try {
-                        this.indexerService.nextCurrentLineIndex(network, batchIndex)
-                        // update the the current line index
-                        await this.raydiumLevelService.increaseLineIndex(network, batchIndex)
-                    } catch (error) {
-                        // if cannot log, it will keep this re-run again in 3s, 100% IO problems, not my code
-                        this.logger.error(
-                            `Cannot increase line index for ${pool.poolId}, message: ${error.message}`,
-                        )
-                    }
+                    await this.retryService.retry({
+                        action: async () => {
+                            this.indexerService.nextCurrentLineIndex(network, batchIndex)
+                            // update the the current line index
+                            await this.raydiumDexLevelService.increaseLineIndex(
+                                network,
+                                batchIndex,
+                            )
+                        }
+                    })
                 }
             },
         })
     }
-
 }

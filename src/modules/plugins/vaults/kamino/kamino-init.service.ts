@@ -1,97 +1,68 @@
-import { Injectable, Logger, Inject } from "@nestjs/common"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
+import { Injectable, Logger } from "@nestjs/common"
 import { Network } from "@/modules/common"
-import { VolumeService } from "@/modules/volume"
-import { createCacheKey } from "@/modules/cache"
-import { VaultRawsData, Vault, VaultRaw } from "./kamino-indexer.service"
-import { FOLDER_NAMES } from "./constants"
+import { KaminoVaultIndexerService } from "./kamino-indexer.service"
+import { VaultsData } from "./kamino-level.service"
+import { KaminoVaultCacheService } from "./kamino-cache.service"
+import { KaminoVaultLevelService } from "./kamino-level.service"
+import { RetryService } from "@/modules/misc"
 
 @Injectable()
 export class KaminoVaultInitService {
     private logger = new Logger(KaminoVaultInitService.name)
 
     constructor(
-        private readonly volumeService: VolumeService,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly kaminoVaultCacheService: KaminoVaultCacheService,
+    private readonly kaminoVaultLevelService: KaminoVaultLevelService,
+    private readonly kaminoVaultIndexerService: KaminoVaultIndexerService,
+    private readonly retryService: RetryService,
     ) {}
 
-    public getVaultsCacheKey(network: Network) {
-        return createCacheKey("kamino-vaults", {
-            network,
-        })
-    }
-
-    public getVaultCacheKey(network: Network, vaultAddress: string) {
-        return createCacheKey("kamino-vault", {
-            vaultAddress,
-            network,
-        })
-    }
-
-    public getVaultsVolumeKey(network: Network) {
-        return `vaults-${network}.json`
-    }
-
-    public getVaultVolumeKey(network: Network, vaultAddress: string) {
-        return `vault-${network}-${vaultAddress}.json`
-    }
-
-    async cacheAllOnInit() {
-        try {
-            for (const network of Object.values(Network)) {
-                if (network === Network.Testnet) continue
-                const vaults = await this.loadAndCacheVaultsFromVolume(network)
-                if (!vaults) continue
-                const promises: Array<Promise<void>> = []
-                for (const vault of vaults.vaults) {
-                    promises.push(this.loadAndCacheVaultData(network, vault))
+    async loadAndCacheAllOnInit() {
+        await this.retryService.retry(
+            {
+                action: async () => {
+                    for (const network of Object.values(Network)) {
+                        if (network === Network.Testnet) continue
+                        const vaults = await this.loadAndCacheVaultsData(network)
+                        if (!vaults) continue
+                        const promises: Array<Promise<void>> = []
+                        for (const vault of vaults.vaults) {
+                            promises.push(
+                                this.loadAndCacheVaultMetadata(network, vault.address?.toString() || ""),
+                            )
+                        }
+                        await Promise.all(promises)
+                    }
                 }
-                await Promise.all(promises)
-            }
-        } catch (error) {
-            this.logger.error(`Cannot cache all on init, maybe some IO-reading failed, we try to reload everything, message: ${error.message}`)
-        }
+            },
+        )
     }
 
     // Load vaults from volume if exists
-    private async loadAndCacheVaultsFromVolume(network: Network): Promise<VaultRawsData | null> {
+    private async loadAndCacheVaultsData(
+        network: Network,
+    ): Promise<VaultsData | null> {
         if (network === Network.Testnet) return null
-        try {
-            const exists = await this.volumeService.existsInDataVolume({
-                name: this.getVaultsVolumeKey(network),
-                folderNames: FOLDER_NAMES
-            })
-            if (!exists) return null
-
-            const vaults = await this.volumeService.readJsonFromDataVolume<VaultRawsData>({
-                name: this.getVaultsVolumeKey(network),
-                folderNames: FOLDER_NAMES
-            })
-            await this.cacheManager.set(this.getVaultsCacheKey(network), vaults)
-            return vaults
-        } catch (err) {
-            this.logger.error(`Error loading vaults from volume for ${network}: ${err.message}`)
-            return null
-        }
+        const vaultRawsData =
+      await this.kaminoVaultLevelService.getVaultsData(network)
+        if (!vaultRawsData) return null
+        await this.kaminoVaultCacheService.cacheVaultsData(network, vaultRawsData)
+        // update the indexer
+        this.kaminoVaultIndexerService.setVaultsAndCurrentIndex(
+            network,
+            vaultRawsData.vaults.map((vault) => ({
+                vaultId: vault.address?.toString() || "",
+            })),
+            vaultRawsData.currentIndex,
+        )
+        return vaultRawsData
     }
 
     // Load and cache vault data if exists
-    private async loadAndCacheVaultData(network: Network, vault: VaultRaw) {
+    private async loadAndCacheVaultMetadata(network: Network, vaultId: string) {
         if (network === Network.Testnet) return
-        if (!vault.address) return
-        const vaultExists = await this.volumeService.existsInDataVolume({
-            name: this.getVaultVolumeKey(network, vault.address.toString()),
-            folderNames: FOLDER_NAMES
-        })
-        if (!vaultExists) return
-        const vaultData = await this.volumeService.readJsonFromDataVolume<Vault>({
-            name: this.getVaultVolumeKey(network, vault.address.toString()),
-            folderNames: FOLDER_NAMES
-        })
-        await this.cacheManager.set(
-            this.getVaultCacheKey(network, vault.address.toString()),
-            vaultData,
-        )
+        const vaultMetadata = await this.kaminoVaultLevelService.getVaultMetadata(network, vaultId)
+        if (!vaultMetadata) return
+        await this.kaminoVaultCacheService.cacheVault(network, vaultId, vaultMetadata)
     }
 }

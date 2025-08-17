@@ -32,7 +32,7 @@ interface PoolPositionResponse {
 }
 
 @Injectable()
-export class RaydiumApiService {
+export class RaydiumDexApiService {
     constructor(private readonly httpService: HttpService) { }
 
     async fetchPoolLines(poolId: string): Promise<Array<LiquidityLine>> {

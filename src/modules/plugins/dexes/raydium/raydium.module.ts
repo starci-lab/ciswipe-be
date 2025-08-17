@@ -1,25 +1,25 @@
 import { Module } from "@nestjs/common"
 import { ConfigurableModuleClass } from "./raydium.module-definition"
-import { RaydiumPluginService } from "./raydium-plugin.service"
-import { RaydiumFetchService } from "./raydium-fetch.service"
-import { RaydiumIndexerService } from "./raydium-indexer.service"
-import { RaydiumInitService } from "./raydium-init.service"
-import { RaydiumApiService } from "./raydium-api.service"
-import { RaydiumLevelService } from "./raydium-level.service"
-import { RaydiumCacheService } from "./raydium-cache.service"
+import { RaydiumDexPluginService } from "./raydium-plugin.service"
+import { RaydiumDexFetchService } from "./raydium-fetch.service"
+import { RaydiumDexIndexerService } from "./raydium-indexer.service"
+import { RaydiumDexInitService } from "./raydium-init.service"
+import { RaydiumDexApiService } from "./raydium-api.service"
+import { RaydiumDexLevelService } from "./raydium-level.service"
+import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 @Module({
     providers: [
-        RaydiumPluginService,
-        RaydiumFetchService,
-        RaydiumIndexerService,
-        RaydiumInitService,
-        RaydiumApiService,
-        RaydiumLevelService,
-        RaydiumCacheService,
+        RaydiumDexPluginService,
+        RaydiumDexFetchService,
+        RaydiumDexIndexerService,
+        RaydiumDexInitService,
+        RaydiumDexApiService,
+        RaydiumDexLevelService,
+        RaydiumDexCacheService,
     ],
     exports: [
-        RaydiumPluginService,
+        RaydiumDexPluginService,
     ],
 })
-export class RaydiumModule extends ConfigurableModuleClass {}
+export class RaydiumDexModule extends ConfigurableModuleClass {}

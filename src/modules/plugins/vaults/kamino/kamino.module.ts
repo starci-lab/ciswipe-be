@@ -5,6 +5,8 @@ import { KaminoVaultApiService } from "./kamino-api.service"
 import { KaminoVaultFetchService } from "./kamino-fetch.service"
 import { KaminoVaultIndexerService } from "./kamino-indexer.service"
 import { KaminoVaultInitService } from "./kamino-init.service"
+import { KaminoVaultLevelService } from "./kamino-level.service"
+import { KaminoVaultCacheService } from "./kamino-cache.service"
 
 @Module({
     providers: [
@@ -12,7 +14,9 @@ import { KaminoVaultInitService } from "./kamino-init.service"
         KaminoVaultApiService, 
         KaminoVaultFetchService,
         KaminoVaultIndexerService,
-        KaminoVaultInitService
+        KaminoVaultInitService,
+        KaminoVaultLevelService,
+        KaminoVaultCacheService,
     ],
     exports: [KaminoVaultPluginService],
 })

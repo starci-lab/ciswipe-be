@@ -1,34 +1,24 @@
 import { LendingPluginAbstract } from "../abstract"
-import { Inject, Injectable, Logger } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { ChainKey, Network, StrategyResult, TokenType } from "@/modules/common"
 import {
     InterestRateConverterService,
     TokenId,
     tokens,
 } from "@/modules/blockchain"
-import {
-    SolendLendingInitService,
-} from "./solend-init.service"
-import {
-    LendingReserveMetadata,
-    PoolsData,
-} from "./solend-fetch.service"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
-import { Cache } from "cache-manager"
 import { ExecuteParams } from "../../types"
 import { ExecuteSingleParams } from "./types"
 import { randomUUID } from "crypto"
 import { Decimal } from "decimal.js"
+import { SolendLendingCacheService } from "./solend-cache.service"
 
 @Injectable()
 export class SolendLendingPluginService extends LendingPluginAbstract {
     private readonly logger = new Logger(SolendLendingPluginService.name)
 
     constructor(
-        private readonly solendInitService: SolendLendingInitService,
-        @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache,
         private readonly interestRateConverterService: InterestRateConverterService,
+        private readonly solendLendingCacheService: SolendLendingCacheService,
     ) {
         super({
             name: "Solend",
@@ -80,11 +70,8 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
                 return []
             }
 
-            const marketsData = await this.cacheManager.get<PoolsData>(
-                this.solendInitService.getLendingPoolsCacheKey(params.network),
-            )
-            
-            if (!marketsData || !marketsData.pools || marketsData.pools.length === 0) {
+            const lendingPoolsData = await this.solendLendingCacheService.getLendingPoolsData(params.network)
+            if (!lendingPoolsData || !lendingPoolsData.pools || lendingPoolsData.pools.length === 0) {
                 this.logger.debug(`No lending pools data found for network: ${params.network}`)
                 return []
             }
@@ -92,7 +79,7 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
             const results: Array<StrategyResult> = []
 
             // Process all pools and reserves efficiently
-            for (const pool of marketsData.pools) {
+            for (const pool of lendingPoolsData.pools) {
                 for (const reserve of pool.reserves) {
                     try {
                         // Check if this reserve matches the input token
@@ -100,18 +87,11 @@ export class SolendLendingPluginService extends LendingPluginAbstract {
                             reserve.reserve.data.liquidity.mintPubkey.toBase58() ===
                             token.tokenAddress
                         ) {
-                            const metadata = await this.cacheManager.get<LendingReserveMetadata>(
-                                this.solendInitService.getReserveMetadataCacheKey(
-                                    params.network,
-                                    reserve.reserve.address,
-                                ),
-                            )
-
+                            const metadata = await this.solendLendingCacheService.getLendingReserveMetadata(params.network, reserve.reserve.address)
                             if (!metadata) {
                                 this.logger.debug(`No metadata found for reserve: ${reserve.reserve.address}`)
                                 continue
                             }
-
                             const strategyResult: StrategyResult = {
                                 outputTokens: {
                                     tokens: [

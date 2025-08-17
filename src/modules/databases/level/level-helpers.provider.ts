@@ -39,6 +39,11 @@ export class LevelHelpersService {
             : { value }
     }
 
+    // create key like sui
+    createKey(...args: Array<string>) {
+        return args.join("::")
+    }
+
     // return null if key not found
     async fetchFromLevel<T>({
         levelKey,

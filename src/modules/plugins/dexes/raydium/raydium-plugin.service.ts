@@ -16,18 +16,18 @@ import {
 } from "@/modules/common"
 import { tokens } from "@/modules/blockchain"
 import { Decimal } from "decimal.js"
-import { RaydiumInitService } from "./raydium-init.service"
-import { RaydiumCacheService } from "./raydium-cache.service"
+import { RaydiumDexInitService } from "./raydium-init.service"
+import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 @Injectable()
-export class RaydiumPluginService
+export class RaydiumDexPluginService
     extends DexPluginAbstract
     implements OnModuleInit
 {
     constructor(
-    private readonly raydiumCacheService: RaydiumCacheService,
+    private readonly raydiumDexCacheService: RaydiumDexCacheService,
     private readonly interestRateConverterService: InterestRateConverterService,
-    private readonly raydiumInitService: RaydiumInitService,
+    private readonly raydiumDexInitService: RaydiumDexInitService,
     private readonly tokenUtilsService: TokenUtilsService,
     ) {
         super({
@@ -41,7 +41,7 @@ export class RaydiumPluginService
     }
 
     async onModuleInit() {
-        await this.raydiumInitService.loadAndCacheAllOnInit()
+        await this.raydiumDexInitService.loadAndCacheAllOnInit()
     }
 
     private async v3ExecuteSingle({
@@ -91,7 +91,7 @@ export class RaydiumPluginService
             chainKey,
             network,
         })
-        const poolBatch = await this.raydiumCacheService.getPoolBatch(
+        const poolBatch = await this.raydiumDexCacheService.getPoolBatch(
             network,
             index,
         )
@@ -104,7 +104,7 @@ export class RaydiumPluginService
         for (const pool of poolBatch.pools.map((pool) => pool.pool)) {
             promises.push(
                 (async () => {
-                    const poolLines = await this.raydiumCacheService.getPoolLines(
+                    const poolLines = await this.raydiumDexCacheService.getPoolLines(
                         network,
                         pool.id,
                     )

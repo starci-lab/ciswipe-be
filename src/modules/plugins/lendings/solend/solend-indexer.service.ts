@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { Network } from "@/modules/common"
-import { Reserve } from "./schema"
-import { WithAddressAndStats } from "./solend-rpc.service"
+
+export interface ReserveData {
+    reserveId: string
+}
 
 @Injectable()
 export class SolendLendingIndexerService {
@@ -10,7 +12,7 @@ export class SolendLendingIndexerService {
         [Network.Testnet]: 0,
     }
 
-    private reserves: Record<Network, Array<WithAddressAndStats<Reserve>>> = {
+    private reserves: Record<Network, Array<ReserveData>> = {
         [Network.Mainnet]: [],
         [Network.Testnet]: [],
     }
@@ -31,7 +33,16 @@ export class SolendLendingIndexerService {
         return this.reserves[network]
     }
 
-    setReserves(network: Network, reserves: Array<WithAddressAndStats<Reserve>>) {
+    setReserves(network: Network, reserves: Array<ReserveData>) {
         this.reserves[network] = reserves
+    }
+
+    setReserveAndCurrentIndex(
+        network: Network,
+        reserves: Array<ReserveData>,
+        currentIndex: number,
+    ) {
+        this.setReserves(network, reserves)
+        this.setCurrentIndex(network, currentIndex)
     }
 }

@@ -10,7 +10,7 @@ const WAD = "1".concat(Array(18 + 1).join("0"))
 
 const RESERVE_DATA_SIZE = 619
 @Injectable()
-export class SolendRpcService {
+export class SolendLendingRpcService {
     private readonly programId: Record<Network, PublicKey> = {
         [Network.Mainnet]: new PublicKey("So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo"),
         // use testnet program id for now, same to mainnet to prevent error

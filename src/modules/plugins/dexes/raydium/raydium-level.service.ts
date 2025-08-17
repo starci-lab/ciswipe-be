@@ -36,7 +36,7 @@ const POOL_BATCH_KEY = "pool-batch"
 const POOL_LINES_KEY = "pool-lines"
 
 @Injectable()
-export class RaydiumLevelService {
+export class RaydiumDexLevelService {
     constructor(
         private readonly levelHelpersService: LevelHelpersService,
         private readonly tokenUtilsService: TokenUtilsService,
@@ -53,7 +53,7 @@ export class RaydiumLevelService {
                 ChainKey.Solana,
                 network,
             )[batchIndex] || []
-        const key = this.tokenUtilsService.createKey(
+        const key = this.levelHelpersService.createKey(
             POOL_BATCH_KEY,
             token0.id,
             token1.id,
@@ -77,7 +77,7 @@ export class RaydiumLevelService {
         poolId: string,
         action?: () => Promise<PoolLines | null>,
     ): Promise<PoolLines | null> {
-        const key = this.tokenUtilsService.createKey(POOL_LINES_KEY, poolId)
+        const key = this.levelHelpersService.createKey(POOL_LINES_KEY, poolId)
         if (action) {
             return this.levelHelpersService.getOrFetchFromLevel({
                 levelKey: key,
@@ -101,7 +101,7 @@ export class RaydiumLevelService {
             ChainKey.Solana,
             network,
         )[batchIndex]
-        const key = this.tokenUtilsService.createKey(
+        const key = this.levelHelpersService.createKey(
             POOL_BATCH_KEY,
             token0.id,
             token1.id,
@@ -119,7 +119,7 @@ export class RaydiumLevelService {
         poolId: string,
         poolLines: PoolLines,
     ) {
-        const key = this.tokenUtilsService.createKey(POOL_LINES_KEY, poolId)
+        const key = this.levelHelpersService.createKey(POOL_LINES_KEY, poolId)
         return await this.levelHelpersService.setLevelDbData({
             levelKey: key,
             network,
@@ -129,7 +129,7 @@ export class RaydiumLevelService {
 
     // set global data to level db
     public async setGlobalData(network: Network, globalData: GlobalData) {
-        const key = this.tokenUtilsService.createKey(GLOBAL_DATA_KEY)
+        const key = this.levelHelpersService.createKey(GLOBAL_DATA_KEY)
         return await this.levelHelpersService.setLevelDbData({
             levelKey: key,
             network,
@@ -139,14 +139,14 @@ export class RaydiumLevelService {
 
     // get global data from level db
     public async getGlobalData(network: Network): Promise<GlobalData | null> {
-        const key = this.tokenUtilsService.createKey(GLOBAL_DATA_KEY)
+        const key = this.levelHelpersService.createKey(GLOBAL_DATA_KEY)
         return await this.levelHelpersService.fetchFromLevel({
             levelKey: key,
             network,
         })
     }
 
-    public async increaseGlobalDataIndex(network: Network) {
+    public async increaseCurrentIndex(network: Network) {
         const globalData = await this.getGlobalData(network)
         if (!globalData) {
             return
