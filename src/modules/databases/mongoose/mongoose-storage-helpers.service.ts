@@ -1,0 +1,110 @@
+import { Injectable } from "@nestjs/common"
+import { Network, PluginProtocolName } from "@/modules/common"
+import { InjectMongoose } from "./mongoose.decorators"
+import { StorageSchema } from "./schemas"
+import { Connection } from "mongoose"
+import { DayjsService } from "@/modules/misc"
+
+export interface GetOrFetchStorageParams<T> {
+  action?: () => Promise<T>;
+  key: string;
+  network: Network;
+  protocolName: PluginProtocolName;
+  ttlMs?: number; // optional, default = no expiration
+}
+
+export interface GetStorageParams {
+  key: string;
+  network: Network;
+  protocolName: PluginProtocolName;
+}
+
+export interface UpsertStorageParams<T> {
+  key: string;
+  network: Network;
+  protocolName: PluginProtocolName;
+  data: T;
+  ttlMs?: number; // optional, default = no expiration
+}
+
+@Injectable()
+export class MongooseStorageHelpersService {
+    constructor(
+    @InjectMongoose()
+    private readonly connection: Connection,
+    private readonly dayjsService: DayjsService,
+    ) {}
+
+    private createDisplayId(
+        key: string,
+        protocolName: PluginProtocolName,
+        network: Network,
+    ) {
+        return `${key}-${protocolName}-${network}`
+    }
+
+    async getStorage<T>({
+        key,
+        protocolName,
+        network,
+    }: GetStorageParams): Promise<T | null> {
+        return await this.connection
+            .model<StorageSchema>(StorageSchema.name)
+            .findOne({
+                displayId: this.createDisplayId(key, protocolName, network),
+            })
+    }
+
+    // return null if key not found
+    async getOrFetchStorage<T>({
+        action,
+        key,
+        protocolName,
+        network,
+        ttlMs,
+    }: GetOrFetchStorageParams<T>): Promise<T | null> {
+        const storage = await this.connection
+            .model<StorageSchema>(StorageSchema.name)
+            .findOne({
+                displayId: this.createDisplayId(key, protocolName, network),
+            })
+        if (storage) {
+            return storage.data as T
+        }
+        if (!action) {
+            return null
+        }
+        const result = await action()
+        console.log(result)
+        await this.upsertStorage({
+            key,
+            network,
+            protocolName,
+            data: result,
+            ttlMs,
+        })
+        return result
+    }
+
+    async upsertStorage<T>({
+        key,
+        protocolName,
+        data,
+        ttlMs,
+        network,
+    }: UpsertStorageParams<T>): Promise<void> {
+        console.log(data)
+        await this.connection.model<StorageSchema>(StorageSchema.name).updateOne(
+            { displayId: this.createDisplayId(key, protocolName, network) }, // condition
+            {
+                $set: {
+                    data,
+                    expiredAt: ttlMs
+                        ? this.dayjsService.now().add(ttlMs, "ms").toDate()
+                        : undefined,
+                },
+            },  
+            { upsert: true }, // create or update
+        )
+    }
+}

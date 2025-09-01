@@ -5,19 +5,25 @@ import {
 import {
     DexPluginAbstract,
     V3ExecuteParams,
-    V3ExecuteSingleParams,
 } from "../abstract"
 import { Injectable, OnModuleInit } from "@nestjs/common"
 import {
     ChainKey,
+    Network,
     combinations,
     StrategyResult,
     TokenType,
 } from "@/modules/common"
-import { tokens } from "@/modules/blockchain"
+import { TokenData, tokens } from "@/modules/blockchain"
 import { Decimal } from "decimal.js"
 import { RaydiumDexInitService } from "./raydium-init.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
+
+export interface V3ExecuteSingleParams {
+    network: Network
+    chainKey: ChainKey
+    inputTokens: Array<TokenData>
+}
 
 @Injectable()
 export class RaydiumDexPluginService

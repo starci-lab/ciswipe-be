@@ -8,7 +8,7 @@ import {
     Network,
     StrategyResult,
 } from "@/modules/common"
-import { Token, TokenData } from "@/modules/blockchain"
+import { TokenData } from "@/modules/blockchain"
 
 export interface DexPluginAbstractConstructorParams
   extends Omit<BasePluginAbstractConstructorParams, "kind"> {
@@ -38,29 +38,4 @@ export interface V3ExecuteParams {
   chainKey: ChainKey;
   // input tokens, if not provided, use the default input tokens
   inputTokens: Array<TokenData>;
-}
-
-export interface V3ExecuteSingleParams {
-  // network, if not provided, use the default network
-  network: Network;
-  // chain key, if not provided, use the default chain key
-  chainKey: ChainKey;
-  // input tokens, if not provided, use the default input tokens
-  inputTokens: Array<TokenData>;
-}
-
-export interface GetDataParams {
-  // network, if not provided, use the default network
-  network: Network;
-  chainKey: ChainKey;
-  // token
-  token1: Token;
-  token2: Token;
-}
-
-export enum V3StrategyAprDuration {
-  Day = "day",
-  Week = "week",
-  Month = "month",
-  Year = "year",
 }

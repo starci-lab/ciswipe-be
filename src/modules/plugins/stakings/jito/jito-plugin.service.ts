@@ -1,25 +1,19 @@
 import {
-    createProviderToken,
-} from "@/modules/blockchain"
-import {
-    StakingPluginAbstract,
-    ExecuteParams,
-    ExecuteResult,
-    GetDataParams,
-} from "../abstract"
-import {
-    Inject,
     Injectable,
-    OnApplicationBootstrap,
     OnModuleInit,
+    OnApplicationBootstrap,
 } from "@nestjs/common"
-import { Connection } from "@solana/web3.js"
-import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
-import { VolumeService } from "@/modules/volume"
-import { JitoPoolStats, JitoSdkService } from "./jito-sdk.service"
-import { JupiterQuoteService } from "../../aggregators"
-import { ChainKey, computePercentage, Network } from "@/modules/common"
+import { JitoDataPoint, JitoPoolStats, 
+} from "./jito-api.service"
+import { ChainKey, Network, StrategyResult } from "@/modules/common"
 import { TokenId } from "@/modules/blockchain"
+import { ExecuteParams } from "../abstract"
+import { StakingPluginAbstract } from "../abstract"
+import { JitoStakingCacheService } from "./jito-cache.service"
+import { Point, RegressionService } from "@/modules/probability-statistics"
+import dayjs from "dayjs"
+
+const DAY = 86400
 
 export interface Data {
   stats: JitoPoolStats;
@@ -31,13 +25,8 @@ export class JitoPluginService
     implements OnModuleInit, OnApplicationBootstrap
 {
     constructor(
-    @Inject(createProviderToken(ChainKey.Solana))
-    private readonly solanaRpcProvider: Record<Network, Connection>,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
-    private readonly volumeService: VolumeService,
-    private readonly jitoSdkService: JitoSdkService,
-    private readonly jupiterQuoteService: JupiterQuoteService,
+        private readonly jitoCacheService: JitoStakingCacheService,
+        private readonly regressionService: RegressionService,
     ) {
         super({
             name: "Jito",
@@ -57,60 +46,28 @@ export class JitoPluginService
         const result = await this.execute({
             network: Network.Mainnet,
             chainKey: ChainKey.Solana,
-            inputToken: { id: TokenId.SolanaSolMainnet, amount: 1 },
+            inputTokens: [
+                { id: TokenId.SolanaSolMainnet, amount: 1 },
+            ],
         })
         console.dir(result, { depth: null })
     }
 
-    protected async getData(params: GetDataParams): Promise<Data> {
-        const volumeName = `jito-${params.inputToken.id}.json`
-        try {
-            const stats = await this.jitoSdkService.getPoolStats()
-            await this.volumeService.writeJsonToDataVolume<JitoPoolStats>(
-                volumeName,
-                stats,
-            )
-            return { stats }
-        } catch (error) {
-            console.error(error)
-            try {
-                const stats =
-          await this.volumeService.readJsonFromDataVolume<JitoPoolStats>(
-              {
-                  name: volumeName,
-              }
-          )
-                return { stats }
-            } catch (error) {
-                console.error(error)
-            }
-            throw error
-        }
-    }
-
     /** Stake into Jito */
-    protected async execute(params: ExecuteParams): Promise<ExecuteResult> {
+    protected async execute(
+        params: ExecuteParams
+    ): Promise<Array<StrategyResult>> {
         try {
-            const { stats } = await this.getData(params)
-            if (!params.inputToken.amount) {
-                throw new Error("Input token amount is required")
-            }
-            const { amountOut } = await this.jupiterQuoteService.quote({
-                tokenInId: TokenId.SolanaSolMainnet,
-                tokenOutId: TokenId.SolanaJitoSolMainnet,
-                amount: params.inputToken.amount,
-            })
-            return {
-                outputTokens: [
-                    {
-                        id: TokenId.SolanaJupMainnet,
-                        amount: amountOut,
-                    }
-                ],
-                apy: {
-                    apy: computePercentage(stats.getStakePoolStats.apy.at(-1)?.data ?? 0, 1, 5)
-                },
-            }
+            const jitoData = await this.jitoCacheService.getJitoData(params.network)
+            // return jitoData.map((data) => ({
+            //     network: params.network,
+            //     chainKey: params.chainKey,
+            //     inputTokens: params.inputTokens,
+            //     outputTokens: data.stats.getStakePoolStats.outputTokens,
+            //     apy: data.stats.getStakePoolStats.apy,
+
+            // }))
+            return []
         } catch (error) {
             console.error(error)
             throw error

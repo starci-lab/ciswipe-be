@@ -26,3 +26,7 @@ export interface ExecuteParams {
     // input tokens, we provide an array of tokens
     inputTokens: Array<TokenData>;
 }
+
+export enum PluginProtocolName {
+    DexRaydium = "dex-raydium",
+}

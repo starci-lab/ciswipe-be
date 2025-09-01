@@ -8,12 +8,11 @@ import {
 import { Connection } from "@solana/web3.js"
 import { Raydium, ApiV3PoolInfoItem } from "@raydium-io/raydium-sdk-v2"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { RaydiumDexInitService } from "./raydium-init.service"
 import { RaydiumDexIndexerService } from "./raydium-indexer.service"
 import { LockService, RetryService } from "@/modules/misc"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumDexApiService } from "./raydium-api.service"
-import { RaydiumDexLevelService } from "./raydium-level.service"
+import { PoolBatch, RaydiumDexDataService } from "./raydium-data.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
@@ -29,12 +28,11 @@ export class RaydiumDexFetchService implements OnModuleInit {
     constructor(
         @Inject(createProviderToken(ChainKey.Solana))
         private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-        private readonly initService: RaydiumDexInitService,
         private readonly indexerService: RaydiumDexIndexerService,
         private readonly lockService: LockService,
         private readonly tokenUtilsService: TokenUtilsService,
         private readonly raydiumDexApiService: RaydiumDexApiService,
-        private readonly raydiumDexLevelService: RaydiumDexLevelService,
+        private readonly raydiumDexDataService: RaydiumDexDataService,
         private readonly retryService: RetryService,
         private readonly raydiumDexCacheService: RaydiumDexCacheService,
     ) { }
@@ -101,7 +99,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 try {
                     // raydium only support Solana, so that we dont care about ChainKey
                     const raydium = this.raydiums[network]
-                    const poolBatch = await this.raydiumDexLevelService.getPoolBatch(
+                    const poolBatch = await this.raydiumDexDataService.getPoolBatch(
                         network,
                         this.indexerService.getCurrentIndex(network),
                         async () => {
@@ -128,20 +126,18 @@ export class RaydiumDexFetchService implements OnModuleInit {
                                         await sleep(1000)
                                     }
                                 }
-                                if (!poolBatch) {
-                                    return null
+                                const poolBatch: PoolBatch = {
+                                    pools: pools.map((pool) => ({
+                                        pool,
+                                    })),
+                                    currentLineIndex: 0,
                                 }
                                 await this.raydiumDexCacheService.cachePoolBatch(
                                     network,
                                     currentIndex,
                                     poolBatch,
                                 )
-                                return {
-                                    pools: pools.map((pool) => ({
-                                        pool,
-                                    })),
-                                    currentLineIndex: 0,
-                                }
+                                return poolBatch
                             } catch (error) {
                                 this.logger.error(
                                     `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
@@ -191,7 +187,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                         // we will increase the index to the next pair
                             this.indexerService.nextCurrentIndex(network)
                             // update the global data
-                            await this.raydiumDexLevelService.increaseCurrentIndex(network)
+                            await this.raydiumDexDataService.increaseCurrentIndex(network)
                         }
                     })
                 }
@@ -221,7 +217,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     lineIndex
                 ]
                 try {
-                    const poolLines = await this.raydiumDexLevelService.getPoolLines(
+                    const poolLines = await this.raydiumDexDataService.getPoolLines(
                         network,
                         pool.poolId,
                         async () => {
@@ -270,7 +266,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                         action: async () => {
                             this.indexerService.nextCurrentLineIndex(network, batchIndex)
                             // update the the current line index
-                            await this.raydiumDexLevelService.increaseLineIndex(
+                            await this.raydiumDexDataService.increaseLineIndex(
                                 network,
                                 batchIndex,
                             )

@@ -4,7 +4,7 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager"
 import { Cache } from "cache-manager"
 import { Network } from "@/modules/common"
 import { createCacheKey } from "@/modules/cache"
-import { PoolBatch, PoolLines } from "./raydium-level.service"
+import { PoolBatch, PoolLines } from "./raydium-data.service"
 
 @Injectable()
 export class RaydiumDexCacheService {

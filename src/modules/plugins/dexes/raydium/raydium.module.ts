@@ -5,7 +5,7 @@ import { RaydiumDexFetchService } from "./raydium-fetch.service"
 import { RaydiumDexIndexerService } from "./raydium-indexer.service"
 import { RaydiumDexInitService } from "./raydium-init.service"
 import { RaydiumDexApiService } from "./raydium-api.service"
-import { RaydiumDexLevelService } from "./raydium-level.service"
+import { RaydiumDexDataService } from "./raydium-data.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 @Module({
@@ -15,7 +15,7 @@ import { RaydiumDexCacheService } from "./raydium-cache.service"
         RaydiumDexIndexerService,
         RaydiumDexInitService,
         RaydiumDexApiService,
-        RaydiumDexLevelService,
+        RaydiumDexDataService,
         RaydiumDexCacheService,
     ],
     exports: [

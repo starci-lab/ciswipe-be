@@ -35,7 +35,9 @@ interface PoolPositionResponse {
 export class RaydiumDexApiService {
     constructor(private readonly httpService: HttpService) { }
 
-    async fetchPoolLines(poolId: string): Promise<Array<LiquidityLine>> {
+    async fetchPoolLines(
+        poolId: string
+    ): Promise<Array<LiquidityLine>> {
         const url = `https://api-v3.raydium.io/pools/line/liquidity?id=${poolId}`
 
         const response$ = this.httpService.get<PoolLineResponse>(url)
@@ -46,7 +48,9 @@ export class RaydiumDexApiService {
         return response.data.data.line
     }
 
-    async fetchPoolPositions(poolId: string): Promise<PositionLine[]> {
+    async fetchPoolPositions(
+        poolId: string
+    ): Promise<Array<PositionLine>> {
         const url = `https://api-v3.raydium.io/pools/line/position?id=${poolId}`
         const response$ = this.httpService.get<PoolPositionResponse>(url)
         const response = await lastValueFrom(response$)
