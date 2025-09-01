@@ -48,11 +48,13 @@ export class MongooseStorageHelpersService {
         protocolName,
         network,
     }: GetStorageParams): Promise<T | null> {
-        return await this.connection
+        const storage =  await this.connection
             .model<StorageSchema>(StorageSchema.name)
             .findOne({
                 displayId: this.createDisplayId(key, protocolName, network),
             })
+        if (!storage) return null 
+        return storage.data as T
     }
 
     // return null if key not found
@@ -75,7 +77,6 @@ export class MongooseStorageHelpersService {
             return null
         }
         const result = await action()
-        console.log(result)
         await this.upsertStorage({
             key,
             network,
@@ -93,12 +94,13 @@ export class MongooseStorageHelpersService {
         ttlMs,
         network,
     }: UpsertStorageParams<T>): Promise<void> {
-        console.log(data)
         await this.connection.model<StorageSchema>(StorageSchema.name).updateOne(
             { displayId: this.createDisplayId(key, protocolName, network) }, // condition
             {
                 $set: {
                     data,
+                    protocolName,
+                    network,
                     expiredAt: ttlMs
                         ? this.dayjsService.now().add(ttlMs, "ms").toDate()
                         : undefined,

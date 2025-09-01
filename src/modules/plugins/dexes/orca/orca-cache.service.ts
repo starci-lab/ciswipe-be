@@ -2,10 +2,10 @@ import { Injectable } from "@nestjs/common"
 import { Cache } from "cache-manager"
 import { Network } from "@/modules/common"
 import { createCacheKey, InjectMemoryCache } from "@/modules/cache"
-import { PoolBatch, PoolLines } from "./raydium-data.service"
+import { PoolBatch } from "./orca-data.service"
 
 @Injectable()
-export class RaydiumDexCacheService {
+export class OrcaDexCacheService {
     constructor(
     @InjectMemoryCache() private readonly cacheManager: Cache,
     ) {}
@@ -14,16 +14,9 @@ export class RaydiumDexCacheService {
         network: Network,
         currentIndex: number,
     ) {
-        return createCacheKey("raydium-dex-pool-batch", {
+        return createCacheKey("orca-dex-pool-batch", {
             network,
             currentIndex,
-        })
-    }
-
-    private getPoolLinesCacheKey(network: Network, poolId: string) {
-        return createCacheKey("raydium-dex-pool-lines", {
-            network,
-            poolId,
         })
     }
 
@@ -38,29 +31,12 @@ export class RaydiumDexCacheService {
         )
     }
 
-    public async cachePoolLines(
-        network: Network,
-        poolId: string,
-        poolLines: PoolLines,
-    ) {
-        await this.cacheManager.set(
-            this.getPoolLinesCacheKey(network, poolId),
-            poolLines,
-        )
-    }
-
     public async getPoolBatch(
         network: Network,
         currentIndex: number,
     ) {
         return await this.cacheManager.get<PoolBatch>(
             this.getPoolBatchCacheKey(network, currentIndex),
-        )
-    }
-
-    public async getPoolLines(network: Network, poolId: string) {
-        return await this.cacheManager.get<PoolLines>(
-            this.getPoolLinesCacheKey(network, poolId),
         )
     }
 }

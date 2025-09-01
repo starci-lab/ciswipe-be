@@ -1,5 +1,4 @@
 import {
-    InterestRateConverterService,
     TokenUtilsService,
 } from "@/modules/blockchain"
 import { DexPluginAbstract, V3ExecuteParams } from "../abstract"
@@ -12,8 +11,7 @@ import {
     TokenType,
 } from "@/modules/common"
 import { TokenData, tokens } from "@/modules/blockchain"
-import { Decimal } from "decimal.js"
-import { RaydiumDexCacheService } from "./raydium-cache.service"
+import { OrcaDexCacheService } from "./orca-cache.service"
 import { CacheHelpersService, createCacheKey, CacheType } from "@/modules/cache"
 import { v4 } from "uuid"
 
@@ -24,21 +22,21 @@ export interface V3ExecuteSingleParams {
 }
 
 @Injectable()
-export class RaydiumDexPluginService
+export class OrcaDexPluginService
     extends DexPluginAbstract
 {
     constructor(
     private readonly cacheHelpersService: CacheHelpersService,
-    private readonly raydiumDexCacheService: RaydiumDexCacheService,
-    private readonly interestRateConverterService: InterestRateConverterService,
+    private readonly orcaDexCacheService: OrcaDexCacheService,
     private readonly tokenUtilsService: TokenUtilsService,
     ) {
         super({
-            name: "Raydium",
-            icon: "https://raydium.io/favicon.ico",
-            url: "https://raydium.io",
-            description: "Raydium is a decentralized exchange on Solana.",
-            tags: ["dex"],
+            name: "Orca",
+            icon: "https://www.orca.so/favicon.ico",
+            url: "https://www.orca.so",
+            description:
+              "Orca is one of the first and most user-friendly decentralized exchanges on Solana, offering concentrated liquidity pools (Whirlpools) with efficient trading and yield opportunities.",
+            tags: ["dex", "amm", "liquidity"],
             chainKeys: [ChainKey.Solana],
         })
     }
@@ -90,7 +88,7 @@ export class RaydiumDexPluginService
             chainKey,
             network,
         })
-        const poolBatch = await this.raydiumDexCacheService.getPoolBatch(
+        const poolBatch = await this.orcaDexCacheService.getPoolBatch(
             network,
             index,
         )
@@ -103,57 +101,25 @@ export class RaydiumDexPluginService
         for (const pool of poolBatch.pools.map((pool) => pool.pool)) {
             promises.push(
                 (async () => {
-                    const poolLines = await this.raydiumDexCacheService.getPoolLines(
-                        network,
-                        pool.id,
-                    )
-                    if (!poolLines) {
-                        return
-                    }
                     results.push({
                         outputTokens: {
                             tokens: [],
                         },
                         metadata: {
-                            poolId: pool.id,
+                            poolId: pool.address,
                             feeRate: pool.feeRate,
-                            tvl: pool.tvl,
-                            openTime: pool.openTime,
+                            tvl: pool.tvlUsdc,
+                            lockedLiquidityPercent: pool.lockedLiquidityPercent,
                         },
                         rewards: {
-                            rewardTokens: pool.rewardDefaultInfos.map((info) => ({
+                            rewardTokens: pool.rewards?.map((info) => ({
                                 token: {
                                     id: v4(),
-                                    address: info.mint.address,
-                                    name: info.mint.name,
-                                    symbol: info.mint.symbol,
-                                    decimals: info.mint.decimals,
-                                    icon: info.mint.logoURI,
+                                    address: info.mint
                                 },
                             })),
                         },
-                        yieldSummary: {
-                            aprs: {
-                                base: pool.day.apr,
-                                day: pool.day.apr,
-                                week: pool.week.apr,
-                                month: pool.month.apr,
-                            },
-                            apys: {
-                                base: this.interestRateConverterService
-                                    .toAPY(new Decimal(pool.day.apr), chainKey, network)
-                                    .toNumber(),
-                                day: this.interestRateConverterService
-                                    .toAPY(new Decimal(pool.day.apr), chainKey, network)
-                                    .toNumber(),
-                                week: this.interestRateConverterService
-                                    .toAPY(new Decimal(pool.week.apr), chainKey, network)
-                                    .toNumber(),
-                                month: this.interestRateConverterService
-                                    .toAPY(new Decimal(pool.month.apr), chainKey, network)
-                                    .toNumber(),
-                            },
-                        },
+                        yieldSummary: {},
                     })
                 })(),
             )

@@ -1,28 +1,15 @@
-// lowest layer to interact with level db
 import { Injectable } from "@nestjs/common"
 import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
-import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
-import { LiquidityLine, PositionLine } from "./raydium-api.service"
 import { MongooseStorageHelpersService } from "@/modules/databases"
+import { OrcaWhirlpool } from "./orca-api.service"
 
+export interface PoolData {
+    pool: OrcaWhirlpool;
+}
 // we track pool batch for each pool
 export interface PoolBatch {
     pools: Array<PoolData>;
-    // we track current line index for each pool to continue loading lines
-    currentLineIndex: number;
-}
-
-// we track pool data for each pool
-export interface PoolData {
-    pool: ApiV3PoolInfoBaseItem;
-}
-
-// we track position and liquidity lines for each pool
-export interface PoolLines {
-    poolId: string;
-    positionLines: Array<PositionLine>;
-    liquidityLines: Array<LiquidityLine>;
 }
 
 // we track global data for all pools
@@ -33,10 +20,9 @@ export interface GlobalData {
 
 const GLOBAL_DATA_KEY = "global-data"
 const POOL_BATCH_KEY = "pool-batch"
-const POOL_LINES_KEY = "pool-lines"
 
 @Injectable()
-export class RaydiumDexDataService {
+export class OrcaDexDataService {
     constructor(
         private readonly tokenUtilsService: TokenUtilsService,
         private readonly mongooseStorageHelpersService: MongooseStorageHelpersService,
@@ -51,12 +37,6 @@ export class RaydiumDexDataService {
             network,
         )[batchIndex]
         return `${POOL_BATCH_KEY}-${token0.id}-${token1.id}-${batchIndex}`
-    }
-
-    private getPoolLinesKey(
-        poolId: string
-    ) {
-        return `${POOL_LINES_KEY}-${poolId}`
     }
 
     private getGlobalDataKey() {
@@ -74,22 +54,7 @@ export class RaydiumDexDataService {
             key: poolBatchKey,
             action,
             network,
-            protocolName: PluginProtocolName.DexRaydium,
-        })
-    }
-
-    // get pool lines from mongoose
-    public async getPoolLines(
-        network: Network,
-        poolId: string,
-        action?: () => Promise<PoolLines | null>,
-    ): Promise<PoolLines | null> {
-        const poolLinesKey = this.getPoolLinesKey(poolId)
-        return this.mongooseStorageHelpersService.getOrFetchStorage({
-            key: poolLinesKey,
-            action,
-            network,
-            protocolName: PluginProtocolName.DexRaydium,
+            protocolName: PluginProtocolName.DexOrca,
         })
     }
 
@@ -104,22 +69,7 @@ export class RaydiumDexDataService {
             key: poolBatchKey,
             network,
             data: poolBatch,
-            protocolName: PluginProtocolName.DexRaydium,
-        })
-    }
-
-    // upsert
-    public async upsertPoolLines(
-        network: Network,
-        poolId: string,
-        poolLines: PoolLines,
-    ) {
-        const poolLinesKey = this.getPoolLinesKey(poolId)
-        return await this.mongooseStorageHelpersService.upsertStorage({
-            key: poolLinesKey,
-            network,
-            data: poolLines,
-            protocolName: PluginProtocolName.DexRaydium,
+            protocolName: PluginProtocolName.DexOrca,
         })
     }
 
@@ -133,7 +83,7 @@ export class RaydiumDexDataService {
             key: globalDataKey,
             network,
             data: globalData,
-            protocolName: PluginProtocolName.DexRaydium,
+            protocolName: PluginProtocolName.DexOrca,
         })
     }
 
@@ -145,7 +95,7 @@ export class RaydiumDexDataService {
         const storage = await this.mongooseStorageHelpersService.getStorage<GlobalData>({
             key: globalDataKey,
             network,
-            protocolName: PluginProtocolName.DexRaydium,
+            protocolName: PluginProtocolName.DexOrca,
         })
         if (!storage) {
             await this.mongooseStorageHelpersService.upsertStorage({
@@ -154,7 +104,7 @@ export class RaydiumDexDataService {
                 data: {
                     currentIndex: 0,
                 },
-                protocolName: PluginProtocolName.DexRaydium,
+                protocolName: PluginProtocolName.DexOrca,
             })
         }
         return storage
@@ -167,12 +117,5 @@ export class RaydiumDexDataService {
         }
         globalData.currentIndex++
         await this.upsertGlobalData(network, globalData)
-    }
-
-    public async increaseLineIndex(network: Network, batchIndex: number) {
-        const poolBatch = await this.getPoolBatch(network, batchIndex)
-        if (!poolBatch) return
-        poolBatch.currentLineIndex += 1
-        await this.upsertPoolBatch(network, batchIndex, poolBatch)
     }
 }

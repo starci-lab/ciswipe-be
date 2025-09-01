@@ -40,6 +40,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
+    "@orca-so/sdk": "^1.2.26",
+    "@orca-so/whirlpools-sdk": "^0.15.0",
     "@raydium-io/raydium-sdk-v2": "^0.2.8-alpha",
     "@solana/kit": "^2.3.0",
     "@solana/spl-token-metadata": "^0.1.6",

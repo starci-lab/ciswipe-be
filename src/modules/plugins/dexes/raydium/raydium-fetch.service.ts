@@ -16,8 +16,8 @@ import { PoolBatch, RaydiumDexDataService } from "./raydium-data.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
 
 const LOCK_KEYS = {
-    POOL_BATCH: "poolBatch",
-    POOL_LINES: "poolLines",
+    POOL_BATCH: "RAYDIUM_DEX_POOL_BATCH",
+    POOL_LINES: "RAYDIUM_DEX_POOL_LINE"
 }
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
     constructor(
         @Inject(createProviderToken(ChainKey.Solana))
         private readonly solanaRpcProvider: RecordRpcProvider<Connection>,
-        private readonly indexerService: RaydiumDexIndexerService,
+        private readonly raydiumDexIndexerService: RaydiumDexIndexerService,
         private readonly lockService: LockService,
         private readonly tokenUtilsService: TokenUtilsService,
         private readonly raydiumDexApiService: RaydiumDexApiService,
@@ -88,9 +88,13 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 }
                 // if the first pair is not loaded, we will return
                 // if we load end the pairs, we will return to the start index
-                this.indexerService.tryResetCurrentIndex(network)
+                this.raydiumDexIndexerService.tryResetCurrentIndex(network)
                 // now we try to get the current index that was reseted
-                const currentIndex = this.indexerService.getCurrentIndex(network)
+                const currentIndex = this.raydiumDexIndexerService.getCurrentIndex(network)
+                if (this.tokenUtilsService.checkEveryPairsLoaded(ChainKey.Solana, network, currentIndex)) {
+                    this.logger.verbose(`Every pairs are loaded for ${network}, current index: ${currentIndex}`)
+                    return
+                }
                 const [token0, token1] =
                     this.tokenUtilsService.getPairsWithoutNativeToken(
                         ChainKey.Solana,
@@ -101,10 +105,11 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     const raydium = this.raydiums[network]
                     const poolBatch = await this.raydiumDexDataService.getPoolBatch(
                         network,
-                        this.indexerService.getCurrentIndex(network),
+                        this.raydiumDexIndexerService.getCurrentIndex(network),
                         async () => {
                             const pools: Array<ApiV3PoolInfoItem> = []
                             try {
+                                let nextPage = 0
                                 let nextPageAvailable = true
                                 while (nextPageAvailable) {
                                     if (!token0.tokenAddress || !token1.tokenAddress) {
@@ -116,8 +121,10 @@ export class RaydiumDexFetchService implements OnModuleInit {
                                         await raydium.api.fetchPoolByMints({
                                             mint1: token0.tokenAddress,
                                             mint2: token1.tokenAddress,
+                                            page: nextPage,
                                         })
                                     pools.push(...data)
+                                    nextPage++
                                     nextPageAvailable = hasNextPage
                                     if (hasNextPage) {
                                         this.logger.debug(
@@ -153,7 +160,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                         return
                     }
                     // update the indexer
-                    this.indexerService.setV3PoolBatchAndCurrentLineIndex(
+                    this.raydiumDexIndexerService.setV3PoolBatchAndCurrentLineIndex(
                         network,
                         currentIndex,
                         poolBatch,
@@ -173,8 +180,8 @@ export class RaydiumDexFetchService implements OnModuleInit {
                       index: ${currentIndex}, 
                       total pools: ${poolBatch.pools.length},
                       total pairs: ${tokenPairs[ChainKey.Solana][network].length},
-                      current line index: ${this.indexerService.getCurrentLineIndex(network, currentIndex)},
-                      total v3 pool batches: ${this.indexerService.getV3PoolBatches(network)[currentIndex]?.length}
+                      current line index: ${this.raydiumDexIndexerService.getCurrentLineIndex(network, currentIndex)},
+                      total v3 pool batches: ${this.raydiumDexIndexerService.getV3PoolBatches(network)[currentIndex]?.length}
                       `,
                     )
                 } catch (error) {
@@ -185,7 +192,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     await this.retryService.retry({
                         action: async () => {
                         // we will increase the index to the next pair
-                            this.indexerService.nextCurrentIndex(network)
+                            this.raydiumDexIndexerService.nextCurrentIndex(network)
                             // update the global data
                             await this.raydiumDexDataService.increaseCurrentIndex(network)
                         }
@@ -207,13 +214,13 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 if (network === Network.Testnet) {
                     return
                 }
-                const pair = this.indexerService.findNextUnloadedLineIndex(network)
+                const pair = this.raydiumDexIndexerService.findNextUnloadedLineIndex(network)
                 if (!pair) {
                     // we already loaded all lines for the current index, or some errors happened
                     return
                 }
                 const [batchIndex, lineIndex] = pair
-                const pool = this.indexerService.getV3PoolBatch(network, batchIndex)[
+                const pool = this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex)[
                     lineIndex
                 ]
                 try {
@@ -253,7 +260,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                       pair: ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][0].id} and ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][1].id}, 
                       batch index: ${batchIndex},
                       line index: ${lineIndex}, 
-                      total lines: ${this.indexerService.getV3PoolBatch(network, batchIndex).length},
+                      total lines: ${this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex).length},
                       total pairs: ${tokenPairs[ChainKey.Solana][network].length}
                       `,
                     )
@@ -264,7 +271,7 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 } finally {
                     await this.retryService.retry({
                         action: async () => {
-                            this.indexerService.nextCurrentLineIndex(network, batchIndex)
+                            this.raydiumDexIndexerService.nextCurrentLineIndex(network, batchIndex)
                             // update the the current line index
                             await this.raydiumDexDataService.increaseLineIndex(
                                 network,

@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./dexes.module-definition"
 import { RaydiumDexModule } from "./raydium"
+import { OrcaDexModule } from "./orca"
 //import { CetusModule } from "./cetus"
 
 @Module({})
@@ -11,6 +12,7 @@ export class DexesModule extends ConfigurableModuleClass {
         const dynamicModule = super.register(options)
         const modules: Array<DynamicModule> = [
             RaydiumDexModule.register(options),
+            OrcaDexModule.register(options),
             //CetusModule.register(options),
         ]
         return {

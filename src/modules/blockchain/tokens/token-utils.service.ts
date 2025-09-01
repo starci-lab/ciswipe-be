@@ -12,6 +12,14 @@ export class TokenUtilsService {
             .map(([token0, token1]) => this.ensureTokensOrder(token0, token1))
     }
 
+    checkEveryPairsLoaded(
+        chainKey: ChainKey, 
+        network: Network, 
+        currentIndex: number
+    ) {
+        return currentIndex >= tokenPairs[chainKey][network].length
+    }
+
     getPairs(chainKey: ChainKey, network: Network) {
         return tokenPairs[chainKey][network].map(([token0, token1]) =>
             this.ensureTokensOrder(token0, token1),

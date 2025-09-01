@@ -1,5 +1,6 @@
 import { HttpService } from "@nestjs/axios"
 import { Injectable, InternalServerErrorException } from "@nestjs/common"
+import axiosRetry from "axios-retry"
 import { lastValueFrom } from "rxjs"
 
 export interface LiquidityLine {
@@ -33,7 +34,9 @@ interface PoolPositionResponse {
 
 @Injectable()
 export class RaydiumDexApiService {
-    constructor(private readonly httpService: HttpService) { }
+    constructor(private readonly httpService: HttpService) { 
+        axiosRetry(this.httpService.axiosRef, { retries: 3 })
+    }
 
     async fetchPoolLines(
         poolId: string
