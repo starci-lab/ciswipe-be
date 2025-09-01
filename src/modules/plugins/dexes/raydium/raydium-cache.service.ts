@@ -1,15 +1,13 @@
-
-import { Injectable, Inject } from "@nestjs/common"
-import { CACHE_MANAGER } from "@nestjs/cache-manager"
+import { Injectable } from "@nestjs/common"
 import { Cache } from "cache-manager"
 import { Network } from "@/modules/common"
-import { createCacheKey } from "@/modules/cache"
+import { createCacheKey, InjectMemoryCache } from "@/modules/cache"
 import { PoolBatch, PoolLines } from "./raydium-data.service"
 
 @Injectable()
 export class RaydiumDexCacheService {
     constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @InjectMemoryCache() private readonly cacheManager: Cache,
     ) {}
 
     private getPoolBatchCacheKey(

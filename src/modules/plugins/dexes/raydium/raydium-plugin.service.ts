@@ -2,10 +2,7 @@ import {
     InterestRateConverterService,
     TokenUtilsService,
 } from "@/modules/blockchain"
-import {
-    DexPluginAbstract,
-    V3ExecuteParams,
-} from "../abstract"
+import { DexPluginAbstract, V3ExecuteParams } from "../abstract"
 import { Injectable, OnModuleInit } from "@nestjs/common"
 import {
     ChainKey,
@@ -18,11 +15,12 @@ import { TokenData, tokens } from "@/modules/blockchain"
 import { Decimal } from "decimal.js"
 import { RaydiumDexInitService } from "./raydium-init.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
+import { CacheHelpersService, createCacheKey, CacheType } from "@/modules/cache"
 
 export interface V3ExecuteSingleParams {
-    network: Network
-    chainKey: ChainKey
-    inputTokens: Array<TokenData>
+  network: Network;
+  chainKey: ChainKey;
+  inputTokens: Array<TokenData>;
 }
 
 @Injectable()
@@ -31,6 +29,7 @@ export class RaydiumDexPluginService
     implements OnModuleInit
 {
     constructor(
+    private readonly cacheHelpersService: CacheHelpersService,
     private readonly raydiumDexCacheService: RaydiumDexCacheService,
     private readonly interestRateConverterService: InterestRateConverterService,
     private readonly raydiumDexInitService: RaydiumDexInitService,
@@ -169,27 +168,32 @@ export class RaydiumDexPluginService
     }
 
     // method to add liquidity to a pool
-    protected async v3Execute({
-        network,
-        chainKey,
-        inputTokens,
-    }: V3ExecuteParams): Promise<Array<StrategyResult>> {
-        const tokenPairs = combinations(inputTokens, 2)
-        const results: Array<StrategyResult> = []
-        const promises: Array<Promise<void>> = []
-        for (const tokenPair of tokenPairs) {
-            promises.push(
-                (async () => {
-                    const results = await this.v3ExecuteSingle({
-                        network,
-                        chainKey,
-                        inputTokens: tokenPair,
-                    })
-                    results.push(...results)
-                })(),
-            )
-        }
-        await Promise.all(promises)
-        return results
+    protected async v3Execute(
+        params: V3ExecuteParams,
+    ): Promise<Array<StrategyResult>> {
+        return await this.cacheHelpersService.getOrSetCache({
+            key: createCacheKey("raydium-dex-v3-execute", params),
+            action: async () => {
+                const { network, chainKey, inputTokens } = params
+                const tokenPairs = combinations(inputTokens, 2)
+                const results: Array<StrategyResult> = []
+                const promises: Array<Promise<void>> = []
+                for (const tokenPair of tokenPairs) {
+                    promises.push(
+                        (async () => {
+                            const results = await this.v3ExecuteSingle({
+                                network,
+                                chainKey,
+                                inputTokens: tokenPair,
+                            })
+                            results.push(...results)
+                        })(),
+                    )
+                }
+                await Promise.all(promises)
+                return results
+            },
+            type: CacheType.Redis,
+        })
     }
 }
