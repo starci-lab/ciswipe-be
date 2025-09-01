@@ -13,11 +13,15 @@ export class TokenUtilsService {
     }
 
     checkEveryPairsLoaded(
-        chainKey: ChainKey, 
-        network: Network, 
-        currentIndex: number
+        chainKey: ChainKey,
+        network: Network,
+        currentIndex: number,
     ) {
-        return currentIndex >= tokenPairs[chainKey][network].length
+        return (
+            currentIndex >=
+            this.getPairsWithoutNativeToken(chainKey, network)
+                .length
+        )
     }
 
     getPairs(chainKey: ChainKey, network: Network) {
@@ -33,10 +37,7 @@ export class TokenUtilsService {
         return [token1, token2]
     }
 
-    ensureTokensOrderById(
-        token1Id: TokenId, 
-        token2Id: TokenId
-    ) {
+    ensureTokensOrderById(token1Id: TokenId, token2Id: TokenId) {
         if (Buffer.byteLength(token1Id) > Buffer.byteLength(token2Id)) {
             [token1Id, token2Id] = [token2Id, token1Id]
         }
@@ -88,21 +89,21 @@ export class TokenUtilsService {
 }
 
 export interface GetIndexByPairParams {
-  token0: TokenId;
-  token1: TokenId;
-  withoutNative?: boolean;
-  chainKey: ChainKey;
-  network: Network;
+    token0: TokenId;
+    token1: TokenId;
+    withoutNative?: boolean;
+    chainKey: ChainKey;
+    network: Network;
 }
 
 export interface TryGetWrappedTokenParams {
-  token: Token;
-  network: Network;
-  chainKey: ChainKey;
+    token: Token;
+    network: Network;
+    chainKey: ChainKey;
 }
 
 export interface TryGetWrappedTokensParams {
-  tokens: Array<Token>;
-  network: Network;
-  chainKey: ChainKey;
+    tokens: Array<Token>;
+    network: Network;
+    chainKey: ChainKey;
 }

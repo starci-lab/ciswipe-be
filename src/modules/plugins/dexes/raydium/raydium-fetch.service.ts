@@ -95,6 +95,10 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.verbose(`Every pairs are loaded for ${network}, current index: ${currentIndex}`)
                     return
                 }
+                console.log(this.tokenUtilsService.getPairsWithoutNativeToken(
+                    ChainKey.Solana,
+                    network,
+                ).length)
                 const [token0, token1] =
                     this.tokenUtilsService.getPairsWithoutNativeToken(
                         ChainKey.Solana,
