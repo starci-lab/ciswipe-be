@@ -28,6 +28,12 @@ export class LokiModule extends ConfigurableModuleClass {
                     format: winston.format.combine(
                         winston.format.timestamp(),
                         winston.format.json(),
+                        utilities.format.nestLike("CiSwipe", {
+                            colors: true,
+                            prettyPrint: true,
+                            appName: true,
+                            processId: true
+                        }),
                     ),
                 }),
                 // write to loki
@@ -38,12 +44,6 @@ export class LokiModule extends ConfigurableModuleClass {
                         winston.format.timestamp(),
                         winston.format.ms(),
                         winston.format.json(),
-                        utilities.format.nestLike("CiSwipe", {
-                            colors: true,
-                            prettyPrint: true,
-                            appName: true,
-                            processId: true
-                        }),
                     ),
                     labels: {
                         environment: envConfig().isProduction,
