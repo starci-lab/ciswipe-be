@@ -1,14 +1,18 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
-import { ChainKey, Network } from "@/modules/common"
+import { Injectable, OnModuleInit } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { OrcaDexIndexerService } from "./orca-indexer.service"
-import { GlobalData, OrcaDexDataService } from "./orca-data.service"
+import { OrcaDexDataService } from "./orca-data.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { OrcaDexCacheService } from "./orca-cache.service"
 import { RetryService } from "@/modules/misc"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 @Injectable()
 export class OrcaDexInitService implements OnModuleInit {
-    private logger = new Logger(OrcaDexInitService.name)
+    private readonly context = OrcaDexInitService.name
+    private readonly protocolName = PluginProtocolName.DexOrca
+    private readonly chain = ChainKey.Solana
 
     constructor(
     private readonly orcaDexDataService: OrcaDexDataService,
@@ -16,6 +20,8 @@ export class OrcaDexInitService implements OnModuleInit {
     private readonly tokenUtilsService: TokenUtilsService,
     private readonly orcaDexCacheService: OrcaDexCacheService,
     private readonly retryService: RetryService,
+    @InjectWinstonLogging()
+    private readonly logger: Logger,
     ) {}
 
     async onModuleInit() {
@@ -74,8 +80,15 @@ export class OrcaDexInitService implements OnModuleInit {
                         )
                     }
                     await Promise.all(promises)
-                    this.logger.fatal(
-                        `Initialized batches for ${network}: ${this.orcaDexIndexerService.getInitializedBatches(network)}`,
+                    this.logger.info(
+                        "InitializedBatches",
+                        {
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            initializedBatches: this.orcaDexIndexerService.getInitializedBatches(network),
+                        },
                     )
                 }
             },
@@ -83,22 +96,30 @@ export class OrcaDexInitService implements OnModuleInit {
     }
 
     async loadGlobalData(network: Network) {
-        const defaultGlobalData: GlobalData = {
-            currentIndex: 0,
-        }
         try {
             const globalData =
         await this.orcaDexDataService.getGlobalData(network)
-            if (!globalData) return defaultGlobalData
+            if (!globalData) {
+                await this.orcaDexDataService.initGlobalData(network)
+                return 
+            }
             this.orcaDexIndexerService.setCurrentIndex(
                 network,
                 globalData.currentIndex,
             )
         } catch (error) {
             this.logger.error(
-                `Cannot load global data for ${network}, message: ${error.message}`,
+                "LoadGlobalDataFailed",
+                {
+                    context: this.context,
+                    protocolName: this.protocolName,
+                    chain: this.chain,
+                    network,
+                    error: error?.message,
+                    stack: error?.stack,
+                },
             )
-            return defaultGlobalData
+            return
         }
     }
 }

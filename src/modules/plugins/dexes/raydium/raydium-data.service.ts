@@ -4,31 +4,36 @@ import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
 import { LiquidityLine, PositionLine } from "./raydium-api.service"
-import { MongooseStorageHelpersService } from "@/modules/databases"
+import {
+    InjectMongoose,
+    MongooseStorageHelpersService,
+    StorageSchema,
+} from "@/modules/databases"
+import { Connection } from "mongoose"
 
 // we track pool batch for each pool
 export interface PoolBatch {
-    pools: Array<PoolData>;
-    // we track current line index for each pool to continue loading lines
-    currentLineIndex: number;
+  pools: Array<PoolData>;
+  // we track current line index for each pool to continue loading lines
+  currentLineIndex: number;
 }
 
 // we track pool data for each pool
 export interface PoolData {
-    pool: ApiV3PoolInfoBaseItem;
+  pool: ApiV3PoolInfoBaseItem;
 }
 
 // we track position and liquidity lines for each pool
 export interface PoolLines {
-    poolId: string;
-    positionLines: Array<PositionLine>;
-    liquidityLines: Array<LiquidityLine>;
+  poolId: string;
+  positionLines: Array<PositionLine>;
+  liquidityLines: Array<LiquidityLine>;
 }
 
 // we track global data for all pools
 export interface GlobalData {
-    // we track current index to continue loading pools
-    currentIndex: number;
+  // we track current index to continue loading pools
+  currentIndex: number;
 }
 
 const GLOBAL_DATA_KEY = "global-data"
@@ -38,14 +43,13 @@ const POOL_LINES_KEY = "pool-lines"
 @Injectable()
 export class RaydiumDexDataService {
     constructor(
-        private readonly tokenUtilsService: TokenUtilsService,
-        private readonly mongooseStorageHelpersService: MongooseStorageHelpersService,
-    ) { }
+    @InjectMongoose()
+    private readonly connection: Connection,
+    private readonly tokenUtilsService: TokenUtilsService,
+    private readonly mongooseStorageHelpersService: MongooseStorageHelpersService,
+    ) {}
 
-    private getPoolBatchKey(
-        network: Network,
-        batchIndex: number
-    ) {
+    private getPoolBatchKey(network: Network, batchIndex: number) {
         const [token0, token1] = this.tokenUtilsService.getPairsWithoutNativeToken(
             ChainKey.Solana,
             network,
@@ -53,9 +57,7 @@ export class RaydiumDexDataService {
         return `${POOL_BATCH_KEY}-${token0.id}-${token1.id}-${batchIndex}`
     }
 
-    private getPoolLinesKey(
-        poolId: string
-    ) {
+    private getPoolLinesKey(poolId: string) {
         return `${POOL_LINES_KEY}-${poolId}`
     }
 
@@ -99,7 +101,7 @@ export class RaydiumDexDataService {
         batchIndex: number,
         poolBatch: PoolBatch,
     ) {
-        const poolBatchKey = this.getPoolBatchKey(network, batchIndex)  
+        const poolBatchKey = this.getPoolBatchKey(network, batchIndex)
         return await this.mongooseStorageHelpersService.upsertStorage({
             key: poolBatchKey,
             network,
@@ -124,10 +126,7 @@ export class RaydiumDexDataService {
     }
 
     // set global data to mongoose
-    public async upsertGlobalData(
-        network: Network, 
-        globalData: GlobalData
-    ) {
+    public async upsertGlobalData(network: Network, globalData: GlobalData) {
         const globalDataKey = this.getGlobalDataKey()
         return await this.mongooseStorageHelpersService.upsertStorage({
             key: globalDataKey,
@@ -137,9 +136,7 @@ export class RaydiumDexDataService {
         })
     }
 
-    public async initGlobalData(
-        network: Network
-    ) {
+    public async initGlobalData(network: Network) {
         const defaultGlobalData: GlobalData = {
             currentIndex: 0,
         }
@@ -154,15 +151,14 @@ export class RaydiumDexDataService {
     }
 
     // get global data from level db
-    public async getGlobalData(
-        network: Network
-    ): Promise <GlobalData | null> {
+    public async getGlobalData(network: Network): Promise<GlobalData | null> {
         const globalDataKey = this.getGlobalDataKey()
-        const storage = await this.mongooseStorageHelpersService.getStorage<GlobalData>({
-            key: globalDataKey,
-            network,
-            protocolName: PluginProtocolName.DexRaydium,
-        })
+        const storage =
+      await this.mongooseStorageHelpersService.getStorage<GlobalData>({
+          key: globalDataKey,
+          network,
+          protocolName: PluginProtocolName.DexRaydium,
+      })
         if (!storage) {
             throw new Error(`Global data not found for ${network}`)
         }
@@ -170,18 +166,30 @@ export class RaydiumDexDataService {
     }
 
     public async increaseCurrentIndex(network: Network) {
-        const globalData = await this.getGlobalData(network)
-        if (!globalData) {
-            return
-        }
-        globalData.currentIndex++
-        await this.upsertGlobalData(network, globalData)
+        await this.connection.model<StorageSchema>(StorageSchema.name).updateOne(
+            {
+                displayId: this.mongooseStorageHelpersService.createDisplayId(
+                    this.getGlobalDataKey(),
+                    PluginProtocolName.DexRaydium,
+                    network,
+                ),
+            },
+            { $inc: { "data.currentIndex": 1 } },
+        )
     }
 
     public async increaseLineIndex(network: Network, batchIndex: number) {
-        const poolBatch = await this.getPoolBatch(network, batchIndex)
-        if (!poolBatch) return
-        poolBatch.currentLineIndex += 1
-        await this.upsertPoolBatch(network, batchIndex, poolBatch)
+        await this.connection
+            .model<StorageSchema>(StorageSchema.name)
+            .updateOne(
+                {
+                    displayId: this.mongooseStorageHelpersService.createDisplayId(
+                        this.getPoolBatchKey(network, batchIndex),
+                        PluginProtocolName.DexRaydium,
+                        network,
+                    ),
+                },
+                { $inc: { "data.currentLineIndex": 1 } },
+            )
     }
 }

@@ -1,7 +1,9 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { ChainKey, Network } from "@/modules/common"
+import { Injectable } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { tokenPairs } from "@/modules/blockchain"
 import { OrcaWhirlpool } from "./orca-api.service"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 export interface V3PoolIndexData {
   poolId: string;
@@ -9,7 +11,14 @@ export interface V3PoolIndexData {
 
 @Injectable()
 export class OrcaDexIndexerService {
-    private logger = new Logger(OrcaDexIndexerService.name)
+    private readonly context = OrcaDexIndexerService.name
+    private readonly protocolName = PluginProtocolName.DexOrca
+    private readonly chain = ChainKey.Solana
+    constructor(
+    @InjectWinstonLogging()
+    private readonly logger: Logger,
+    ) {}
+
     // current index for load lines index
     // if null, the index is not initialized
     private currentLineIndex: Record<

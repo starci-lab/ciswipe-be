@@ -153,7 +153,7 @@ export class OrcaDexApiService {
             "addresses",
             "stats",
         ])
-        console.log(fixed)
+        // logging removed to follow structured logging style in services
 
         try {
             const response$ = this.httpService.get<ListWhirlpoolsResponse>(url, { params: fixed })

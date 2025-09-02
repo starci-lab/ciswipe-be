@@ -1,8 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { ChainKey, Network } from "@/modules/common"
+import { Injectable } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { tokenPairs } from "@/modules/blockchain"
 import { ApiV3PoolInfoBaseItem } from "@raydium-io/raydium-sdk-v2"
 import { PoolBatch } from "./raydium-data.service"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 export interface V3PoolIndexData {
     poolId: string
@@ -10,7 +12,9 @@ export interface V3PoolIndexData {
 
 @Injectable()
 export class RaydiumDexIndexerService {
-    private logger = new Logger(RaydiumDexIndexerService.name)
+    private readonly context = RaydiumDexIndexerService.name
+    private readonly protocolName = PluginProtocolName.DexRaydium
+    private readonly chain = ChainKey.Solana
     // current index for load lines index
     // if null, the index is not initialized
     private currentLineIndex: Record<
@@ -31,6 +35,11 @@ export class RaydiumDexIndexerService {
             [Network.Mainnet]: [],
             [Network.Testnet]: [],
         }
+
+    constructor(
+    @InjectWinstonLogging()
+    private readonly logger: Logger,
+    ) {}
 
     getCurrentIndex(network: Network) {
         return this.currentIndex[network] || 0
@@ -121,18 +130,33 @@ export class RaydiumDexIndexerService {
     findNextUnloadedLineIndex(network: Network): [number, number] | null {
         const v3PoolBatches = this.getV3PoolBatches(network)
         if (!v3PoolBatches.length) {
-            this.logger.debug(`Batch is not loaded for ${network}`)
+            this.logger.debug(
+                "BatchNotLoaded",
+                {
+                    context: this.context,
+                    protocolName: this.protocolName,
+                    chain: this.chain,
+                    network,
+                },
+            )
             return null
         }
         for (let batchIndex = 0; batchIndex < v3PoolBatches.length; batchIndex++) {
             if (!v3PoolBatches[batchIndex]?.length) {
                 this.logger.debug(
-                    `Batch is not loaded for ${network} at batch index ${batchIndex}, maybe same keys, skip...`,
+                    "BatchEmptyAtIndex",
+                    {
+                        context: this.context,
+                        protocolName: this.protocolName,
+                        chain: this.chain,
+                        network,
+                        batchIndex,
+                        reason: "maybe same keys, skip",
+                    },
                 )
                 continue
             }
             const lineIndex = this.getCurrentLineIndex(network, batchIndex)
-            console.log(lineIndex)
             if (lineIndex < v3PoolBatches[batchIndex].length) {
                 if (!v3PoolBatches[batchIndex][lineIndex]) {
                     throw new Error(
@@ -143,7 +167,15 @@ export class RaydiumDexIndexerService {
             }
         }
         // we will increase the index to the next batch
-        this.logger.debug(`All lines loaded for ${network}`)
+        this.logger.debug(
+            "AllLinesLoaded",
+            {
+                context: this.context,
+                protocolName: this.protocolName,
+                chain: this.chain,
+                network,
+            },
+        )
         return null
     }
 

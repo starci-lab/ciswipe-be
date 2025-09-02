@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
-import { MongooseStorageHelpersService } from "@/modules/databases"
+import { InjectMongoose, MongooseStorageHelpersService, StorageSchema } from "@/modules/databases"
 import { OrcaWhirlpool } from "./orca-api.service"
+import { Connection } from "mongoose"
 
 export interface PoolData {
     pool: OrcaWhirlpool;
@@ -26,6 +27,8 @@ export class OrcaDexDataService {
     constructor(
         private readonly tokenUtilsService: TokenUtilsService,
         private readonly mongooseStorageHelpersService: MongooseStorageHelpersService,
+        @InjectMongoose()
+        private readonly connection: Connection,
     ) { }
 
     private getPoolBatchKey(
@@ -41,6 +44,14 @@ export class OrcaDexDataService {
 
     private getGlobalDataKey() {
         return `${GLOBAL_DATA_KEY}`
+    }
+
+    public async initGlobalData(network: Network) {
+        const defaultGlobalData: GlobalData = {
+            currentIndex: 0,
+        }
+        await this.upsertGlobalData(network, defaultGlobalData)
+        return defaultGlobalData
     }
 
     // get pool batch from mongoose
@@ -97,25 +108,19 @@ export class OrcaDexDataService {
             network,
             protocolName: PluginProtocolName.DexOrca,
         })
-        if (!storage) {
-            await this.mongooseStorageHelpersService.upsertStorage({
-                key: globalDataKey,
-                network,
-                data: {
-                    currentIndex: 0,
-                },
-                protocolName: PluginProtocolName.DexOrca,
-            })
-        }
         return storage
     }
 
     public async increaseCurrentIndex(network: Network) {
-        const globalData = await this.getGlobalData(network)
-        if (!globalData) {
-            return
-        }
-        globalData.currentIndex++
-        await this.upsertGlobalData(network, globalData)
+        await this.connection.model<StorageSchema>(StorageSchema.name).updateOne(
+            {
+                displayId: this.mongooseStorageHelpersService.createDisplayId(
+                    this.getGlobalDataKey(),
+                    PluginProtocolName.DexOrca,
+                    network,
+                ),
+            },
+            { $inc: { "data.currentIndex": 1 } },
+        )
     }
 }

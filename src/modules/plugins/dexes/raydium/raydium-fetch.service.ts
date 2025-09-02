@@ -119,11 +119,13 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 this.logger.debug(  
                     "PairsWithoutNativeCount",
                     {
+                        context: this.context,
                         protocolName: this.protocolName,
                         chain: this.chain,
                         network,
                         pairsCount: pairs.length,
-                    })
+                    }
+                )
 
                 const [token0, token1] = pairs[currentIndex]
                 try {
@@ -176,7 +178,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                                 this.logger.info(
                                     "PoolBatchCached",
                                     {
-                                        msg: "PoolBatchCached",
                                         context: this.context,
                                         protocolName: this.protocolName,
                                         chain: this.chain,
@@ -192,7 +193,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                                 this.logger.error(
                                     "PoolBatchLoadFailed",
                                     {
-                                        msg: "PoolBatchLoadFailed",
                                         context: this.context,
                                         protocolName: this.protocolName,
                                         chain: this.chain,
@@ -212,7 +212,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                         this.logger.error(
                             "PoolBatchNotFound",
                             {
-                                msg: "PoolBatchNotFound",
                                 context: this.context,
                                 protocolName: this.protocolName,
                                 chain: this.chain,
@@ -235,7 +234,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.info(
                         "PoolBatchLoaded",
                         {
-                            msg: "PoolBatchLoaded",
                             context: this.context,
                             protocolName: this.protocolName,
                             chain: this.chain,
@@ -256,7 +254,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.error(
                         "PoolBatchTopLevelError",
                         {
-                            msg: "PoolBatchTopLevelError",
                             context: this.context,
                             protocolName: this.protocolName,
                             chain: this.chain,
@@ -276,7 +273,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                             this.logger.verbose(
                                 "AdvanceToNextPairIndex",
                                 {
-                                    msg: "AdvanceToNextPairIndex",
                                     context: this.context,
                                     protocolName: this.protocolName,
                                     chain: this.chain,
@@ -307,7 +303,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.verbose(
                         "NoUnloadedLineIndex",
                         {
-                            msg: "NoUnloadedLineIndex",
                             context: this.context,
                             protocolName: this.protocolName,
                             chain: this.chain,
@@ -339,7 +334,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                         this.logger.error(
                             "PoolLinesNotFound",
                             {
-                                msg: "PoolLinesNotFound",
                                 context: this.context,
                                 protocolName: this.protocolName,
                                 chain: this.chain,
@@ -361,7 +355,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.info(
                         "PoolLinesLoaded",
                         {
-                            msg: "PoolLinesLoaded",
                             context: this.context,
                             protocolName: this.protocolName,
                             chain: this.chain,
@@ -378,7 +371,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                     this.logger.error(
                         "PoolLinesLoadFailed",
                         {
-                            msg: "PoolLinesLoadFailed",
                             context: this.context,
                             protocolName: this.protocolName,
                             chain: this.chain,
@@ -388,7 +380,8 @@ export class RaydiumDexFetchService implements OnModuleInit {
                             lineIndex,
                             error: error?.message,
                             stack: error?.stack,
-                        })
+                        }
+                    )
                 } finally {
                     await this.retryService.retry({
                         action: async () => {
@@ -398,7 +391,6 @@ export class RaydiumDexFetchService implements OnModuleInit {
                             this.logger.verbose(
                                 "AdvanceToNextLineIndex",
                                 {
-                                    msg: "AdvanceToNextLineIndex",
                                     context: this.context,
                                     protocolName: this.protocolName,
                                     chain: this.chain,

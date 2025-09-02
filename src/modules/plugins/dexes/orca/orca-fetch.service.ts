@@ -1,5 +1,5 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { ChainKey, Network, sleep } from "@/modules/common"
+import { Injectable } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName, sleep } from "@/modules/common"
 import {
     tokenPairs,
 } from "@/modules/blockchain"
@@ -10,6 +10,8 @@ import { OrcaDexIndexerService } from "./orca-indexer.service"
 import { OrcaDexApiService, OrcaWhirlpool } from "./orca-api.service"
 import { OrcaDexDataService, PoolBatch } from "./orca-data.service"
 import { OrcaDexCacheService } from "./orca-cache.service"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 const LOCK_KEYS = {
     POOL_BATCH: "ORCA_DEX_POOL_BATCH",
@@ -17,7 +19,9 @@ const LOCK_KEYS = {
 
 @Injectable()
 export class OrcaDexFetchService {
-    private logger = new Logger(OrcaDexFetchService.name)
+    private readonly context = OrcaDexFetchService.name
+    private readonly protocolName = PluginProtocolName.DexOrca
+    private readonly chain = ChainKey.Solana
 
     constructor(
         private readonly orcaDexIndexerService: OrcaDexIndexerService,
@@ -27,6 +31,8 @@ export class OrcaDexFetchService {
         private readonly retryService: RetryService,
         private readonly orcaDexCacheService: OrcaDexCacheService,
         private readonly orcaDexDataService: OrcaDexDataService,
+        @InjectWinstonLogging()
+        private readonly logger: Logger,
     ) { }
 
     @Cron(CronExpression.EVERY_10_SECONDS)
@@ -54,7 +60,16 @@ export class OrcaDexFetchService {
                 // now we try to get the current index that was reseted
                 const currentIndex = this.orcaDexIndexerService.getCurrentIndex(network)
                 if (this.tokenUtilsService.checkEveryPairsLoaded(ChainKey.Solana, network, currentIndex)) {
-                    this.logger.verbose(`Every pairs are loaded for ${network}, current index: ${currentIndex}`)
+                    this.logger.verbose(
+                        "EveryPairsLoaded",
+                        {
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            currentIndex,
+                        },
+                    )
                     return
                 }
                 const [token0, token1] =
@@ -69,7 +84,17 @@ export class OrcaDexFetchService {
                         currentIndex,
                         async () => {
                             if (!token0.tokenAddress || !token1.tokenAddress) {
-                                this.logger.error(`Token address is not found for ${token0.id} and ${token1.id}`)
+                                this.logger.error(
+                                    "TokenAddressNotFound",
+                                    {
+                                        context: this.context,
+                                        protocolName: this.protocolName,
+                                        chain: this.chain,
+                                        network,
+                                        token0: token0.id,
+                                        token1: token1.id,
+                                    },
+                                )
                                 return null
                             }
                             const pools: Array<OrcaWhirlpool> = []
@@ -86,7 +111,16 @@ export class OrcaDexFetchService {
                                     next = _next ?? null
                                     if (next) {
                                         this.logger.debug(
-                                            `Found more pools for ${token0.id}-${token1.id}. Sleeping 1s to avoid rate limit...`,
+                                            "MorePoolsFoundSleepingToAvoidRateLimit",
+                                            {
+                                                context: this.context,
+                                                protocolName: this.protocolName,
+                                                chain: this.chain,
+                                                network,
+                                                token0: token0.id,
+                                                token1: token1.id,
+                                                sleepMs: 1000,
+                                            },
                                         )
                                         await sleep(1000)
                                     }
@@ -99,7 +133,18 @@ export class OrcaDexFetchService {
                                 return batch
                             } catch (error) {
                                 this.logger.error(
-                                    `Cannot load pool batch for ${token0.id}-${token1.id}, message: ${error?.message ?? error}`,
+                                    "PoolBatchLoadFailed",
+                                    {
+                                        context: this.context,
+                                        protocolName: this.protocolName,
+                                        chain: this.chain,
+                                        network,
+                                        token0: token0.id,
+                                        token1: token1.id,
+                                        currentIndex,
+                                        error: error?.message,
+                                        stack: error?.stack,
+                                    },
                                 )
                                 return null
                             }
@@ -107,7 +152,16 @@ export class OrcaDexFetchService {
                     )
                     if (!poolBatch) {
                         this.logger.error(
-                            `Cannot load pool batch for ${token0.id} and ${token1.id}, message: Pool batch is not found`,
+                            "PoolBatchNotFound",
+                            {
+                                context: this.context,
+                                protocolName: this.protocolName,
+                                chain: this.chain,
+                                network,
+                                token0: token0.id,
+                                token1: token1.id,
+                                currentIndex,
+                            },
                         )
                         return
                     }
@@ -124,20 +178,35 @@ export class OrcaDexFetchService {
                         poolBatch,
                     )
                     // log the pool batch
-                    this.logger.debug(
-                        `Loaded pool batch for 
-                      ${token0.id} 
-                      and 
-                      ${token1.id}, 
-                      index: ${currentIndex}, 
-                      total pools: ${poolBatch.pools.length},
-                      total pairs: ${tokenPairs[ChainKey.Solana][network].length},
-                      total v3 pool batches: ${this.orcaDexIndexerService.getV3PoolBatches(network)[currentIndex]?.length}
-                      `,
+                    this.logger.info(
+                        "PoolBatchLoaded",
+                        {
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            token0: token0.id,
+                            token1: token1.id,
+                            currentIndex,
+                            poolsCount: poolBatch.pools.length,
+                            totalPairs: tokenPairs[ChainKey.Solana][network].length,
+                            totalV3PoolBatches: this.orcaDexIndexerService.getV3PoolBatches(network)[currentIndex]?.length,
+                        },
                     )
                 } catch (error) {
                     this.logger.error(
-                        `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
+                        "PoolBatchTopLevelError",
+                        {
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            token0: token0?.id,
+                            token1: token1?.id,
+                            currentIndex,
+                            error: error?.message,
+                            stack: error?.stack,
+                        },
                     )
                 } finally {
                     await this.retryService.retry({
@@ -145,6 +214,16 @@ export class OrcaDexFetchService {
                             // update the global data
                             this.orcaDexIndexerService.nextCurrentIndex(network)
                             await this.orcaDexDataService.increaseCurrentIndex(network)
+                            this.logger.verbose(
+                                "AdvanceToNextPairIndex",
+                                {
+                                    context: this.context,
+                                    protocolName: this.protocolName,
+                                    chain: this.chain,
+                                    network,
+                                    nextIndex: this.orcaDexIndexerService.getCurrentIndex(network),
+                                },
+                            )
                         }
                     })
                 }

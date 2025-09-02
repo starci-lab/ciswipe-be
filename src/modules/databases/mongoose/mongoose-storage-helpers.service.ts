@@ -27,6 +27,13 @@ export interface UpsertStorageParams<T> {
   ttlMs?: number; // optional, default = no expiration
 }
 
+export interface UpdateStorageParams<T> {
+  key: string;
+  protocolName: PluginProtocolName;
+  data: T;
+  network: Network;
+}
+
 @Injectable()
 export class MongooseStorageHelpersService {
     constructor(
@@ -35,7 +42,7 @@ export class MongooseStorageHelpersService {
     private readonly dayjsService: DayjsService,
     ) {}
 
-    private createDisplayId(
+    public createDisplayId(
         key: string,
         protocolName: PluginProtocolName,
         network: Network,

@@ -1,14 +1,18 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
-import { ChainKey, Network } from "@/modules/common"
+import { Injectable, OnModuleInit } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName } from "@/modules/common"
 import { RaydiumDexIndexerService } from "./raydium-indexer.service"
 import { RaydiumDexDataService } from "./raydium-data.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
 import { RetryService } from "@/modules/misc"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 @Injectable()
 export class RaydiumDexInitService implements OnModuleInit {
-    private logger = new Logger(RaydiumDexInitService.name)
+    private readonly context = RaydiumDexInitService.name
+    private readonly protocolName = PluginProtocolName.DexRaydium
+    private readonly chain = ChainKey.Solana
 
     constructor(
     private readonly raydiumDexDataService: RaydiumDexDataService,
@@ -16,6 +20,8 @@ export class RaydiumDexInitService implements OnModuleInit {
     private readonly tokenUtilsService: TokenUtilsService,
     private readonly raydiumDexCacheService: RaydiumDexCacheService,
     private readonly retryService: RetryService,
+    @InjectWinstonLogging()
+    private readonly logger: Logger,
     ) {}
 
     async onModuleInit() {
@@ -95,8 +101,15 @@ export class RaydiumDexInitService implements OnModuleInit {
                         )
                     }
                     await Promise.all(promises)
-                    this.logger.fatal(
-                        `Initialized batches for ${network}: ${this.raydiumDexIndexerService.getInitializedBatches(network)}`,
+                    this.logger.info(
+                        "InitializedBatches",
+                        {
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            initializedBatches: this.raydiumDexIndexerService.getInitializedBatches(network),
+                        },
                     )
                 }
             },
@@ -117,7 +130,15 @@ export class RaydiumDexInitService implements OnModuleInit {
             )
         } catch (error) {
             this.logger.error(
-                `Cannot load global data for ${network}, message: ${error.message}`,
+                "LoadGlobalDataFailed",
+                {
+                    context: this.context,
+                    protocolName: this.protocolName,
+                    chain: this.chain,
+                    network,
+                    error: error?.message,
+                    stack: error?.stack,
+                },
             )
         }
     }
