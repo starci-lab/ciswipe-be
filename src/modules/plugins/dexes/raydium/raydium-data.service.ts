@@ -137,10 +137,26 @@ export class RaydiumDexDataService {
         })
     }
 
+    public async initGlobalData(
+        network: Network
+    ) {
+        const defaultGlobalData: GlobalData = {
+            currentIndex: 0,
+        }
+        const globalDataKey = this.getGlobalDataKey()
+        await this.mongooseStorageHelpersService.upsertStorage({
+            key: globalDataKey,
+            network,
+            data: defaultGlobalData,
+            protocolName: PluginProtocolName.DexRaydium,
+        })
+        return defaultGlobalData
+    }
+
     // get global data from level db
     public async getGlobalData(
         network: Network
-    ): Promise < GlobalData | null > {
+    ): Promise <GlobalData | null> {
         const globalDataKey = this.getGlobalDataKey()
         const storage = await this.mongooseStorageHelpersService.getStorage<GlobalData>({
             key: globalDataKey,
@@ -148,14 +164,7 @@ export class RaydiumDexDataService {
             protocolName: PluginProtocolName.DexRaydium,
         })
         if (!storage) {
-            await this.mongooseStorageHelpersService.upsertStorage({
-                key: globalDataKey,
-                network,
-                data: {
-                    currentIndex: 0,
-                },
-                protocolName: PluginProtocolName.DexRaydium,
-            })
+            throw new Error(`Global data not found for ${network}`)
         }
         return storage
     }

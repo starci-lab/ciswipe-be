@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { ChainKey, Network } from "@/modules/common"
 import { RaydiumDexIndexerService } from "./raydium-indexer.service"
-import { GlobalData, RaydiumDexDataService } from "./raydium-data.service"
+import { RaydiumDexDataService } from "./raydium-data.service"
 import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
 import { RetryService } from "@/modules/misc"
@@ -104,13 +104,13 @@ export class RaydiumDexInitService implements OnModuleInit {
     }
 
     async loadGlobalData(network: Network) {
-        const defaultGlobalData: GlobalData = {
-            currentIndex: 0,
-        }
         try {
             const globalData =
         await this.raydiumDexDataService.getGlobalData(network)
-            if (!globalData) return defaultGlobalData
+            if (!globalData) {
+                await this.raydiumDexDataService.initGlobalData(network)
+                return
+            }
             this.raydiumDexIndexerService.setCurrentIndex(
                 network,
                 globalData.currentIndex,
@@ -119,7 +119,6 @@ export class RaydiumDexInitService implements OnModuleInit {
             this.logger.error(
                 `Cannot load global data for ${network}, message: ${error.message}`,
             )
-            return defaultGlobalData
         }
     }
 }

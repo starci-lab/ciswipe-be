@@ -19,10 +19,14 @@ import { ProbabilityStatisticsModule } from "@/modules/probability-statistics"
 import { CryptographyModule } from "@/modules/cryptography"
 import { MiscModule } from "@/modules/misc"
 import { DatabasesModule } from "@/modules/databases"
+import { LokiModule } from "@/modules/loki"
 
 @Module({
     imports: [
         EnvModule.forRoot({
+            isGlobal: true,
+        }),
+        LokiModule.register({
             isGlobal: true,
         }),
         DatabasesModule.register({

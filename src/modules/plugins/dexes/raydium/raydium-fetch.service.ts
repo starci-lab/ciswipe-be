@@ -1,5 +1,5 @@
-import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common"
-import { ChainKey, Network, sleep } from "@/modules/common"
+import { Inject, Injectable, OnModuleInit } from "@nestjs/common"
+import { ChainKey, Network, PluginProtocolName, sleep } from "@/modules/common"
 import {
     createProviderToken,
     RecordRpcProvider,
@@ -14,16 +14,20 @@ import { TokenUtilsService } from "@/modules/blockchain/tokens"
 import { RaydiumDexApiService } from "./raydium-api.service"
 import { PoolBatch, RaydiumDexDataService } from "./raydium-data.service"
 import { RaydiumDexCacheService } from "./raydium-cache.service"
+import { InjectWinstonLogging } from "@/modules/loki"
+import { Logger } from "winston"
 
 const LOCK_KEYS = {
     POOL_BATCH: "RAYDIUM_DEX_POOL_BATCH",
-    POOL_LINES: "RAYDIUM_DEX_POOL_LINE"
+    POOL_LINES: "RAYDIUM_DEX_POOL_LINE",
 }
 
 @Injectable()
 export class RaydiumDexFetchService implements OnModuleInit {
-    private logger = new Logger(RaydiumDexFetchService.name)
     private raydiums: Record<Network, Raydium>
+    private readonly context = RaydiumDexFetchService.name
+    private readonly protocolName = PluginProtocolName.DexRaydium
+    private readonly chain = ChainKey.Solana
 
     constructor(
         @Inject(createProviderToken(ChainKey.Solana))
@@ -35,20 +39,28 @@ export class RaydiumDexFetchService implements OnModuleInit {
         private readonly raydiumDexDataService: RaydiumDexDataService,
         private readonly retryService: RetryService,
         private readonly raydiumDexCacheService: RaydiumDexCacheService,
+        @InjectWinstonLogging()
+        private readonly logger: Logger,
     ) { }
 
     async onModuleInit() {
         await this.retryService.retry({
             action: async () => {
-                // 3. Load raydium
                 const _raydiums: Partial<Record<Network, Raydium>> = {}
                 for (const network of Object.values(Network)) {
                     _raydiums[network] = await Raydium.load({
                         connection: this.solanaRpcProvider[network],
                     })
                 }
-                // we have to cast type to Record<Network, Raydium> to avoid compilation error
                 this.raydiums = _raydiums as Record<Network, Raydium>
+                this.logger.info(
+                    "ModuleInitialized",
+                    {
+                        protocolName: this.protocolName,
+                        chain: this.chain,
+                        loadedNetworks: Object.keys(this.raydiums),
+                    }
+                )
             },
         })
     }
@@ -86,30 +98,39 @@ export class RaydiumDexFetchService implements OnModuleInit {
                 if (network === Network.Testnet) {
                     return
                 }
-                // if the first pair is not loaded, we will return
-                // if we load end the pairs, we will return to the start index
+
                 this.raydiumDexIndexerService.tryResetCurrentIndex(network)
-                // now we try to get the current index that was reseted
                 const currentIndex = this.raydiumDexIndexerService.getCurrentIndex(network)
-                if (this.tokenUtilsService.checkEveryPairsLoaded(ChainKey.Solana, network, currentIndex)) {
-                    this.logger.verbose(`Every pairs are loaded for ${network}, current index: ${currentIndex}`)
+
+                if (
+                    this.tokenUtilsService.checkEveryPairsLoaded(this.chain, network, currentIndex)
+                ) {
+                    this.logger.verbose(
+                        "EveryPairsLoaded",
+                        {
+                            chain: this.chain,
+                            network,
+                            currentIndex,
+                        })
                     return
                 }
-                console.log(this.tokenUtilsService.getPairsWithoutNativeToken(
-                    ChainKey.Solana,
-                    network,
-                ).length)
-                const [token0, token1] =
-                    this.tokenUtilsService.getPairsWithoutNativeToken(
-                        ChainKey.Solana,
+
+                const pairs = this.tokenUtilsService.getPairsWithoutNativeToken(this.chain, network)
+                this.logger.debug(  
+                    "PairsWithoutNativeCount",
+                    {
+                        protocolName: this.protocolName,
+                        chain: this.chain,
                         network,
-                    )[currentIndex]
+                        pairsCount: pairs.length,
+                    })
+
+                const [token0, token1] = pairs[currentIndex]
                 try {
-                    // raydium only support Solana, so that we dont care about ChainKey
                     const raydium = this.raydiums[network]
                     const poolBatch = await this.raydiumDexDataService.getPoolBatch(
                         network,
-                        this.raydiumDexIndexerService.getCurrentIndex(network),
+                        currentIndex,
                         async () => {
                             const pools: Array<ApiV3PoolInfoItem> = []
                             try {
@@ -121,85 +142,148 @@ export class RaydiumDexFetchService implements OnModuleInit {
                                             `Token address is not found for ${token0.id} and ${token1.id}`,
                                         )
                                     }
-                                    const { data, hasNextPage } =
-                                        await raydium.api.fetchPoolByMints({
-                                            mint1: token0.tokenAddress,
-                                            mint2: token1.tokenAddress,
-                                            page: nextPage,
-                                        })
+                                    const { data, hasNextPage } = await raydium.api.fetchPoolByMints({
+                                        mint1: token0.tokenAddress,
+                                        mint2: token1.tokenAddress,
+                                        page: nextPage,
+                                    })
                                     pools.push(...data)
                                     nextPage++
                                     nextPageAvailable = hasNextPage
                                     if (hasNextPage) {
                                         this.logger.debug(
-                                            `We found more pools for ${token0.id} and ${token1.id}, so we will sleep for 1 second to avoid rate limit`,
-                                        )
+                                            "MorePoolsFoundSleepingToAvoidRateLimit",
+                                            {
+                                                context: this.context,
+                                                protocolName: this.protocolName,
+                                                chain: this.chain,
+                                                network,
+                                                token0: token0.id,
+                                                token1: token1.id,
+                                                nextPage,
+                                                sleepMs: 1000,
+                                            })
                                         await sleep(1000)
                                     }
                                 }
+
                                 const poolBatch: PoolBatch = {
-                                    pools: pools.map((pool) => ({
-                                        pool,
-                                    })),
+                                    pools: pools.map((pool) => ({ pool })),
                                     currentLineIndex: 0,
                                 }
-                                await this.raydiumDexCacheService.cachePoolBatch(
-                                    network,
-                                    currentIndex,
-                                    poolBatch,
+                                await this.raydiumDexCacheService.cachePoolBatch(network, currentIndex, poolBatch)
+
+                                this.logger.info(
+                                    "PoolBatchCached",
+                                    {
+                                        msg: "PoolBatchCached",
+                                        context: this.context,
+                                        protocolName: this.protocolName,
+                                        chain: this.chain,
+                                        network,
+                                        token0: token0.id,
+                                        token1: token1.id,
+                                        currentIndex,
+                                        poolsCount: pools.length,
+                                    }
                                 )
                                 return poolBatch
                             } catch (error) {
                                 this.logger.error(
-                                    `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
-                                )
+                                    "PoolBatchLoadFailed",
+                                    {
+                                        msg: "PoolBatchLoadFailed",
+                                        context: this.context,
+                                        protocolName: this.protocolName,
+                                        chain: this.chain,
+                                        network,
+                                        token0: token0.id,
+                                        token1: token1.id,
+                                        currentIndex,
+                                        error: error?.message,
+                                        stack: error?.stack,
+                                    })
                                 return null
                             }
                         },
                     )
+
                     if (!poolBatch) {
                         this.logger.error(
-                            `Cannot load pool batch for ${token0.id} and ${token1.id}, message: Pool batch is not found`,
-                        )
+                            "PoolBatchNotFound",
+                            {
+                                msg: "PoolBatchNotFound",
+                                context: this.context,
+                                protocolName: this.protocolName,
+                                chain: this.chain,
+                                network,
+                                token0: token0.id,
+                                token1: token1.id,
+                                currentIndex,
+                            })
                         return
                     }
-                    // update the indexer
+
                     this.raydiumDexIndexerService.setV3PoolBatchAndCurrentLineIndex(
                         network,
                         currentIndex,
                         poolBatch,
                     )
-                    // cache the pool batch
-                    await this.raydiumDexCacheService.cachePoolBatch(
-                        network,
-                        currentIndex,
-                        poolBatch,
-                    )
-                    // log the pool batch
-                    this.logger.debug(
-                        `Loaded pool batch for 
-                      ${token0.id} 
-                      and 
-                      ${token1.id}, 
-                      index: ${currentIndex}, 
-                      total pools: ${poolBatch.pools.length},
-                      total pairs: ${tokenPairs[ChainKey.Solana][network].length},
-                      current line index: ${this.raydiumDexIndexerService.getCurrentLineIndex(network, currentIndex)},
-                      total v3 pool batches: ${this.raydiumDexIndexerService.getV3PoolBatches(network)[currentIndex]?.length}
-                      `,
-                    )
+
+                    await this.raydiumDexCacheService.cachePoolBatch(network, currentIndex, poolBatch)
+
+                    this.logger.info(
+                        "PoolBatchLoaded",
+                        {
+                            msg: "PoolBatchLoaded",
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            token0: token0.id,
+                            token1: token1.id,
+                            currentIndex,
+                            poolsCount: poolBatch.pools.length,
+                            totalPairs: tokenPairs[this.chain][network].length,
+                            currentLineIndex: this.raydiumDexIndexerService.getCurrentLineIndex(
+                                network,
+                                currentIndex,
+                            ),
+                            totalV3PoolBatches:
+                            this.raydiumDexIndexerService.getV3PoolBatches(network)[currentIndex]?.length,
+                        })
                 } catch (error) {
                     this.logger.error(
-                        `Cannot load pool batch for ${token0.id} and ${token1.id}, message: ${error.message}`,
-                    )
+                        "PoolBatchTopLevelError",
+                        {
+                            msg: "PoolBatchTopLevelError",
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            token0: token0?.id,
+                            token1: token1?.id,
+                            currentIndex,
+                            error: error?.message,
+                            stack: error?.stack,
+                        })
                 } finally {
                     await this.retryService.retry({
                         action: async () => {
-                        // we will increase the index to the next pair
                             this.raydiumDexIndexerService.nextCurrentIndex(network)
-                            // update the global data
                             await this.raydiumDexDataService.increaseCurrentIndex(network)
-                        }
+
+                            this.logger.verbose(
+                                "AdvanceToNextPairIndex",
+                                {
+                                    msg: "AdvanceToNextPairIndex",
+                                    context: this.context,
+                                    protocolName: this.protocolName,
+                                    chain: this.chain,
+                                    network,
+                                    nextIndex: this.raydiumDexIndexerService.getCurrentIndex(network),
+                                })
+                        },
                     })
                 }
             },
@@ -211,33 +295,38 @@ export class RaydiumDexFetchService implements OnModuleInit {
         await this.lockService.withLocks({
             blockedKeys: [LOCK_KEYS.POOL_LINES, LOCK_KEYS.POOL_BATCH],
             acquiredKeys: [LOCK_KEYS.POOL_LINES],
-            // no authorized to release batch
             releaseKeys: [LOCK_KEYS.POOL_LINES],
             network,
             callback: async () => {
                 if (network === Network.Testnet) {
                     return
                 }
-                const pair = this.raydiumDexIndexerService.findNextUnloadedLineIndex(network)
-                if (!pair) {
-                    // we already loaded all lines for the current index, or some errors happened
+
+                const pairIdx = this.raydiumDexIndexerService.findNextUnloadedLineIndex(network)
+                if (!pairIdx) {
+                    this.logger.verbose(
+                        "NoUnloadedLineIndex",
+                        {
+                            msg: "NoUnloadedLineIndex",
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                        })
                     return
                 }
-                const [batchIndex, lineIndex] = pair
-                const pool = this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex)[
-                    lineIndex
-                ]
+
+                const [batchIndex, lineIndex] = pairIdx
+                const pool = this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex)[lineIndex]
+
                 try {
                     const poolLines = await this.raydiumDexDataService.getPoolLines(
                         network,
                         pool.poolId,
                         async () => {
-                            const liquidityLines =
-                                await this.raydiumDexApiService.fetchPoolLines(pool.poolId)
-                            // sleep 1000s to avoid rate limit
-                            await sleep(1000)
-                            const positionLines =
-                                await this.raydiumDexApiService.fetchPoolPositions(pool.poolId)
+                            const liquidityLines = await this.raydiumDexApiService.fetchPoolLines(pool.poolId)
+                            await sleep(1000) // avoid rate limit
+                            const positionLines = await this.raydiumDexApiService.fetchPoolPositions(pool.poolId)
                             return {
                                 poolId: pool.poolId,
                                 liquidityLines,
@@ -245,43 +334,82 @@ export class RaydiumDexFetchService implements OnModuleInit {
                             }
                         },
                     )
+
                     if (!poolLines) {
                         this.logger.error(
-                            `Cannot load pool lines for ${pool.poolId}, message: Pool lines is not found`,
-                        )
+                            "PoolLinesNotFound",
+                            {
+                                msg: "PoolLinesNotFound",
+                                context: this.context,
+                                protocolName: this.protocolName,
+                                chain: this.chain,
+                                network,
+                                poolId: pool.poolId,
+                                batchIndex,
+                                lineIndex,
+                            })
                         return
                     }
-                    // cache the pool lines
-                    await this.raydiumDexCacheService.cachePoolLines(
+
+                    await this.raydiumDexCacheService.cachePoolLines(network, pool.poolId, poolLines)
+
+                    const [p0, p1] = this.tokenUtilsService.getPairsWithoutNativeToken(
+                        this.chain,
                         network,
-                        pool.poolId,
-                        poolLines,
-                    )
-                    // log the pool lines
-                    this.logger.warn(
-                        `Loaded pool lines for 
-                      ${pool.poolId}, 
-                      pair: ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][0].id} and ${this.tokenUtilsService.getPairsWithoutNativeToken(ChainKey.Solana, network)[batchIndex][1].id}, 
-                      batch index: ${batchIndex},
-                      line index: ${lineIndex}, 
-                      total lines: ${this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex).length},
-                      total pairs: ${tokenPairs[ChainKey.Solana][network].length}
-                      `,
-                    )
+                    )[batchIndex]
+
+                    this.logger.info(
+                        "PoolLinesLoaded",
+                        {
+                            msg: "PoolLinesLoaded",
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            poolId: pool.poolId,
+                            pairToken0: p0.id,
+                            pairToken1: p1.id,
+                            batchIndex,
+                            lineIndex,
+                            totalLines: this.raydiumDexIndexerService.getV3PoolBatch(network, batchIndex).length,
+                            totalPairs: tokenPairs[this.chain][network].length,
+                        })
                 } catch (error) {
                     this.logger.error(
-                        `Cannot load pool lines for ${pool.poolId}, message: ${error.message}`,
-                    )
+                        "PoolLinesLoadFailed",
+                        {
+                            msg: "PoolLinesLoadFailed",
+                            context: this.context,
+                            protocolName: this.protocolName,
+                            chain: this.chain,
+                            network,
+                            poolId: pool.poolId,
+                            batchIndex,
+                            lineIndex,
+                            error: error?.message,
+                            stack: error?.stack,
+                        })
                 } finally {
                     await this.retryService.retry({
                         action: async () => {
                             this.raydiumDexIndexerService.nextCurrentLineIndex(network, batchIndex)
-                            // update the the current line index
-                            await this.raydiumDexDataService.increaseLineIndex(
-                                network,
-                                batchIndex,
-                            )
-                        }
+                            await this.raydiumDexDataService.increaseLineIndex(network, batchIndex)
+
+                            this.logger.verbose(
+                                "AdvanceToNextLineIndex",
+                                {
+                                    msg: "AdvanceToNextLineIndex",
+                                    context: this.context,
+                                    protocolName: this.protocolName,
+                                    chain: this.chain,
+                                    network,
+                                    batchIndex,
+                                    nextLineIndex: this.raydiumDexIndexerService.getCurrentLineIndex(
+                                        network,
+                                        batchIndex,
+                                    ),
+                                })
+                        },
                     })
                 }
             },

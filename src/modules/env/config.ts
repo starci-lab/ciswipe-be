@@ -1,6 +1,7 @@
 import { join } from "path"
 
 export const envConfig = () => ({
+    isProduction: process.env.NODE_ENV === "production",
     redis: {
         host: process.env.REDIS_HOST || "localhost",
         port: parseInt(process.env.REDIS_PORT || "6379", 10),
@@ -30,5 +31,11 @@ export const envConfig = () => ({
     },
     cryptography: {
         sha256Salt: process.env.SHA256_SALT || "ciswipesha256",
-    }
+    },
+    loki: {
+        host: process.env.LOKI_HOST || "http://localhost:3100",
+        requireAuth: Boolean(process.env.LOKI_REQUIRE_AUTH) || false,
+        username: process.env.LOKI_USERNAME,
+        password: process.env.LOKI_PASSWORD,
+    },
 })
