@@ -5,8 +5,8 @@ import {
     OPTIONS_TYPE,
 } from "./cache.module-definition"
 import {
-    createRedisCacheManagerFactoryProvider, 
-    createMemoryCacheManagerFactoryProvider 
+    createRedisCacheManagerProvider, 
+    createMemoryCacheManagerProvider 
 } from "./cache.providers"
 import { CacheHelpersService } from "./cache-helpers.service"
 import { CacheModule as NestCacheModule } from "@nestjs/cache-manager"
@@ -22,8 +22,8 @@ export class CacheModule extends ConfigurableModuleClass {
     ): DynamicModule {
         const dynamicModule = super.register(options)
         const providers = [
-            createRedisCacheManagerFactoryProvider(),
-            createMemoryCacheManagerFactoryProvider(),
+            createRedisCacheManagerProvider(),
+            createMemoryCacheManagerProvider(),
             CacheHelpersService
         ]
         const nestCacheModule = NestCacheModule.registerAsync({

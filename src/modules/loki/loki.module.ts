@@ -14,14 +14,6 @@ export class LokiModule extends ConfigurableModuleClass {
         const dynamicModule = super.register(options)
         const winstonModule = WinstonModule.forRoot({
             level: "debug",
-            levels: {
-                fatal: 0,
-                error: 1,
-                warn: 2,
-                info: 3,
-                verbose: 4,
-                debug: 5,
-            },
             transports: [
                 // write to console
                 new winston.transports.Console({

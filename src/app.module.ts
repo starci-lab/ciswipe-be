@@ -20,10 +20,23 @@ import { CryptographyModule } from "@/modules/cryptography"
 import { MiscModule } from "@/modules/misc"
 import { DatabasesModule } from "@/modules/databases"
 import { LokiModule } from "@/modules/loki"
+import { PassportModule } from "@/modules/passport"
+import { CryptoModule } from "@/modules/crypto"
+import { ApiModule } from "@/api"
+import { GcpModule } from "@/modules/gcp"
 
 @Module({
     imports: [
         EnvModule.forRoot({
+            isGlobal: true,
+        }),
+        GcpModule.register({
+            isGlobal: true,
+        }),
+        CryptoModule.register({
+            isGlobal: true,
+        }),
+        PassportModule.register({
             isGlobal: true,
         }),
         LokiModule.register({
@@ -71,6 +84,9 @@ import { LokiModule } from "@/modules/loki"
             resolvers: { JSON: GraphQLJSON },
         }),
         GraphQLModule.register({
+            isGlobal: true,
+        }),
+        ApiModule.register({
             isGlobal: true,
         }),
     ],

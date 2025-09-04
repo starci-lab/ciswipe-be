@@ -7,7 +7,7 @@ import Keyv from "keyv"
 import { createClient } from "redis"
 import { CacheableMemory } from "cacheable"
 
-export const createRedisCacheManagerFactoryProvider = (): Provider => ({
+export const createRedisCacheManagerProvider = (): Provider => ({
     provide: REDIS_CACHE_MANAGER,
     useFactory: async (): Promise<Cache> => {
         const client = createClient({
@@ -23,7 +23,7 @@ export const createRedisCacheManagerFactoryProvider = (): Provider => ({
     },
 })
 
-export const createMemoryCacheManagerFactoryProvider = (): Provider => ({
+export const createMemoryCacheManagerProvider = (): Provider => ({
     provide: MEMORY_CACHE_MANAGER,
     useFactory: async (): Promise<Cache> => {
         return createCache({

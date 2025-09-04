@@ -38,4 +38,25 @@ export const envConfig = () => ({
         username: process.env.LOKI_USERNAME,
         password: process.env.LOKI_PASSWORD,
     },
+    crypto: {
+        cipher: {
+            secret: process.env.CIPHER_SECRET || "Cuong123_A",
+        },
+        bcrypt: {
+            salt: process.env.BCRYPT_SALT || "Cuong123_A",
+        },
+    },
+    googleCloud: {
+        oauth: {
+            clientId: process.env.GOOGLE_CLOUD_OAUTH_CLIENT_ID || "",
+            clientSecret: process.env.GOOGLE_CLOUD_OAUTH_CLIENT_SECRET || "",
+            redirectUri: process.env.GOOGLE_CLOUD_OAUTH_REDIRECT_URI || "",
+        },
+        kms: {
+            keyName: process.env.GOOGLE_CLOUD_KMS_KEY_NAME || "",
+        },
+        secret: {
+            secretName: process.env.GOOGLE_CLOUD_SECRET_NAME || "",
+        },
+    },
 })
