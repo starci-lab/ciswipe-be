@@ -1,8 +1,9 @@
-import { Prop, Schema } from "@nestjs/mongoose"
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { AbstractSchema } from "./abstract"
 import { Field } from "@nestjs/graphql"
 import { OauthProviderName } from "../enums"
 import { WalletSchema } from "./wallet.schema"
+import { SessionSchema } from "./session.scheam"
 
 @Schema({
     timestamps: true,
@@ -40,4 +41,10 @@ export class UserSchema extends AbstractSchema {
     @Field(() => WalletSchema, { nullable: true })
     @Prop({ type: WalletSchema, required: false })
         evm?: WalletSchema
+
+    @Field(() => [SessionSchema])
+    @Prop({ type: [SessionSchema], required: true, default: [] })
+        sessions?: Array<SessionSchema>
 }
+
+export const UserSchemaClass = SchemaFactory.createForClass(UserSchema)

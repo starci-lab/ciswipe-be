@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common"
-import { StorageSchema, StorageSchemaClass } from "./schemas"
+import { SessionSchema, SessionSchemaClass, StorageSchema, StorageSchemaClass, UserSchema, UserSchemaClass, WalletSchema, WalletSchemaClass } from "./schemas"
 import { MongooseModule as NestMongooseModule } from "@nestjs/mongoose"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./mongoose.module-definition"
 import { envConfig } from "@/modules/env"
@@ -26,7 +26,7 @@ export class MongooseModule extends ConfigurableModuleClass {
                     connectionFactory: async (connection: Connection) => {
                         connection.plugin(normalizeMongoose)
                         return connection
-                    }, 
+                    },
                 }),
                 this.forFeature()
             ],
@@ -48,6 +48,18 @@ export class MongooseModule extends ConfigurableModuleClass {
                         {
                             name: StorageSchema.name,
                             useFactory: () => StorageSchemaClass
+                        },
+                        {
+                            name: UserSchema.name,
+                            useFactory: () => UserSchemaClass
+                        },
+                        {
+                            name: WalletSchema.name,
+                            useFactory: () => WalletSchemaClass
+                        },
+                        {
+                            name: SessionSchema.name,
+                            useFactory: () => SessionSchemaClass
                         },
                     ],
                 )

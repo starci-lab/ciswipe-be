@@ -24,10 +24,14 @@ import { PassportModule } from "@/modules/passport"
 import { CryptoModule } from "@/modules/crypto"
 import { ApiModule } from "@/api"
 import { GcpModule } from "@/modules/gcp"
+import { DateModule } from "@/modules/date"
 
 @Module({
     imports: [
         EnvModule.forRoot({
+            isGlobal: true,
+        }),
+        DateModule.register({
             isGlobal: true,
         }),
         GcpModule.register({

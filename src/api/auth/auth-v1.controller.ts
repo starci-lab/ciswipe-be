@@ -1,10 +1,14 @@
-import { Controller, Get, UseGuards } from "@nestjs/common"
+import { Controller, Get, Res, UseGuards } from "@nestjs/common"
 import { GoogleAuthGuard } from "@/modules/passport"
 import {
     ApiOperation,
     ApiResponse,
     ApiTags,
 } from "@nestjs/swagger"
+import { GoogleUser, UserGoogleLike } from "@/modules/passport"
+import { Response } from "express"
+import { AuthV1Service } from "./auth-v1.service"
+import { envConfig } from "@/modules/env"
 
 @ApiTags("Auth v1")
 @Controller({
@@ -12,7 +16,9 @@ import {
     version: "1",
 })
 export class AuthV1Controller {
-    constructor() {}
+    constructor(
+        private readonly authV1Service: AuthV1Service,
+    ) {}
 
   @ApiOperation({
       summary: "Google OAuth2 Redirect (v1)",
@@ -39,7 +45,13 @@ export class AuthV1Controller {
   @ApiResponse({ status: 403, description: "Forbidden - user not allowed" })
   @UseGuards(GoogleAuthGuard)
   @Get("google/callback")
-  async handleGoogleCallback() {
-      return { message: "Google authentication successful" }
+  async handleGoogleCallback(
+    @GoogleUser() user: UserGoogleLike, @Res() res: Response,
+  ) {
+      const { accessToken, refreshToken } = await this.authV1Service.handleGoogleCallback(user)
+      const url = new URL(envConfig().frontend.url)
+      url.searchParams.set("accessToken", accessToken)
+      url.searchParams.set("refreshToken", refreshToken)
+      res.redirect(url.toString())
   }
 }

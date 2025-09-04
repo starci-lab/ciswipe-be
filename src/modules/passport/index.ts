@@ -1,3 +1,5 @@
 export * from "./strategies"
 export * from "./passport.module"
 export * from "./guards"
+export * from "./jwt"
+export * from "./decorators"

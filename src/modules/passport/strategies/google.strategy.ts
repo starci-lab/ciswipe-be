@@ -53,12 +53,12 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
         const state = this.serializationService.deserializeFromBase64<GoogleAuthState>(req.query.state as string)
         const { emails, photos, id, displayName } = profile
         const user: UserGoogleLike = {
-            id,
             email: emails[0].value,
             username: displayName,
             picture: photos[0].value,
             network: state.network,
-            referralUserId: state.referralUserId
+            referralUserId: state.referralUserId,
+            oauthProviderId: id
         }
         done(null, user)
     }

@@ -2,6 +2,9 @@ import { join } from "path"
 
 export const envConfig = () => ({
     isProduction: process.env.NODE_ENV === "production",
+    frontend: {
+        url: process.env.FRONTEND_URL || "http://localhost:3000/callback/google",
+    },
     redis: {
         host: process.env.REDIS_HOST || "localhost",
         port: parseInt(process.env.REDIS_PORT || "6379", 10),
@@ -58,5 +61,10 @@ export const envConfig = () => ({
         secret: {
             secretName: process.env.GOOGLE_CLOUD_SECRET_NAME || "",
         },
+    },
+    jwt: {
+        secret: process.env.JWT_SECRET || "",
+        accessTokenExpiration: process.env.JWT_ACCESS_TOKEN_EXPIRATION || "1h",
+        refreshTokenExpiration: process.env.JWT_REFRESH_TOKEN_EXPIRATION || "7d",
     },
 })

@@ -1,10 +1,16 @@
 import { Network } from "@/modules/common"
 
-export type UserGoogleLike = {
+export interface UserLike {
     email: string
     username: string
     picture: string
-    id: string
+    id?: string
     network: Network
     referralUserId?: string
 }
+
+export interface UserGoogleLike extends UserLike {
+    oauthProviderId: string
+}
+
+export type UserJwtLike = UserLike

@@ -1,7 +1,7 @@
-import { Prop, Schema } from "@nestjs/mongoose"
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { Field, ObjectType } from "@nestjs/graphql"
 
-@Schema({ _id: false })
+@Schema({ autoCreate: false })
 @ObjectType()
 export class WalletSchema {
     @Field(() => String, { nullable: true })
@@ -12,3 +12,5 @@ export class WalletSchema {
     @Prop({ type: String, required: false })
         encryptedPrivateKey?: string
 }
+
+export const WalletSchemaClass = SchemaFactory.createForClass(WalletSchema)

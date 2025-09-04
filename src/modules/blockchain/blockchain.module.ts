@@ -3,6 +3,7 @@ import { RpcModule } from "./rpc"
 import { ConfigurableModuleClass, OPTIONS_TYPE } from "./blockchain.module-definition"
 import { BlockModule } from "./block"
 import { TokensModule } from "./tokens"
+import { KeypairsModule } from "./keypairs"
 
 @Module({})
 export class BlockchainModule extends ConfigurableModuleClass {
@@ -19,17 +20,22 @@ export class BlockchainModule extends ConfigurableModuleClass {
         const tokensModule = TokensModule.register({
             isGlobal: options.isGlobal,
         })
+        const keypairsModule = KeypairsModule.register({
+            isGlobal: options.isGlobal,
+        })
         return {
             ...dynamicModule,
             imports: [
                 rpcModule,
                 blockModule,
-                tokensModule
+                tokensModule,
+                keypairsModule
             ],
             exports: [
                 rpcModule,
                 blockModule,
-                tokensModule
+                tokensModule,
+                keypairsModule
             ],
         }
     }
